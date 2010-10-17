@@ -46,7 +46,7 @@ namespace LibSvm
       if (this.label != null)
       {
         for (int i = 0; i < this.nr_class; i++)
-        { 
+        {
           label[i] = this.label[i];
         }
       }

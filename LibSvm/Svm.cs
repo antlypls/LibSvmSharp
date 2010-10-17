@@ -42,8 +42,8 @@ namespace LibSvm
           y[i] = +1;
         }
         else
-        { 
-          y[i] = -1; 
+        {
+          y[i] = -1;
         }
       }
 
@@ -53,17 +53,17 @@ namespace LibSvm
 
       double sum_alpha = 0;
       for (int i = 0; i < l; i++)
-      { 
+      {
         sum_alpha += alpha[i];
       }
 
       if (Cp == Cn)
-      { 
+      {
         Svm.info("nu = " + sum_alpha / (Cp * prob.l) + "\n");
       }
 
       for (int i = 0; i < l; i++)
-      { 
+      {
         alpha[i] *= y[i];
       }
     }
@@ -929,10 +929,10 @@ namespace LibSvm
         var rnd = new Random();
 
         for (i = 0; i < l; i++)
-        { 
-          perm[i] = i; 
+        {
+          perm[i] = i;
         }
-        
+
         for (i = 0; i < l; i++)
         {
           int j = i + (int)(rnd.NextDouble() * (l - i));
