@@ -12,6 +12,7 @@ namespace LibSvmDemo
     static void Main(string[] args)
     {
       CSVMDemo.Run();
+      OneClassDemo.Run();
 
       Console.ReadKey();
     }

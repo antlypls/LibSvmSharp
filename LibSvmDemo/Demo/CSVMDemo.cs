@@ -10,6 +10,7 @@ namespace LibSvmDemo.Demo
   {
     public static void Run()
     {
+      Console.WriteLine("CSVMDemo");
       var rnd = new Random();
       var class1 = DemoHelper.GenerateClass(0, 0.1, 0.1, 50);
       var class2 = DemoHelper.GenerateClass(1, 0.8, 0.8, 50);
@@ -25,7 +26,7 @@ namespace LibSvmDemo.Demo
       param.gamma = 0.5;
       param.coef0 = 0;
       param.nu = 0.5;
-      param.cache_size = 40;
+      param.cache_size = 128;
       param.C = 1;
       param.eps = 1e-3;
       param.p = 0.1;
