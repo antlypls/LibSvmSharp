@@ -7,12 +7,15 @@ namespace LibSvm
 {
   using svm_print_interface = Action<string>;
 
+  //
+  // construct and solve various formulations
+  //
   public static class Svm
   {
-    //
-    // construct and solve various formulations
-    //
     public const int LIBSVM_VERSION = 300;
+
+    #region private_members
+
 
     private static svm_print_interface svm_print_stdout = str => Console.WriteLine(str);
 
@@ -625,6 +628,9 @@ namespace LibSvm
       start_ret[0] = start;
       count_ret[0] = count;
     }
+
+    #endregion
+
 
     //
     // Interface functions
