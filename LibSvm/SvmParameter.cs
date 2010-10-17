@@ -7,37 +7,23 @@ namespace LibSvm
 {
   public class SvmParameter : ICloneable
   {
-    /* svm_type */
-    //public static int C_SVC = 0;
-    //public static int NU_SVC = 1;
-    //public static int ONE_CLASS = 2;
-    //public static int EPSILON_SVR = 3;
-    //public static int NU_SVR = 4;
-
-    /* kernel_type */
-    //public static int LINEAR = 0;
-    //public static int POLY = 1;
-    //public static int RBF = 2;
-    //public static int SIGMOID = 3;
-    //public static int PRECOMPUTED = 4;
-
     public SvmType svm_type;
     public KernelType kernel_type;
-    public int degree;	// for poly
-    public double gamma;	// for poly/rbf/sigmoid
-    public double coef0;	// for poly/sigmoid
+    public int degree;	            // for poly
+    public double gamma;	          // for poly/rbf/sigmoid
+    public double coef0;	          // for poly/sigmoid
 
     // these are for training only
     public double cache_size; // in MB
-    public double eps;	// stopping criteria
-    public double C;	// for C_SVC, EPSILON_SVR and NU_SVR
-    public int nr_weight;		// for C_SVC
+    public double eps;	        // stopping criteria
+    public double C;	          // for C_SVC, EPSILON_SVR and NU_SVR
+    public int nr_weight;		    // for C_SVC
     public int[] weight_label;	// for C_SVC
-    public double[] weight;		// for C_SVC
-    public double nu;	// for NU_SVC, ONE_CLASS, and NU_SVR
-    public double p;	// for EPSILON_SVR
-    public int shrinking;	// use the shrinking heuristics
-    public int probability; // do probability estimates
+    public double[] weight;		  // for C_SVC
+    public double nu;	          // for NU_SVC, ONE_CLASS, and NU_SVR
+    public double p;	          // for EPSILON_SVR
+    public int shrinking;	      // use the shrinking heuristics
+    public int probability;     // do probability estimates
 
     public object Clone()
     {
@@ -102,25 +88,8 @@ namespace LibSvm
     //from Svm.svm_check_parameter
     public void Check(SvmProblem prob)
     {
-      // svm_type
-
       var svm_type = this.svm_type;
-      //if(svm_type != svm_parameter.C_SVC &&
-      //   svm_type != svm_parameter.NU_SVC &&
-      //   svm_type != svm_parameter.ONE_CLASS &&
-      //   svm_type != svm_parameter.EPSILON_SVR &&
-      //   svm_type != svm_parameter.NU_SVR)
-      //return "unknown svm type";
-
-      // kernel_type, degree
-
       var kernel_type = this.kernel_type;
-      //if(kernel_type != svm_parameter.LINEAR &&
-      //   kernel_type != svm_parameter.POLY &&
-      //   kernel_type != svm_parameter.RBF &&
-      //   kernel_type != svm_parameter.SIGMOID &&
-      //   kernel_type != svm_parameter.PRECOMPUTED)
-      //  return "unknown kernel type";
 
       if (this.gamma < 0)
         throw new ApplicationException("gamma < 0");
@@ -170,10 +139,6 @@ namespace LibSvm
 
       // check whether nu-svc is feasible
       IsNuFeasible(prob);
-
-
-
     }
-
   }
 }
