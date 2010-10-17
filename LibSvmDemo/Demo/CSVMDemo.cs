@@ -46,11 +46,11 @@ namespace LibSvmDemo.Demo
       var model = Svm.svm_train(prob, param);
 
       var x = new Point(0.9, 0.9).ToSvmNodes();
-      var res = Svm.svm_predict(model, x);
+      var res = model.Predict(x);
       Console.WriteLine(res);
 
       var y = new Point(0.1, 0.1).ToSvmNodes();
-      var resy = Svm.svm_predict(model, y);
+      var resy = model.Predict(y);
       Console.WriteLine(resy);
     }
   }

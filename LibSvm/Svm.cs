@@ -377,7 +377,7 @@ namespace LibSvm
       probAB[0] = A; probAB[1] = B;
     }
 
-    private static double sigmoid_predict(double decision_value, double A, double B)
+    internal static double sigmoid_predict(double decision_value, double A, double B)
     {
       double fApB = decision_value * A + B;
       if (fApB >= 0)
@@ -387,7 +387,7 @@ namespace LibSvm
     }
 
     // Method 2 from the multiclass_prob paper by Wu, Lin, and Weng
-    private static void multiclass_probability(int k, double[][] r, double[] p)
+    internal static void multiclass_probability(int k, double[][] r, double[] p)
     {
       int t, j;
       int iter = 0, max_iter = Math.Max(100, k);
@@ -526,7 +526,7 @@ namespace LibSvm
           for (j = begin; j < end; j++)
           {
             double[] dec_value = new double[1];
-            svm_predict_values(submodel, prob.x[perm[j]], dec_value);
+            submodel.PredictValues(prob.x[perm[j]], dec_value);
             dec_values[perm[j]] = dec_value[0];
             // ensure +1 -1 order; reason not using CV subroutine
             dec_values[perm[j]] *= submodel.label[0];
@@ -975,168 +975,14 @@ namespace LibSvm
            (param.svm_type == SvmType.C_SVC ||
             param.svm_type == SvmType.NU_SVC))
         {
-          double[] prob_estimates = new double[svm_get_nr_class(submodel)];
+          double[] prob_estimates = new double[submodel.NrClass];
           for (j = begin; j < end; j++)
-            target[perm[j]] = svm_predict_probability(submodel, prob.x[perm[j]], prob_estimates);
+            target[perm[j]] = submodel.PredictProbability(prob.x[perm[j]], prob_estimates);
         }
         else
           for (j = begin; j < end; j++)
-            target[perm[j]] = svm_predict(submodel, prob.x[perm[j]]);
+            target[perm[j]] = submodel.Predict(prob.x[perm[j]]);
       }
-    }
-
-    public static SvmType svm_get_svm_type(SvmModel model)
-    {
-      return model.param.svm_type;
-    }
-
-    public static int svm_get_nr_class(SvmModel model)
-    {
-      return model.nr_class;
-    }
-
-    public static void svm_get_labels(SvmModel model, int[] label)
-    {
-      if (model.label != null)
-        for (int i = 0; i < model.nr_class; i++)
-          label[i] = model.label[i];
-    }
-
-    public static double svm_get_svr_probability(SvmModel model)
-    {
-      if ((model.param.svm_type == SvmType.EPSILON_SVR || model.param.svm_type == SvmType.NU_SVR) &&
-          model.probA != null)
-        return model.probA[0];
-      else
-      {
-        Console.Error.WriteLine("Model doesn't contain information for SVR probability inference\n");
-        return 0;
-      }
-    }
-
-    public static double svm_predict_values(SvmModel model, SvmNode[] x, double[] dec_values)
-    {
-      if (model.param.svm_type == SvmType.ONE_CLASS ||
-         model.param.svm_type == SvmType.EPSILON_SVR ||
-         model.param.svm_type == SvmType.NU_SVR)
-      {
-        double[] sv_coef = model.sv_coef[0];
-        double sum = 0;
-        for (int i = 0; i < model.l; i++)
-          sum += sv_coef[i] * Kernel.k_function(x, model.SV[i], model.param);
-        sum -= model.rho[0];
-        dec_values[0] = sum;
-
-        if (model.param.svm_type == SvmType.ONE_CLASS)
-          return (sum > 0) ? 1 : -1;
-        else
-          return sum;
-      }
-      else
-      {
-        int i;
-        int nr_class = model.nr_class;
-        int l = model.l;
-
-        double[] kvalue = new double[l];
-        for (i = 0; i < l; i++)
-          kvalue[i] = Kernel.k_function(x, model.SV[i], model.param);
-
-        int[] start = new int[nr_class];
-        start[0] = 0;
-        for (i = 1; i < nr_class; i++)
-          start[i] = start[i - 1] + model.nSV[i - 1];
-
-        int[] vote = new int[nr_class];
-        for (i = 0; i < nr_class; i++)
-          vote[i] = 0;
-
-        int p = 0;
-        for (i = 0; i < nr_class; i++)
-          for (int j = i + 1; j < nr_class; j++)
-          {
-            double sum = 0;
-            int si = start[i];
-            int sj = start[j];
-            int ci = model.nSV[i];
-            int cj = model.nSV[j];
-
-            int k;
-            double[] coef1 = model.sv_coef[j - 1];
-            double[] coef2 = model.sv_coef[i];
-            for (k = 0; k < ci; k++)
-              sum += coef1[si + k] * kvalue[si + k];
-            for (k = 0; k < cj; k++)
-              sum += coef2[sj + k] * kvalue[sj + k];
-            sum -= model.rho[p];
-            dec_values[p] = sum;
-
-            if (dec_values[p] > 0)
-              ++vote[i];
-            else
-              ++vote[j];
-            p++;
-          }
-
-        int vote_max_idx = 0;
-        for (i = 1; i < nr_class; i++)
-          if (vote[i] > vote[vote_max_idx])
-            vote_max_idx = i;
-
-        return model.label[vote_max_idx];
-      }
-    }
-
-    public static double svm_predict(SvmModel model, SvmNode[] x)
-    {
-      int nr_class = model.nr_class;
-      double[] dec_values;
-      if (model.param.svm_type == SvmType.ONE_CLASS ||
-          model.param.svm_type == SvmType.EPSILON_SVR ||
-          model.param.svm_type == SvmType.NU_SVR)
-        dec_values = new double[1];
-      else
-        dec_values = new double[nr_class * (nr_class - 1) / 2];
-      double pred_result = svm_predict_values(model, x, dec_values);
-      return pred_result;
-    }
-
-    public static double svm_predict_probability(SvmModel model, SvmNode[] x, double[] prob_estimates)
-    {
-      if ((model.param.svm_type == SvmType.C_SVC || model.param.svm_type == SvmType.NU_SVC) &&
-          model.probA != null && model.probB != null)
-      {
-        int i;
-        int nr_class = model.nr_class;
-        double[] dec_values = new double[nr_class * (nr_class - 1) / 2];
-        svm_predict_values(model, x, dec_values);
-
-        double min_prob = 1e-7;
-        //double[][] pairwise_prob=new double[nr_class][nr_class];
-        double[][] pairwise_prob = new double[nr_class][];
-        for (i = 0; i < nr_class; i++)
-        {
-          pairwise_prob[i] = new double[nr_class];
-        }
-
-        int k = 0;
-        for (i = 0; i < nr_class; i++)
-          for (int j = i + 1; j < nr_class; j++)
-          {
-            pairwise_prob[i][j] = Math.Min(Math.Max(sigmoid_predict(dec_values[k], model.probA[k], model.probB[k]), min_prob), 1 - min_prob);
-            pairwise_prob[j][i] = 1 - pairwise_prob[i][j];
-            k++;
-          }
-        multiclass_probability(nr_class, pairwise_prob, prob_estimates);
-
-        int prob_max_idx = 0;
-        for (i = 1; i < nr_class; i++)
-          if (prob_estimates[i] > prob_estimates[prob_max_idx])
-            prob_max_idx = i;
-        return model.label[prob_max_idx];
-      }
-      else
-        return svm_predict(model, x);
     }
 
     static readonly string[] svm_type_table = { "c_svc", "nu_svc", "one_class", "epsilon_svr", "nu_svr", };
@@ -1509,17 +1355,6 @@ namespace LibSvm
       }
 
       return null;
-    }
-
-    public static int svm_check_probability_model(SvmModel model)
-    {
-      if (((model.param.svm_type == SvmType.C_SVC || model.param.svm_type == SvmType.NU_SVC) &&
-      model.probA != null && model.probB != null) ||
-      ((model.param.svm_type == SvmType.EPSILON_SVR || model.param.svm_type == SvmType.NU_SVR) &&
-       model.probA != null))
-        return 1;
-      else
-        return 0;
     }
 
     public static void svm_set_print_string_function(svm_print_interface print_func)
