@@ -1,0 +1,10 @@
+*.exe
+*.dll
+*.pdb
+*.suo
+*.user
+bin
+obj
+Release
+Debug
+

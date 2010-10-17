@@ -1,0 +1,6 @@
+h1. LibSvmSharp
+
+LibSVMSharp is a port of java version of "libsvm":http://www.csie.ntu.edu.tw/~cjlin/libsvm/ to C#. This port based on libsvm 3.0.
+
+The work is just started.
+
