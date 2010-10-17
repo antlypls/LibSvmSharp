@@ -11,7 +11,7 @@ namespace LibSvm
   // l is the number of total data items
   // size is the cache size limit in bytes
   //
-  class Cache
+  internal class Cache
   {
     private readonly int l;
     private long size;
