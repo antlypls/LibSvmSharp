@@ -66,17 +66,6 @@ namespace LibSvm
     protected bool is_lower_bound(int i) { return alpha_status[i] == BoundType.LOWER_BOUND; }
     protected bool is_free(int i) { return alpha_status[i] == BoundType.FREE; }
 
-    // java: information about solution except alpha,
-    // because we cannot return multiple values otherwise...
-    internal struct SolutionInfo
-    {
-      public double obj;
-      public double rho;
-      public double upper_bound_p;
-      public double upper_bound_n;
-      public double r;	// for Solver_NU
-    }
-
     protected void swap_index(int i, int j)
     {
       Q.swap_index(i, j);

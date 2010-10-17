@@ -26,7 +26,7 @@ namespace LibSvm
       svm_print_string(s);
     }
 
-    private static void solve_c_svc(SvmProblem prob, SvmParameter param, double[] alpha, Solver.SolutionInfo si, double Cp, double Cn)
+    private static void solve_c_svc(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si, double Cp, double Cn)
     {
       int l = prob.l;
       double[] minus_ones = new double[l];
@@ -68,7 +68,7 @@ namespace LibSvm
       }
     }
 
-    private static void solve_nu_svc(SvmProblem prob, SvmParameter param, double[] alpha, Solver.SolutionInfo si)
+    private static void solve_nu_svc(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
     {
       int i;
       int l = prob.l;
@@ -118,7 +118,7 @@ namespace LibSvm
       si.upper_bound_n = 1 / r;
     }
 
-    private static void solve_one_class(SvmProblem prob, SvmParameter param, double[] alpha, Solver.SolutionInfo si)
+    private static void solve_one_class(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
     {
       int l = prob.l;
       double[] zeros = new double[l];
@@ -145,7 +145,7 @@ namespace LibSvm
         alpha, 1.0, 1.0, param.eps, si, param.shrinking);
     }
 
-    private static void solve_epsilon_svr(SvmProblem prob, SvmParameter param, double[] alpha, Solver.SolutionInfo si)
+    private static void solve_epsilon_svr(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
     {
       int l = prob.l;
       double[] alpha2 = new double[2 * l];
@@ -177,7 +177,7 @@ namespace LibSvm
       Svm.info("nu = " + sum_alpha / (param.C * l) + "\n");
     }
 
-    private static void solve_nu_svr(SvmProblem prob, SvmParameter param, double[] alpha, Solver.SolutionInfo si)
+    private static void solve_nu_svr(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
     {
       int l = prob.l;
       double C = param.C;
@@ -212,7 +212,7 @@ namespace LibSvm
     private static DecisionFunction svm_train_one(SvmProblem prob, SvmParameter param, double Cp, double Cn)
     {
       double[] alpha = new double[prob.l];
-      Solver.SolutionInfo si = new Solver.SolutionInfo();
+      var si = new SolutionInfo();
       switch (param.svm_type)
       {
         case SvmType.C_SVC:

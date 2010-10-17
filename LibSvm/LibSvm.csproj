@@ -49,6 +49,7 @@
     <Compile Include="OneClassQ.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QMatrix.cs" />
+    <Compile Include="SolutionInfo.cs" />
     <Compile Include="Solver.cs" />
     <Compile Include="SolverNu.cs" />
     <Compile Include="SvcQ.cs" />
