@@ -42,9 +42,15 @@ namespace LibSvm
 
     public override void swap_index(int i, int j)
     {
-      do { sbyte _ = sign[i]; sign[i] = sign[j]; sign[j] = _; } while (false);
-      do { int _ = index[i]; index[i] = index[j]; index[j] = _; } while (false);
-      do { double _ = QD[i]; QD[i] = QD[j]; QD[j] = _; } while (false);
+      //do { sbyte _ = sign[i]; sign[i] = sign[j]; sign[j] = _; } while (false);
+      Common.Swap(ref sign[i], ref sign[j]);
+
+      //do { int _ = index[i]; index[i] = index[j]; index[j] = _; } while (false);
+      Common.Swap(ref index[i], ref index[j]);
+
+      //do { double _ = QD[i]; QD[i] = QD[j]; QD[j] = _; } while (false);
+      Common.Swap(ref QD[i], ref QD[j]);
+
     }
 
     public override float[] get_Q(int i, int len)

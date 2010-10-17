@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="BoundType.cs" />
     <Compile Include="Cache.cs" />
+    <Compile Include="Common.cs" />
     <Compile Include="DecisionFunction.cs" />
     <Compile Include="Kernel.cs" />
     <Compile Include="KernelType.cs" />

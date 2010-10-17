@@ -21,8 +21,13 @@ namespace LibSvm
 
     public override void swap_index(int i, int j)
     {
-      do { SvmNode[] _ = x[i]; x[i] = x[j]; x[j] = _; } while (false);
-      if (x_square != null) do { double _ = x_square[i]; x_square[i] = x_square[j]; x_square[j] = _; } while (false);
+      //do { SvmNode[] _ = x[i]; x[i] = x[j]; x[j] = _; } while (false);
+      Common.Swap(ref x[i], ref x[j]);
+      if (x_square != null)
+      {
+        Common.Swap(ref x_square[i], ref x_square[j]);
+        //do { double _ = x_square[i]; x_square[i] = x_square[j]; x_square[j] = _; } while (false);
+      }
     }
 
     private static double powi(double base_, int times)

@@ -41,8 +41,23 @@ namespace LibSvmDemo
       return data.ToList();
     }
 
+    static void Swap<T>(ref T lhs, ref T rhs)
+    {
+      T temp;
+      temp = lhs;
+      lhs = rhs;
+      rhs = temp;
+    }
+    
+
     static void Main(string[] args)
     {
+      //Common.Swap(ref, ref);
+      var a = new int[] { 1, 2 };
+
+      Swap(ref a[0], ref a[1]);
+
+
       var rnd = new Random();
       var class1 = GenerateClass(0, 0.1, 0.1, 50);
       var class2 = GenerateClass(1, 0.8, 0.8, 50);
@@ -79,10 +94,13 @@ namespace LibSvmDemo
       var model = Svm.svm_train(prob, param);
 
       var x = new Point(0.9, 0.9).ToSvmNodes();
-
       var res = Svm.svm_predict(model, x);
-
       Console.WriteLine(res);
+
+      var y = new Point(0.1, 0.1).ToSvmNodes();
+      var resy = Svm.svm_predict(model, y);
+      Console.WriteLine(resy);
+
 
       Console.ReadKey();
     }

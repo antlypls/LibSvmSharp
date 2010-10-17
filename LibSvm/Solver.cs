@@ -80,13 +80,28 @@ namespace LibSvm
     protected void swap_index(int i, int j)
     {
       Q.swap_index(i, j);
-      do { sbyte _ = y[i]; y[i] = y[j]; y[j] = _; } while (false);
-      do { double _ = G[i]; G[i] = G[j]; G[j] = _; } while (false);
-      do { BoundType _ = alpha_status[i]; alpha_status[i] = alpha_status[j]; alpha_status[j] = _; } while (false);
-      do { double _ = alpha[i]; alpha[i] = alpha[j]; alpha[j] = _; } while (false);
-      do { double _ = p[i]; p[i] = p[j]; p[j] = _; } while (false);
-      do { int _ = active_set[i]; active_set[i] = active_set[j]; active_set[j] = _; } while (false);
-      do { double _ = G_bar[i]; G_bar[i] = G_bar[j]; G_bar[j] = _; } while (false);
+      
+      //do { sbyte _ = y[i]; y[i] = y[j]; y[j] = _; } while (false);
+      Common.Swap(ref y[i], ref y[j]);
+
+      //do { double _ = G[i]; G[i] = G[j]; G[j] = _; } while (false);
+      Common.Swap(ref G[i], ref G[j]);
+
+      //do { BoundType _ = alpha_status[i]; alpha_status[i] = alpha_status[j]; alpha_status[j] = _; } while (false);
+      Common.Swap(ref alpha_status[i], ref alpha_status[j]);
+
+      //do { double _ = alpha[i]; alpha[i] = alpha[j]; alpha[j] = _; } while (false);
+      Common.Swap(ref alpha[i], ref alpha[j]);
+
+      //do { double _ = p[i]; p[i] = p[j]; p[j] = _; } while (false);
+      Common.Swap(ref p[i], ref p[j]);
+
+      //do { int _ = active_set[i]; active_set[i] = active_set[j]; active_set[j] = _; } while (false);
+      Common.Swap(ref active_set[i], ref active_set[j]);
+
+      //do { double _ = G_bar[i]; G_bar[i] = G_bar[j]; G_bar[j] = _; } while (false);
+      Common.Swap(ref G_bar[i], ref G_bar[j]);
+
     }
 
     protected void reconstruct_gradient()
