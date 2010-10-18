@@ -23,7 +23,7 @@ namespace LibSvm
     }
 
     // return 1 if already optimal, return 0 otherwise
-    int select_working_set(int[] working_set)
+    protected override int select_working_set(int[] working_set)
     {
       // return i,j such that y_i = y_j and
       // i: maximizes -y_i * grad(f)_i, i in I_up(\alpha)
@@ -155,7 +155,7 @@ namespace LibSvm
         return (false);
     }
 
-    void do_shrinking()
+    protected override void do_shrinking()
     {
       double Gmax1 = double.NegativeInfinity;
       double Gmax2 = double.NegativeInfinity;
@@ -207,7 +207,7 @@ namespace LibSvm
         }
     }
 
-    double calculate_rho()
+    protected override double calculate_rho()
     {
       int nr_free1 = 0, nr_free2 = 0;
       double ub1 = double.PositiveInfinity, ub2 = double.PositiveInfinity;

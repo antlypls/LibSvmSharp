@@ -89,7 +89,7 @@ namespace LibSvm
     public void Check(SvmProblem prob)
     {
       var svm_type = this.svm_type;
-      var kernel_type = this.kernel_type;
+      //var kernel_type = this.kernel_type;
 
       if (this.gamma < 0)
         throw new ApplicationException("gamma < 0");

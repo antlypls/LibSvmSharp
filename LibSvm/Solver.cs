@@ -30,10 +30,6 @@ namespace LibSvm
     protected sbyte[] y;
     protected double[] G;		// gradient of objective function
 
-    //static readonly sbyte LOWER_BOUND = 0;
-    //static readonly sbyte UPPER_BOUND = 1;
-    //static readonly sbyte FREE = 2;
-
     BoundType[] alpha_status;	// LOWER_BOUND, UPPER_BOUND, FREE
 
     double[] alpha;
@@ -47,12 +43,13 @@ namespace LibSvm
     protected int l;
     protected bool unshrink;	// XXX
 
-    static readonly double INF = Double.PositiveInfinity;
+    //static readonly double INF = Double.PositiveInfinity;
 
     double get_C(int i)
     {
       return (y[i] > 0) ? Cp : Cn;
     }
+
     void update_alpha_status(int i)
     {
       if (alpha[i] >= get_C(i))
@@ -394,7 +391,7 @@ namespace LibSvm
     }
 
     // return 1 if already optimal, return 0 otherwise
-    int select_working_set(int[] working_set)
+    protected virtual int select_working_set(int[] working_set)
     {
       // return i,j such that
       // i: maximizes -y_i * grad(f)_i, i in I_up(\alpha)
@@ -402,11 +399,11 @@ namespace LibSvm
       //    (if quadratic coefficeint <= 0, replace it with tau)
       //    -y_j*grad(f)_j < -y_i*grad(f)_i, j in I_low(\alpha)
 
-      double Gmax = -INF;
-      double Gmax2 = -INF;
+      double Gmax = double.NegativeInfinity;
+      double Gmax2 = double.NegativeInfinity;
       int Gmax_idx = -1;
       int Gmin_idx = -1;
-      double obj_diff_min = INF;
+      double obj_diff_min = Double.PositiveInfinity;
 
       for (int t = 0; t < active_size; t++)
         if (y[t] == +1)
@@ -513,7 +510,7 @@ namespace LibSvm
         return (false);
     }
 
-    void do_shrinking()
+    protected virtual void do_shrinking()
     {
       int i;
       double Gmax1 = double.NegativeInfinity;		// max { -y_i * grad(f)_i | i in I_up(\alpha) }
@@ -573,11 +570,11 @@ namespace LibSvm
         }
     }
 
-    double calculate_rho()
+    protected virtual double calculate_rho()
     {
       double r;
       int nr_free = 0;
-      double ub = INF, lb = -INF, sum_free = 0;
+      double ub = Double.PositiveInfinity, lb = double.NegativeInfinity, sum_free = 0;
       for (int i = 0; i < active_size; i++)
       {
         double yG = y[i] * G[i];

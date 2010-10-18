@@ -11,7 +11,6 @@ namespace LibSvmDemo.Demo
     public static void Run()
     {
       Console.WriteLine("OneClassDemo");
-      var rnd = new Random();
       var trainData = DemoHelper.GenerateClass(0, 0.5, 0.5, 100);
 
       var param = new SvmParameter();

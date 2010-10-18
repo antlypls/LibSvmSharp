@@ -41,7 +41,7 @@ namespace LibSvm
     }
 
     //from Svm.svm_get_labels
-    public void svm_get_labels(int[] label)
+    public void GetLabels(int[] label)
     {
       if (this.label != null)
       {

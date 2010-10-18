@@ -11,7 +11,6 @@ namespace LibSvmDemo.Demo
     public static void Run()
     {
       Console.WriteLine("CSVMDemo");
-      var rnd = new Random();
       var class1 = DemoHelper.GenerateClass(0, 0.1, 0.1, 50);
       var class2 = DemoHelper.GenerateClass(1, 0.8, 0.8, 50);
 

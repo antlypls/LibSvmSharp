@@ -10,7 +10,6 @@ namespace LibSvmDemo.Demo
     public static List<Point> GenerateClass(int label, double x, double y, int count)
     {
       var rndx = new Random();
-      var rndy = new Random();
       var data = Enumerable.Range(0, count).Select(_ => new Point()
       {
         X = x + (rndx.NextDouble() - 0.5) / 4,
