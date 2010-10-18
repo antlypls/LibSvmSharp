@@ -43,8 +43,6 @@ namespace LibSvm
     protected int l;
     protected bool unshrink;	// XXX
 
-    //static readonly double INF = Double.PositiveInfinity;
-
     double get_C(int i)
     {
       return (y[i] > 0) ? Cp : Cn;

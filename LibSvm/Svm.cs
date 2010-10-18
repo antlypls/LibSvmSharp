@@ -17,7 +17,7 @@ namespace LibSvm
     #region private_members
 
 
-    private static svm_print_interface svm_print_stdout = str => Console.WriteLine(str);
+    private static readonly svm_print_interface svm_print_stdout = str => Console.WriteLine(str);
 
     private static svm_print_interface svm_print_string = svm_print_stdout;
 
@@ -267,18 +267,21 @@ namespace LibSvm
     // Platt's binary SVM Probablistic Output: an improvement from Lin et al.
     private static void sigmoid_train(int l, double[] dec_values, double[] labels, double[] probAB)
     {
-      double A, B;
+      //double A, B;
       double prior1 = 0, prior0 = 0;
-      int i;
+      //int i;
 
-      for (i = 0; i < l; i++)
+      for (int i = 0; i < l; i++)
+      {
         if (labels[i] > 0) prior1 += 1;
         else prior0 += 1;
+      }
 
-      int max_iter = 100;	// Maximal number of iterations
-      double min_step = 1e-10;	// Minimal step taken in line search
-      double sigma = 1e-12;	// For numerically strict PD of Hessian
-      double eps = 1e-5;
+      const int max_iter = 100;	// Maximal number of iterations
+      const double min_step = 1e-10;	// Minimal step taken in line search
+      const double sigma = 1e-12;	// For numerically strict PD of Hessian
+      const double eps = 1e-5;
+
       double hiTarget = (prior1 + 1.0) / (prior1 + 2.0);
       double loTarget = 1 / (prior0 + 2.0);
       double[] t = new double[l];
@@ -287,10 +290,12 @@ namespace LibSvm
       int iter;
 
       // Initial Point and Initial Fun Value
-      A = 0.0; B = Math.Log((prior0 + 1.0) / (prior1 + 1.0));
+      double A = 0.0; 
+      double B = Math.Log((prior0 + 1.0) / (prior1 + 1.0));
+
       double fval = 0.0;
 
-      for (i = 0; i < l; i++)
+      for (int i = 0; i < l; i++)
       {
         if (labels[i] > 0) t[i] = hiTarget;
         else t[i] = loTarget;
@@ -300,13 +305,14 @@ namespace LibSvm
         else
           fval += (t[i] - 1) * fApB + Math.Log(1 + Math.Exp(fApB));
       }
+
       for (iter = 0; iter < max_iter; iter++)
       {
         // Update Gradient and Hessian (use H' = H + sigma I)
         h11 = sigma; // numerically ensures strict PD
         h22 = sigma;
         h21 = 0.0; g1 = 0.0; g2 = 0.0;
-        for (i = 0; i < l; i++)
+        for (int i = 0; i < l; i++)
         {
           fApB = dec_values[i] * A + B;
           if (fApB >= 0)
@@ -347,7 +353,7 @@ namespace LibSvm
 
           // New function value
           newf = 0.0;
-          for (i = 0; i < l; i++)
+          for (int i = 0; i < l; i++)
           {
             fApB = dec_values[i] * newA + newB;
             if (fApB >= 0)
@@ -456,59 +462,64 @@ namespace LibSvm
     // Cross-validation decision values for probability estimates
     private static void svm_binary_svc_probability(SvmProblem prob, SvmParameter param, double Cp, double Cn, double[] probAB)
     {
-      int i;
+      //int i;
       int nr_fold = 5;
       int[] perm = new int[prob.l];
       double[] dec_values = new double[prob.l];
 
       // random shuffle
       var rnd = new Random();
-      for (i = 0; i < prob.l; i++) perm[i] = i;
-      for (i = 0; i < prob.l; i++)
+      for (int i = 0; i < prob.l; i++) perm[i] = i;
+      
+      for (int i = 0; i < prob.l; i++)
       {
         int j = i + (int)(rnd.NextDouble() * (prob.l - i));
         //do { int _ = perm[i]; perm[i] = perm[j]; perm[j] = _; } while (false);
         Common.Swap(ref perm[i], ref perm[j]);
       }
-      for (i = 0; i < nr_fold; i++)
+
+      for (int i = 0; i < nr_fold; i++)
       {
         int begin = i * prob.l / nr_fold;
         int end = (i + 1) * prob.l / nr_fold;
-        int j, k;
+        //int j;
         var subprob = new SvmProblem();
 
         subprob.l = prob.l - (end - begin);
         subprob.x = new SvmNode[subprob.l][];
         subprob.y = new double[subprob.l];
 
-        k = 0;
-        for (j = 0; j < begin; j++)
+        int k = 0;
+        for (int j = 0; j < begin; j++)
         {
           subprob.x[k] = prob.x[perm[j]];
           subprob.y[k] = prob.y[perm[j]];
           ++k;
         }
-        for (j = end; j < prob.l; j++)
+
+        for (int j = end; j < prob.l; j++)
         {
           subprob.x[k] = prob.x[perm[j]];
           subprob.y[k] = prob.y[perm[j]];
           ++k;
         }
+
         int p_count = 0, n_count = 0;
-        for (j = 0; j < k; j++)
+        
+        for (int j = 0; j < k; j++)
           if (subprob.y[j] > 0)
             p_count++;
           else
             n_count++;
 
         if (p_count == 0 && n_count == 0)
-          for (j = begin; j < end; j++)
+          for (int j = begin; j < end; j++)
             dec_values[perm[j]] = 0;
         else if (p_count > 0 && n_count == 0)
-          for (j = begin; j < end; j++)
+          for (int j = begin; j < end; j++)
             dec_values[perm[j]] = 1;
         else if (p_count == 0 && n_count > 0)
-          for (j = begin; j < end; j++)
+          for (int j = begin; j < end; j++)
             dec_values[perm[j]] = -1;
         else
         {
@@ -523,7 +534,7 @@ namespace LibSvm
           subparam.weight[0] = Cp;
           subparam.weight[1] = Cn;
           var submodel = svm_train(subprob, subparam);
-          for (j = begin; j < end; j++)
+          for (int j = begin; j < end; j++)
           {
             double[] dec_value = new double[1];
             submodel.PredictValues(prob.x[perm[j]], dec_value);
