@@ -59,7 +59,7 @@ namespace LibSvm
     // return some position p where [p,len) need to be filled
     // (p >= len if nothing needs to be filled)
     // java: simulate pointer using single-element array
-    public int get_data(int index, float[][] data, int len)
+    public int get_data(int index, out float[] data, int len)
     {
       head_t h = head[index];
       if (h.len > 0) lru_delete(h);
@@ -89,7 +89,7 @@ namespace LibSvm
       }
 
       lru_insert(h);
-      data[0] = h.data;
+      data = h.data;
       return len;
     }
 

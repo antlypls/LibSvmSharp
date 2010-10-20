@@ -22,14 +22,14 @@ namespace LibSvm
 
     public override float[] get_Q(int i, int len)
     {
-      float[][] data = new float[1][];
+      float[] data;
       int start, j;
-      if ((start = cache.get_data(i, data, len)) < len)
+      if ((start = cache.get_data(i, out data, len)) < len)
       {
         for (j = start; j < len; j++)
-          data[0][j] = (float)kernel_function(i, j);
+          data[j] = (float)kernel_function(i, j);
       }
-      return data[0];
+      return data;
     }
 
     public override double[] get_QD()

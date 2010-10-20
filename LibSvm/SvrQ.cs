@@ -55,12 +55,12 @@ namespace LibSvm
 
     public override float[] get_Q(int i, int len)
     {
-      float[][] data = new float[1][];
+      float[] data;
       int j, real_i = index[i];
-      if (cache.get_data(real_i, data, l) < l)
+      if (cache.get_data(real_i, out data, l) < l)
       {
         for (j = 0; j < l; j++)
-          data[0][j] = (float)kernel_function(real_i, j);
+          data[j] = (float)kernel_function(real_i, j);
       }
 
       // reorder and copy
@@ -68,7 +68,7 @@ namespace LibSvm
       next_buffer = 1 - next_buffer;
       sbyte si = sign[i];
       for (j = 0; j < len; j++)
-        buf[j] = (float)si * sign[j] * data[0][index[j]];
+        buf[j] = (float)si * sign[j] * data[index[j]];
       return buf;
     }
 
