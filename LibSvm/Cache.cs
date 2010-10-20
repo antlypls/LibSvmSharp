@@ -58,7 +58,6 @@ namespace LibSvm
     // request data [0,len)
     // return some position p where [p,len) need to be filled
     // (p >= len if nothing needs to be filled)
-    // java: simulate pointer using single-element array
     public int get_data(int index, out float[] data, int len)
     {
       head_t h = head[index];
