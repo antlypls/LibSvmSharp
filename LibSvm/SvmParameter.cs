@@ -22,12 +22,18 @@ namespace LibSvm
     public double[] weight;		  // for C_SVC
     public double nu;	          // for NU_SVC, ONE_CLASS, and NU_SVR
     public double p;	          // for EPSILON_SVR
-    public int shrinking;	      // use the shrinking heuristics
-    public int probability;     // do probability estimates
+    public bool shrinking;	      // use the shrinking heuristics
+    public bool probability;     // do probability estimates
 
     public object Clone()
     {
-      throw new NotImplementedException();
+      var clone = (SvmParameter)this.MemberwiseClone();
+
+      //check for null
+      clone.weight_label = (int[])weight_label.Clone();
+      clone.weight = (double[])weight.Clone();
+
+      return clone;
     }
 
     // check whether nu-svc is feasible
@@ -125,15 +131,7 @@ namespace LibSvm
         if (this.p < 0)
           throw new ApplicationException("p < 0");
 
-      if (this.shrinking != 0 &&
-         this.shrinking != 1)
-        throw new ApplicationException("shrinking != 0 and shrinking != 1");
-
-      if (this.probability != 0 &&
-         this.probability != 1)
-        throw new ApplicationException("probability != 0 and probability != 1");
-
-      if (this.probability == 1 &&
+      if (this.probability &&
          svm_type == SvmType.ONE_CLASS)
         throw new ApplicationException("one-class SVM probability output not supported yet");
 

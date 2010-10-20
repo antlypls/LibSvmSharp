@@ -134,7 +134,7 @@ namespace LibSvm
     }
 
     public virtual void Solve(int l, QMatrix Q, double[] p_, sbyte[] y_,
-         double[] alpha_, double Cp, double Cn, double eps, SolutionInfo si, int shrinking)
+         double[] alpha_, double Cp, double Cn, double eps, SolutionInfo si, bool shrinking)
     {
       this.l = l;
       this.Q = Q;
@@ -199,7 +199,7 @@ namespace LibSvm
         if (--counter == 0)
         {
           counter = Math.Min(l, 1000);
-          if (shrinking != 0) do_shrinking();
+          if (shrinking) do_shrinking();
           Svm.info(".");
         }
 

@@ -7,7 +7,8 @@ namespace LibSvm
 {
   // java: information about solution except alpha,
   // because we cannot return multiple values otherwise...
-  internal struct SolutionInfo
+  // class some times used as reference
+  internal class SolutionInfo
   {
     public double obj;
     public double rho;

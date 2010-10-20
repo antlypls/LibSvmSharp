@@ -13,6 +13,9 @@ namespace LibSvmDemo
     {
       CSVMDemo.Run();
       OneClassDemo.Run();
+      NuSVMDemo.Run();
+      EpsSVRDemo.Run();
+      NuSVRDemo.Run();
 
       Console.ReadKey();
     }

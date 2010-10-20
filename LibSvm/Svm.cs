@@ -524,7 +524,7 @@ namespace LibSvm
         else
         {
           var subparam = (SvmParameter)param.Clone();
-          subparam.probability = 0;
+          subparam.probability = false;
           subparam.C = 1.0;
           subparam.nr_weight = 2;
           subparam.weight_label = new int[2];
@@ -556,7 +556,7 @@ namespace LibSvm
       double mae = 0;
 
       var newparam = (SvmParameter)param.Clone();
-      newparam.probability = 0;
+      newparam.probability = false;
       svm_cross_validation(prob, newparam, nr_fold, ymv);
       for (i = 0; i < prob.l; i++)
       {
@@ -662,7 +662,7 @@ namespace LibSvm
         model.probA = null; model.probB = null;
         model.sv_coef = new double[1][];
 
-        if (param.probability == 1 &&
+        if (param.probability &&
            (param.svm_type == SvmType.EPSILON_SVR ||
             param.svm_type == SvmType.NU_SVR))
         {
@@ -736,7 +736,7 @@ namespace LibSvm
         DecisionFunction[] f = new DecisionFunction[nr_class * (nr_class - 1) / 2];
 
         double[] probA = null, probB = null;
-        if (param.probability == 1)
+        if (param.probability)
         {
           probA = new double[nr_class * (nr_class - 1) / 2];
           probB = new double[nr_class * (nr_class - 1) / 2];
@@ -764,7 +764,7 @@ namespace LibSvm
               sub_prob.y[ci + k] = -1;
             }
 
-            if (param.probability == 1)
+            if (param.probability)
             {
               double[] probAB = new double[2];
               svm_binary_svc_probability(sub_prob, param, weighted_C[i], weighted_C[j], probAB);
@@ -794,7 +794,7 @@ namespace LibSvm
         for (i = 0; i < nr_class * (nr_class - 1) / 2; i++)
           model.rho[i] = f[i].rho;
 
-        if (param.probability == 1)
+        if (param.probability)
         {
           model.probA = new double[nr_class * (nr_class - 1) / 2];
           model.probB = new double[nr_class * (nr_class - 1) / 2];
@@ -982,7 +982,7 @@ namespace LibSvm
           ++k;
         }
         var submodel = svm_train(subprob, param);
-        if (param.probability == 1 &&
+        if (param.probability &&
            (param.svm_type == SvmType.C_SVC ||
             param.svm_type == SvmType.NU_SVC))
         {

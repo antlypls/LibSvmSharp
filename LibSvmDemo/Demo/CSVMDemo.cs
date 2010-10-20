@@ -16,24 +16,16 @@ namespace LibSvmDemo.Demo
 
       var trainData = class1.Concat(class2);
 
-
       var param = new SvmParameter();
 
       param.svm_type = SvmType.C_SVC;
       param.kernel_type = KernelType.RBF;
-      param.degree = 3;
       param.gamma = 0.5;
-      param.coef0 = 0;
-      param.nu = 0.5;
       param.cache_size = 128;
       param.C = 1;
       param.eps = 1e-3;
-      param.p = 0.1;
-      param.shrinking = 1;
-      param.probability = 0;
-      param.nr_weight = 0;
-      param.weight_label = new int[0];
-      param.weight = new double[0];
+      param.shrinking = true;
+      param.probability = false;
 
       var prob = new SvmProblem();
 
@@ -42,6 +34,8 @@ namespace LibSvmDemo.Demo
       prob.y = trainData.Select(p => (double)p.Label).ToArray();
 
       prob.x = trainData.Select(p => p.ToSvmNodes()).ToArray();
+
+      param.Check(prob);
 
       var model = Svm.svm_train(prob, param);
 

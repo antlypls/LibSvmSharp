@@ -45,6 +45,9 @@
   <ItemGroup>
     <Compile Include="Demo\CSVMDemo.cs" />
     <Compile Include="Demo\DemoHelper.cs" />
+    <Compile Include="Demo\EpsSVRDemo.cs" />
+    <Compile Include="Demo\NuSVMDemo.cs" />
+    <Compile Include="Demo\NuSVRDemo.cs" />
     <Compile Include="Demo\OneClassDemo.cs" />
     <Compile Include="Demo\Point.cs" />
     <Compile Include="Program.cs" />
