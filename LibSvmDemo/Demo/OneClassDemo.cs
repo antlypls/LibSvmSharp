@@ -17,8 +17,8 @@ namespace LibSvmDemo.Demo
 
       param.svm_type = SvmType.ONE_CLASS;
       param.kernel_type = KernelType.RBF;
-      param.gamma = 10;
-      param.nu = 0.9;
+      param.gamma = 0.5;
+      param.nu = 0.5;
       param.cache_size = 128;
       param.eps = 1e-3;
       param.shrinking = true;
@@ -40,11 +40,11 @@ namespace LibSvmDemo.Demo
       var resx = model.Predict(x);
       Console.WriteLine(resx);
 
-      var y = new Point(0.1, 0.1).ToSvmNodes();
+      var y = new Point(0.5, 0.5).ToSvmNodes();
       var resy = model.Predict(y);
       Console.WriteLine(resy);
 
-      var z = new Point(10, 10).ToSvmNodes();
+      var z = new Point(0.45, 0.45).ToSvmNodes();
       var resz = model.Predict(z);
       Console.WriteLine(resz);
     }
