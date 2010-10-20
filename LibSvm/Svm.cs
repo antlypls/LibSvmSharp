@@ -651,9 +651,7 @@ namespace LibSvm
       var model = new SvmModel();
       model.param = param;
 
-      if (param.svm_type == SvmType.ONE_CLASS ||
-         param.svm_type == SvmType.EPSILON_SVR ||
-         param.svm_type == SvmType.NU_SVR)
+      if (param.svm_type.IsSVROrOneClass())
       {
         // regression or one-class-svm
         model.nr_class = 2;
@@ -662,9 +660,7 @@ namespace LibSvm
         model.probA = null; model.probB = null;
         model.sv_coef = new double[1][];
 
-        if (param.probability &&
-           (param.svm_type == SvmType.EPSILON_SVR ||
-            param.svm_type == SvmType.NU_SVR))
+        if (param.probability && param.svm_type.IsSVR())
         {
           model.probA = new double[1];
           model.probA[0] = svm_svr_probability(prob, param);
@@ -881,8 +877,7 @@ namespace LibSvm
 
       // stratified cv may not give leave-one-out rate
       // Each class to l folds -> some folds may have zero elements
-      if ((param.svm_type == SvmType.C_SVC ||
-          param.svm_type == SvmType.NU_SVC) && nr_fold < l)
+      if (param.svm_type.IsSVC() && nr_fold < l)
       {
         int[] tmp_nr_class = new int[1];
         int[][] tmp_label = new int[1][];
@@ -982,9 +977,7 @@ namespace LibSvm
           ++k;
         }
         var submodel = svm_train(subprob, param);
-        if (param.probability &&
-           (param.svm_type == SvmType.C_SVC ||
-            param.svm_type == SvmType.NU_SVC))
+        if (param.probability && param.svm_type.IsSVC())
         {
           double[] prob_estimates = new double[submodel.NrClass];
           for (j = begin; j < end; j++)

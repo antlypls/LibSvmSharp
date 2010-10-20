@@ -39,7 +39,7 @@ namespace LibSvm
     // check whether nu-svc is feasible
     private void IsNuFeasible(SvmProblem prob)
     {
-      if (svm_type == SvmType.NU_SVC)
+      if (svm_type.IsNuSVC())
       {
         int l = prob.l;
         int max_nr_class = 16;
@@ -111,28 +111,24 @@ namespace LibSvm
       if (this.eps <= 0)
         throw new ApplicationException("eps <= 0");
 
-      if (svm_type == SvmType.C_SVC ||
-         svm_type == SvmType.EPSILON_SVR ||
-         svm_type == SvmType.NU_SVR)
+      if (svm_type.UseCParameter())
       {
         if (this.C <= 0)
           throw new ApplicationException("C <= 0");
       }
 
-      if (svm_type == SvmType.NU_SVC ||
-         svm_type == SvmType.ONE_CLASS ||
-         svm_type == SvmType.NU_SVR)
+      if (svm_type.UseNuParameter())
       {
         if (this.nu <= 0 || this.nu > 1)
           throw new ApplicationException("nu <= 0 or nu > 1");
       }
 
-      if (svm_type == SvmType.EPSILON_SVR)
+      if (svm_type.UsePParameter())
         if (this.p < 0)
           throw new ApplicationException("p < 0");
 
       if (this.probability &&
-         svm_type == SvmType.ONE_CLASS)
+         svm_type.IsOneClass())
         throw new ApplicationException("one-class SVM probability output not supported yet");
 
       // check whether nu-svc is feasible

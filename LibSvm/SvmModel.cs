@@ -55,7 +55,7 @@ namespace LibSvm
     //from Svm.svm_get_svr_probability
     public double GetSvrProbability()
     {
-      if ((param.svm_type == SvmType.EPSILON_SVR || param.svm_type == SvmType.NU_SVR) && probA != null)
+      if ((param.svm_type.IsSVR()) && probA != null)
       {
         return probA[0];
       }
@@ -68,9 +68,7 @@ namespace LibSvm
     //from Svm.svm_predict_values
     public double PredictValues(SvmNode[] x, double[] dec_values)
     {
-      if (this.param.svm_type == SvmType.ONE_CLASS ||
-         this.param.svm_type == SvmType.EPSILON_SVR ||
-         this.param.svm_type == SvmType.NU_SVR)
+      if (this.param.svm_type.IsSVROrOneClass())
       {
         double[] sv_coef = this.sv_coef[0];
         double sum = 0;
@@ -79,7 +77,7 @@ namespace LibSvm
         sum -= this.rho[0];
         dec_values[0] = sum;
 
-        if (this.param.svm_type == SvmType.ONE_CLASS)
+        if (this.param.svm_type.IsOneClass())
           return (sum > 0) ? 1 : -1;
         else
           return sum;
@@ -144,9 +142,7 @@ namespace LibSvm
     {
       int nr_class = this.nr_class;
       double[] dec_values;
-      if (param.svm_type == SvmType.ONE_CLASS ||
-          param.svm_type == SvmType.EPSILON_SVR ||
-          param.svm_type == SvmType.NU_SVR)
+      if (param.svm_type.IsSVROrOneClass())
         dec_values = new double[1];
       else
         dec_values = new double[nr_class * (nr_class - 1) / 2];
@@ -157,7 +153,7 @@ namespace LibSvm
     //from Svm.svm_predict_probability
     public double PredictProbability(SvmNode[] x, double[] prob_estimates)
     {
-      if ((this.param.svm_type == SvmType.C_SVC || this.param.svm_type == SvmType.NU_SVC) &&
+      if (this.param.svm_type.IsSVC() &&
           this.probA != null && this.probB != null)
       {
         int i;
@@ -194,13 +190,10 @@ namespace LibSvm
     }
 
     //from Svm.svm_check_probability_model
-    public int CheckProbabilityModel()
+    public bool CheckProbabilityModel()
     {
-      if (((param.svm_type == SvmType.C_SVC || param.svm_type == SvmType.NU_SVC) && probA != null && probB != null) ||
-      ((param.svm_type == SvmType.EPSILON_SVR || param.svm_type == SvmType.NU_SVR) && probA != null))
-        return 1;
-      else
-        return 0;
+      return (param.svm_type.IsSVC() && probA != null && probB != null) ||
+             (param.svm_type.IsSVR() && probA != null);
     }
 
 
