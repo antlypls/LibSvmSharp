@@ -8,7 +8,7 @@ namespace LibSvm
   //
   // decision_function
   //
-  internal struct DecisionFunction
+  internal class DecisionFunction
   {
     public double[] alpha;
     public double rho;
