@@ -57,7 +57,7 @@ namespace LibSvm
         case KernelType.PRECOMPUTED:
           return x[i][(int)(x[j][0].value)].value;
         default:
-          return 0;	// java
+          throw new ApplicationException("Bad kernel_type");
       }
     }
 
@@ -154,7 +154,7 @@ namespace LibSvm
         case KernelType.PRECOMPUTED:
           return x[(int)(y[0].value)].value;
         default:
-          return 0;	// java
+          throw new ApplicationException("Bad kernel_type");
       }
     }
   }
