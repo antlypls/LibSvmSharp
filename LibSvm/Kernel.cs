@@ -19,7 +19,7 @@ namespace LibSvm
     //public abstract float[] get_Q(int column, int len);
     //public abstract double[] get_QD();
 
-    public override void swap_index(int i, int j)
+    public override void SwapIndex(int i, int j)
     {
       //do { SvmNode[] _ = x[i]; x[i] = x[j]; x[j] = _; } while (false);
       Common.Swap(ref x[i], ref x[j]);
@@ -89,13 +89,19 @@ namespace LibSvm
       while (i < xlen && j < ylen)
       {
         if (x[i].Index == y[j].Index)
+        {
           sum += x[i++].Value * y[j++].Value;
+        }
         else
         {
           if (x[i].Index > y[j].Index)
+          {
             ++j;
+          }
           else
+          {
             ++i;
+          }
         }
       }
       return sum;
@@ -108,51 +114,52 @@ namespace LibSvm
         case KernelType.Linear:
           return dot(x, y);
         case KernelType.Poly:
-          return powi(param.gamma * dot(x, y) + param.coef0, param.degree);
+          return powi(param.gamma*dot(x, y) + param.coef0, param.degree);
         case KernelType.Rbf:
+          double sum = 0;
+          int xlen = x.Length;
+          int ylen = y.Length;
+          int i = 0;
+          int j = 0;
+          while (i < xlen && j < ylen)
           {
-            double sum = 0;
-            int xlen = x.Length;
-            int ylen = y.Length;
-            int i = 0;
-            int j = 0;
-            while (i < xlen && j < ylen)
+            if (x[i].Index == y[j].Index)
             {
-              if (x[i].Index == y[j].Index)
+              double d = x[i++].Value - y[j++].Value;
+              sum += d * d;
+            }
+            else
+            {
+              if (x[i].Index > y[j].Index)
               {
-                double d = x[i++].Value - y[j++].Value;
-                sum += d * d;
-              }
-              else if (x[i].Index > y[j].Index)
-              {
-                sum += y[j].Value * y[j].Value;
+                sum += y[j].Value*y[j].Value;
                 ++j;
               }
               else
               {
-                sum += x[i].Value * x[i].Value;
+                sum += x[i].Value*x[i].Value;
                 ++i;
               }
             }
-
-            while (i < xlen)
-            {
-              sum += x[i].Value * x[i].Value;
-              ++i;
-            }
-
-            while (j < ylen)
-            {
-              sum += y[j].Value * y[j].Value;
-              ++j;
-            }
-
-            return Math.Exp(-param.gamma * sum);
           }
+
+          while (i < xlen)
+          {
+            sum += x[i].Value*x[i].Value;
+            ++i;
+          }
+
+          while (j < ylen)
+          {
+            sum += y[j].Value*y[j].Value;
+            ++j;
+          }
+
+          return Math.Exp(-param.gamma*sum);
         case KernelType.Sigmoid:
-          return Math.Tanh(param.gamma * dot(x, y) + param.coef0);
+          return Math.Tanh(param.gamma*dot(x, y) + param.coef0);
         case KernelType.Precomputed:
-          return x[(int)(y[0].Value)].Value;
+          return x[(int) (y[0].Value)].Value;
         default:
           throw new ApplicationException("Bad kernel_type");
       }

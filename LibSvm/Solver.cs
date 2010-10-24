@@ -18,13 +18,13 @@ namespace LibSvm
   // Given:
   //
   //	Q, p, y, Cp, Cn, and an initial feasible point \alpha
-  //	l is the size of vectors and matrices
+  //	length is the size of vectors and matrices
   //	eps is the stopping tolerance
   //
   // solution will be put in \alpha, objective value will be put in obj
   //
 
-  class Solver
+  internal class Solver
   {
     protected int active_size;
     protected sbyte[] y;
@@ -63,7 +63,7 @@ namespace LibSvm
 
     protected void swap_index(int i, int j)
     {
-      Q.swap_index(i, j);
+      Q.SwapIndex(i, j);
       
       //do { sbyte _ = y[i]; y[i] = y[j]; y[j] = _; } while (false);
       Common.Swap(ref y[i], ref y[j]);
@@ -114,7 +114,7 @@ namespace LibSvm
       {
         for (i = active_size; i < l; i++)
         {
-          float[] Q_i = Q.get_Q(i, active_size);
+          float[] Q_i = Q.GetQ(i, active_size);
           for (j = 0; j < active_size; j++)
             if (is_free(j))
               G[i] += alpha[j] * Q_i[j];
@@ -125,7 +125,7 @@ namespace LibSvm
         for (i = 0; i < active_size; i++)
           if (is_free(i))
           {
-            float[] Q_i = Q.get_Q(i, l);
+            float[] Q_i = Q.GetQ(i, l);
             double alpha_i = alpha[i];
             for (j = active_size; j < l; j++)
               G[j] += alpha_i * Q_i[j];
@@ -133,12 +133,12 @@ namespace LibSvm
       }
     }
 
-    public virtual void Solve(int l, QMatrix Q, double[] p_, sbyte[] y_,
+    public virtual void Solve(int length, QMatrix Q, double[] p_, sbyte[] y_,
          double[] alpha_, double Cp, double Cn, double eps, SolutionInfo si, bool shrinking)
     {
-      this.l = l;
+      this.l = length;
       this.Q = Q;
-      QD = Q.get_QD();
+      QD = Q.GetQD();
       p = (double[])p_.Clone();
       y = (sbyte[])y_.Clone();
       alpha = (double[])alpha_.Clone();
@@ -149,39 +149,39 @@ namespace LibSvm
 
       // initialize alpha_status
       {
-        alpha_status = new BoundType[l];
-        for (int i = 0; i < l; i++)
+        alpha_status = new BoundType[length];
+        for (int i = 0; i < length; i++)
           update_alpha_status(i);
       }
 
       // initialize active set (for shrinking)
       {
-        active_set = new int[l];
-        for (int i = 0; i < l; i++)
+        active_set = new int[length];
+        for (int i = 0; i < length; i++)
           active_set[i] = i;
-        active_size = l;
+        active_size = length;
       }
 
       // initialize gradient
       {
-        G = new double[l];
-        G_bar = new double[l];
+        G = new double[length];
+        G_bar = new double[length];
         int i;
-        for (i = 0; i < l; i++)
+        for (i = 0; i < length; i++)
         {
           G[i] = p[i];
           G_bar[i] = 0;
         }
-        for (i = 0; i < l; i++)
+        for (i = 0; i < length; i++)
           if (!is_lower_bound(i))
           {
-            float[] Q_i = Q.get_Q(i, l);
+            float[] Q_i = Q.GetQ(i, length);
             double alpha_i = alpha[i];
             int j;
-            for (j = 0; j < l; j++)
+            for (j = 0; j < length; j++)
               G[j] += alpha_i * Q_i[j];
             if (is_upper_bound(i))
-              for (j = 0; j < l; j++)
+              for (j = 0; j < length; j++)
                 G_bar[j] += get_C(i) * Q_i[j];
           }
       }
@@ -189,7 +189,7 @@ namespace LibSvm
       // optimization step
 
       int iter = 0;
-      int counter = Math.Min(l, 1000) + 1;
+      int counter = Math.Min(length, 1000) + 1;
       int[] working_set = new int[2];
 
       while (true)
@@ -198,7 +198,7 @@ namespace LibSvm
 
         if (--counter == 0)
         {
-          counter = Math.Min(l, 1000);
+          counter = Math.Min(length, 1000);
           if (shrinking) do_shrinking();
           Svm.info(".");
         }
@@ -208,7 +208,7 @@ namespace LibSvm
           // reconstruct the whole gradient
           reconstruct_gradient();
           // reset active set size and check
-          active_size = l;
+          active_size = length;
           Svm.info("*");
           if (select_working_set(working_set) != 0)
             break;
@@ -223,8 +223,8 @@ namespace LibSvm
 
         // update alpha[i] and alpha[j], handle bounds carefully
 
-        float[] Q_i = Q.get_Q(i, active_size);
-        float[] Q_j = Q.get_Q(j, active_size);
+        float[] Q_i = Q.GetQ(i, active_size);
+        float[] Q_j = Q.GetQ(j, active_size);
 
         double C_i = get_C(i);
         double C_j = get_C(j);
@@ -339,23 +339,23 @@ namespace LibSvm
           int k;
           if (ui != is_upper_bound(i))
           {
-            Q_i = Q.get_Q(i, l);
+            Q_i = Q.GetQ(i, length);
             if (ui)
-              for (k = 0; k < l; k++)
+              for (k = 0; k < length; k++)
                 G_bar[k] -= C_i * Q_i[k];
             else
-              for (k = 0; k < l; k++)
+              for (k = 0; k < length; k++)
                 G_bar[k] += C_i * Q_i[k];
           }
 
           if (uj != is_upper_bound(j))
           {
-            Q_j = Q.get_Q(j, l);
+            Q_j = Q.GetQ(j, length);
             if (uj)
-              for (k = 0; k < l; k++)
+              for (k = 0; k < length; k++)
                 G_bar[k] -= C_j * Q_j[k];
             else
-              for (k = 0; k < l; k++)
+              for (k = 0; k < length; k++)
                 G_bar[k] += C_j * Q_j[k];
           }
         }
@@ -364,26 +364,26 @@ namespace LibSvm
 
       // calculate rho
 
-      si.rho = calculate_rho();
+      si.Rho = calculate_rho();
 
       // calculate objective value
       {
         double v = 0;
         int i;
-        for (i = 0; i < l; i++)
+        for (i = 0; i < length; i++)
           v += alpha[i] * (G[i] + p[i]);
 
-        si.obj = v / 2;
+        si.Obj = v / 2;
       }
 
       // put back the solution
       {
-        for (int i = 0; i < l; i++)
+        for (int i = 0; i < length; i++)
           alpha_[active_set[i]] = alpha[i];
       }
 
-      si.upper_bound_p = Cp;
-      si.upper_bound_n = Cn;
+      si.UpperBoundP = Cp;
+      si.UpperBoundN = Cn;
 
       Svm.info("\noptimization finished, #iter = "+iter+"\n");
     }
@@ -426,7 +426,7 @@ namespace LibSvm
       int i = Gmax_idx;
       float[] Q_i = null;
       if (i != -1) // null Q_i not accessed: Gmax=-INF if i=-1
-        Q_i = Q.get_Q(i, active_size);
+        Q_i = Q.GetQ(i, active_size);
 
       for (int j = 0; j < active_size; j++)
       {

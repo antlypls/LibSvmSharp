@@ -12,14 +12,14 @@ namespace LibSvm
   //
   sealed class SolverNu : Solver
   {
-    private SolutionInfo si;
+    private SolutionInfo _si;
 
-    public override void Solve(int l, QMatrix Q, double[] p, sbyte[] y,
+    public override void Solve(int length, QMatrix Q, double[] p, sbyte[] y,
          double[] alpha, double Cp, double Cn, double eps,
          SolutionInfo si, bool shrinking)
     {
-      this.si = si;
-      base.Solve(l, Q, p, y, alpha, Cp, Cn, eps, si, shrinking);
+      _si = si;
+      base.Solve(length, Q, p, y, alpha, Cp, Cn, eps, si, shrinking);
     }
 
     // return 1 if already optimal, return 0 otherwise
@@ -67,9 +67,9 @@ namespace LibSvm
       float[] Q_ip = null;
       float[] Q_in = null;
       if (ip != -1) // null Q_ip not accessed: Gmaxp=-INF if ip=-1
-        Q_ip = Q.get_Q(ip, active_size);
+        Q_ip = Q.GetQ(ip, active_size);
       if (@in != -1)
-        Q_in = Q.get_Q(@in, active_size);
+        Q_in = Q.GetQ(@in, active_size);
 
       for (int j = 0; j < active_size; j++)
       {
@@ -253,7 +253,7 @@ namespace LibSvm
       else
         r2 = (ub2 + lb2) / 2;
 
-      si.r = (r1 + r2) / 2;
+      _si.R = (r1 + r2) / 2;
       return (r1 - r2) / 2;
     }
   }

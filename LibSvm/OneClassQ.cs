@@ -7,24 +7,24 @@ namespace LibSvm
 {
   class OneClassQ : Kernel
   {
-    private readonly Cache cache;
-    private readonly double[] QD;
+    private readonly Cache _cache;
+    private readonly double[] _qd;
 
     public OneClassQ(SvmProblem prob, SvmParameter param)
       : base(prob.Lenght, prob.X, param)
     {
       //super(prob.l, prob.x, param);
-      cache = new Cache(prob.Lenght, (long)(param.cache_size * (1 << 20)));
-      QD = new double[prob.Lenght];
+      _cache = new Cache(prob.Lenght, (long)(param.cache_size * (1 << 20)));
+      _qd = new double[prob.Lenght];
       for (int i = 0; i < prob.Lenght; i++)
-        QD[i] = kernel_function(i, i);
+        _qd[i] = kernel_function(i, i);
     }
 
-    public override float[] get_Q(int i, int len)
+    public override float[] GetQ(int i, int len)
     {
       float[] data;
       int start, j;
-      if ((start = cache.get_data(i, out data, len)) < len)
+      if ((start = _cache.get_data(i, out data, len)) < len)
       {
         for (j = start; j < len; j++)
           data[j] = (float)kernel_function(i, j);
@@ -32,18 +32,18 @@ namespace LibSvm
       return data;
     }
 
-    public override double[] get_QD()
+    public override double[] GetQD()
     {
-      return QD;
+      return _qd;
     }
 
-    public override void swap_index(int i, int j)
+    public override void SwapIndex(int i, int j)
     {
-      cache.swap_index(i, j);
-      base.swap_index(i, j);
+      _cache.swap_index(i, j);
+      base.SwapIndex(i, j);
 
       //do { double _ = QD[i]; QD[i] = QD[j]; QD[j] = _; } while (false);
-      Common.Swap(ref QD[i], ref QD[j]);
+      Common.Swap(ref _qd[i], ref _qd[j]);
     }
   }
 }

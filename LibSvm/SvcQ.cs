@@ -23,7 +23,7 @@ namespace LibSvm
         QD[i] = kernel_function(i, i);
     }
 
-    public override float[] get_Q(int i, int len)
+    public override float[] GetQ(int i, int len)
     {
       float[] data;
       int start, j;
@@ -35,15 +35,15 @@ namespace LibSvm
       return data;
     }
 
-    public override double[] get_QD()
+    public override double[] GetQD()
     {
       return QD;
     }
 
-    public override void swap_index(int i, int j)
+    public override void SwapIndex(int i, int j)
     {
       cache.swap_index(i, j);
-      base.swap_index(i, j);
+      base.SwapIndex(i, j);
       
       //do { sbyte _ = y[i]; y[i] = y[j]; y[j] = _; } while (false);
       Common.Swap(ref y[i], ref y[j]);

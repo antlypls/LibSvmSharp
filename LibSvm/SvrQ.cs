@@ -40,7 +40,7 @@ namespace LibSvm
       next_buffer = 0;
     }
 
-    public override void swap_index(int i, int j)
+    public override void SwapIndex(int i, int j)
     {
       //do { sbyte _ = sign[i]; sign[i] = sign[j]; sign[j] = _; } while (false);
       Common.Swap(ref sign[i], ref sign[j]);
@@ -53,7 +53,7 @@ namespace LibSvm
 
     }
 
-    public override float[] get_Q(int i, int len)
+    public override float[] GetQ(int i, int len)
     {
       float[] data;
       int j, real_i = index[i];
@@ -72,7 +72,7 @@ namespace LibSvm
       return buf;
     }
 
-    public override double[] get_QD()
+    public override double[] GetQD()
     {
       return QD;
     }

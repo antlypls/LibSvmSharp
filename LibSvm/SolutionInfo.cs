@@ -10,10 +10,10 @@ namespace LibSvm
   // class some times used as reference
   internal class SolutionInfo
   {
-    public double obj;
-    public double rho;
-    public double upper_bound_p;
-    public double upper_bound_n;
-    public double r;	// for Solver_NU
+    public double Obj;
+    public double Rho;
+    public double UpperBoundP;
+    public double UpperBoundN;
+    public double R;	// for Solver_NU
   }
 }

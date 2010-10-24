@@ -105,17 +105,17 @@ namespace LibSvm
       var s = new SolverNu();
       s.Solve(l, new SvcQ(prob, param, y), zeros, y,
         alpha, 1.0, 1.0, param.eps, si, param.shrinking);
-      double r = si.r;
+      double r = si.R;
 
       Svm.info("C = " + 1 / r + "\n");
 
       for (i = 0; i < l; i++)
         alpha[i] *= y[i] / r;
 
-      si.rho /= r;
-      si.obj /= (r * r);
-      si.upper_bound_p = 1 / r;
-      si.upper_bound_n = 1 / r;
+      si.Rho /= r;
+      si.Obj /= (r * r);
+      si.UpperBoundP = 1 / r;
+      si.UpperBoundN = 1 / r;
     }
 
     private static void solve_one_class(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
@@ -203,7 +203,7 @@ namespace LibSvm
       s.Solve(2 * l, new SvrQ(prob, param), linear_term, y,
         alpha2, C, C, param.eps, si, param.shrinking);
 
-      Svm.info("epsilon = " + (-si.r) + "\n");
+      Svm.info("epsilon = " + (-si.R) + "\n");
 
       for (i = 0; i < l; i++)
         alpha[i] = alpha2[i] - alpha2[i + l];
@@ -232,7 +232,7 @@ namespace LibSvm
           break;
       }
 
-      Svm.info("obj = " + si.obj + ", rho = " + si.rho + "\n");
+      Svm.info("obj = " + si.Obj + ", rho = " + si.Rho + "\n");
 
       // output SVs
 
@@ -245,12 +245,12 @@ namespace LibSvm
           ++nSV;
           if (prob.Y[i] > 0)
           {
-            if (Math.Abs(alpha[i]) >= si.upper_bound_p)
+            if (Math.Abs(alpha[i]) >= si.UpperBoundP)
               ++nBSV;
           }
           else
           {
-            if (Math.Abs(alpha[i]) >= si.upper_bound_n)
+            if (Math.Abs(alpha[i]) >= si.UpperBoundN)
               ++nBSV;
           }
         }
@@ -258,7 +258,7 @@ namespace LibSvm
 
       Svm.info("nSV = " + nSV + ", nBSV = " + nBSV + "\n");
 
-      var f = new DecisionFunction(alpha, si.rho);
+      var f = new DecisionFunction(alpha, si.Rho);
       return f;
     }
 
