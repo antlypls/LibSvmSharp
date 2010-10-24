@@ -27,7 +27,7 @@ namespace LibSvm
     {
       get
       {
-        return param.svm_type;
+        return param.SvmType;
       }
     }
 
@@ -55,7 +55,7 @@ namespace LibSvm
     //from Svm.svm_get_svr_probability
     public double GetSvrProbability()
     {
-      if ((param.svm_type.IsSVR()) && probA != null)
+      if ((param.SvmType.IsSVR()) && probA != null)
       {
         return probA[0];
       }
@@ -68,7 +68,7 @@ namespace LibSvm
     //from Svm.svm_predict_values
     public double PredictValues(SvmNode[] x, double[] dec_values)
     {
-      if (this.param.svm_type.IsSVROrOneClass())
+      if (this.param.SvmType.IsSVROrOneClass())
       {
         double[] sv_coef = this.sv_coef[0];
         double sum = 0;
@@ -77,7 +77,7 @@ namespace LibSvm
         sum -= this.rho[0];
         dec_values[0] = sum;
 
-        if (this.param.svm_type.IsOneClass())
+        if (this.param.SvmType.IsOneClass())
           return (sum > 0) ? 1 : -1;
         else
           return sum;
@@ -142,7 +142,7 @@ namespace LibSvm
     {
       int nr_class = this.nr_class;
       double[] dec_values;
-      if (param.svm_type.IsSVROrOneClass())
+      if (param.SvmType.IsSVROrOneClass())
         dec_values = new double[1];
       else
         dec_values = new double[nr_class * (nr_class - 1) / 2];
@@ -153,7 +153,7 @@ namespace LibSvm
     //from Svm.svm_predict_probability
     public double PredictProbability(SvmNode[] x, double[] prob_estimates)
     {
-      if (this.param.svm_type.IsSVC() &&
+      if (this.param.SvmType.IsSVC() &&
           this.probA != null && this.probB != null)
       {
         int i;
@@ -192,8 +192,8 @@ namespace LibSvm
     //from Svm.svm_check_probability_model
     public bool CheckProbabilityModel()
     {
-      return (param.svm_type.IsSVC() && probA != null && probB != null) ||
-             (param.svm_type.IsSVR() && probA != null);
+      return (param.SvmType.IsSVC() && probA != null && probB != null) ||
+             (param.SvmType.IsSVR() && probA != null);
     }
 
 

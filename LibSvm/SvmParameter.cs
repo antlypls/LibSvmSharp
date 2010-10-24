@@ -7,31 +7,37 @@ namespace LibSvm
 {
   public class SvmParameter : ICloneable
   {
-    public SvmType svm_type;
-    public KernelType kernel_type;
-    public int degree;	            // for poly
-    public double gamma;	          // for poly/rbf/sigmoid
-    public double coef0;	          // for poly/sigmoid
+    public SvmType SvmType;
+    public KernelType KernelType;
+    public int Degree;	            // for poly
+    public double Gamma;	          // for poly/rbf/sigmoid
+    public double Coef0;	          // for poly/sigmoid
 
     // these are for training only
-    public double cache_size; // in MB
-    public double eps;	        // stopping criteria
+    public double CacheSize; // in MB
+    public double Eps;	        // stopping criteria
     public double C;	          // for C_SVC, EPSILON_SVR and NU_SVR
-    public int nr_weight;		    // for C_SVC
-    public int[] weight_label;	// for C_SVC
-    public double[] weight;		  // for C_SVC
-    public double nu;	          // for NU_SVC, ONE_CLASS, and NU_SVR
-    public double p;	          // for EPSILON_SVR
-    public bool shrinking;	      // use the shrinking heuristics
-    public bool probability;     // do probability estimates
+    public int WeightsCount;		    // for C_SVC
+    public int[] WeightLabel;	// for C_SVC
+    public double[] Weight;		  // for C_SVC
+    public double Nu;	          // for NU_SVC, ONE_CLASS, and NU_SVR
+    public double P;	          // for EPSILON_SVR
+    public bool Shrinking;	      // use the shrinking heuristics
+    public bool Probability;     // do probability estimates
 
     public object Clone()
     {
-      var clone = (SvmParameter)this.MemberwiseClone();
+      var clone = (SvmParameter)MemberwiseClone();
 
-      //check for null
-      clone.weight_label = (int[])weight_label.Clone();
-      clone.weight = (double[])weight.Clone();
+      if (WeightLabel != null)
+      {
+        clone.WeightLabel = (int[])WeightLabel.Clone();
+      }
+
+      if (Weight != null)
+      {
+        clone.Weight = (double[])Weight.Clone();
+      }
 
       return clone;
     }
@@ -39,7 +45,7 @@ namespace LibSvm
     // check whether nu-svc is feasible
     private void IsNuFeasible(SvmProblem prob)
     {
-      if (svm_type.IsNuSVC())
+      if (SvmType.IsNuSVC())
       {
         int l = prob.Lenght;
         int max_nr_class = 16;
@@ -84,7 +90,7 @@ namespace LibSvm
           for (int j = i + 1; j < nr_class; j++)
           {
             int n2 = count[j];
-            if (this.nu * (n1 + n2) / 2 > Math.Min(n1, n2))
+            if (this.Nu * (n1 + n2) / 2 > Math.Min(n1, n2))
               throw new ApplicationException("specified nu is infeasible");
           }
         }
@@ -94,21 +100,21 @@ namespace LibSvm
     //from Svm.svm_check_parameter
     public void Check(SvmProblem prob)
     {
-      var svm_type = this.svm_type;
+      var svm_type = this.SvmType;
       //var kernel_type = this.kernel_type;
 
-      if (this.gamma < 0)
+      if (this.Gamma < 0)
         throw new ApplicationException("gamma < 0");
 
-      if (this.degree < 0)
+      if (this.Degree < 0)
         throw new ApplicationException("degree of polynomial kernel < 0");
 
       // cache_size,eps,C,nu,p,shrinking
 
-      if (this.cache_size <= 0)
+      if (this.CacheSize <= 0)
         throw new ApplicationException("cache_size <= 0");
 
-      if (this.eps <= 0)
+      if (this.Eps <= 0)
         throw new ApplicationException("eps <= 0");
 
       if (svm_type.UseCParameter())
@@ -119,15 +125,15 @@ namespace LibSvm
 
       if (svm_type.UseNuParameter())
       {
-        if (this.nu <= 0 || this.nu > 1)
+        if (this.Nu <= 0 || this.Nu > 1)
           throw new ApplicationException("nu <= 0 or nu > 1");
       }
 
       if (svm_type.UsePParameter())
-        if (this.p < 0)
+        if (this.P < 0)
           throw new ApplicationException("p < 0");
 
-      if (this.probability &&
+      if (this.Probability &&
          svm_type.IsOneClass())
         throw new ApplicationException("one-class SVM probability output not supported yet");
 

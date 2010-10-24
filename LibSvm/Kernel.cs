@@ -63,10 +63,10 @@ namespace LibSvm
 
     public Kernel(int l, SvmNode[][] x_, SvmParameter param)
     {
-      this.kernel_type = param.kernel_type;
-      this.degree = param.degree;
-      this.gamma = param.gamma;
-      this.coef0 = param.coef0;
+      this.kernel_type = param.KernelType;
+      this.degree = param.Degree;
+      this.gamma = param.Gamma;
+      this.coef0 = param.Coef0;
 
       x = (SvmNode[][])x_.Clone();
 
@@ -109,12 +109,12 @@ namespace LibSvm
 
     public static double k_function(SvmNode[] x, SvmNode[] y, SvmParameter param)
     {
-      switch (param.kernel_type)
+      switch (param.KernelType)
       {
         case KernelType.Linear:
           return dot(x, y);
         case KernelType.Poly:
-          return powi(param.gamma*dot(x, y) + param.coef0, param.degree);
+          return powi(param.Gamma*dot(x, y) + param.Coef0, param.Degree);
         case KernelType.Rbf:
           double sum = 0;
           int xlen = x.Length;
@@ -155,9 +155,9 @@ namespace LibSvm
             ++j;
           }
 
-          return Math.Exp(-param.gamma*sum);
+          return Math.Exp(-param.Gamma*sum);
         case KernelType.Sigmoid:
-          return Math.Tanh(param.gamma*dot(x, y) + param.coef0);
+          return Math.Tanh(param.Gamma*dot(x, y) + param.Coef0);
         case KernelType.Precomputed:
           return x[(int) (y[0].Value)].Value;
         default:

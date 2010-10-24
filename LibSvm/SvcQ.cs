@@ -17,7 +17,7 @@ namespace LibSvm
     {
       //super(prob.l, prob.x, param);
       y = (sbyte[])y_.Clone();
-      cache = new Cache(prob.Lenght, (long)(param.cache_size * (1 << 20)));
+      cache = new Cache(prob.Lenght, (long)(param.CacheSize * (1 << 20)));
       QD = new double[prob.Lenght];
       for (int i = 0; i < prob.Lenght; i++)
         QD[i] = kernel_function(i, i);

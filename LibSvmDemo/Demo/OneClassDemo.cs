@@ -15,14 +15,14 @@ namespace LibSvmDemo.Demo
 
       var parameters = new SvmParameter
       {
-        svm_type = SvmType.ONE_CLASS,
-        kernel_type = KernelType.Rbf,
-        gamma = 0.5,
-        nu = 0.5,
-        cache_size = 128,
-        eps = 1e-3,
-        shrinking = true,
-        probability = false
+        SvmType = SvmType.ONE_CLASS,
+        KernelType = KernelType.Rbf,
+        Gamma = 0.5,
+        Nu = 0.5,
+        CacheSize = 128,
+        Eps = 1e-3,
+        Shrinking = true,
+        Probability = false
       };
 
       var problem = new SvmProblem

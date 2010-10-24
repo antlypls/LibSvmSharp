@@ -49,7 +49,7 @@ namespace LibSvm
 
       Solver s = new Solver();
       s.Solve(l, new SvcQ(prob, param, y), minus_ones, y,
-        alpha, Cp, Cn, param.eps, si, param.shrinking);
+        alpha, Cp, Cn, param.Eps, si, param.Shrinking);
 
       double sum_alpha = 0;
       for (int i = 0; i < l; i++)
@@ -72,7 +72,7 @@ namespace LibSvm
     {
       int i;
       int l = prob.Lenght;
-      double nu = param.nu;
+      double nu = param.Nu;
 
       sbyte[] y = new sbyte[l];
 
@@ -104,7 +104,7 @@ namespace LibSvm
 
       var s = new SolverNu();
       s.Solve(l, new SvcQ(prob, param, y), zeros, y,
-        alpha, 1.0, 1.0, param.eps, si, param.shrinking);
+        alpha, 1.0, 1.0, param.Eps, si, param.Shrinking);
       double r = si.R;
 
       Svm.info("C = " + 1 / r + "\n");
@@ -125,12 +125,12 @@ namespace LibSvm
       sbyte[] ones = new sbyte[l];
       int i;
 
-      int n = (int)(param.nu * prob.Lenght);	// # of alpha's at upper bound
+      int n = (int)(param.Nu * prob.Lenght);	// # of alpha's at upper bound
 
       for (i = 0; i < n; i++)
         alpha[i] = 1;
       if (n < prob.Lenght)
-        alpha[n] = param.nu * prob.Lenght - n;
+        alpha[n] = param.Nu * prob.Lenght - n;
       for (i = n + 1; i < l; i++)
         alpha[i] = 0;
 
@@ -142,7 +142,7 @@ namespace LibSvm
 
       var s = new Solver();
       s.Solve(l, new OneClassQ(prob, param), zeros, ones,
-        alpha, 1.0, 1.0, param.eps, si, param.shrinking);
+        alpha, 1.0, 1.0, param.Eps, si, param.Shrinking);
     }
 
     private static void solve_epsilon_svr(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
@@ -156,17 +156,17 @@ namespace LibSvm
       for (i = 0; i < l; i++)
       {
         alpha2[i] = 0;
-        linear_term[i] = param.p - prob.Y[i];
+        linear_term[i] = param.P - prob.Y[i];
         y[i] = 1;
 
         alpha2[i + l] = 0;
-        linear_term[i + l] = param.p + prob.Y[i];
+        linear_term[i + l] = param.P + prob.Y[i];
         y[i + l] = -1;
       }
 
       Solver s = new Solver();
       s.Solve(2 * l, new SvrQ(prob, param), linear_term, y,
-        alpha2, param.C, param.C, param.eps, si, param.shrinking);
+        alpha2, param.C, param.C, param.Eps, si, param.Shrinking);
 
       double sum_alpha = 0;
       for (i = 0; i < l; i++)
@@ -186,7 +186,7 @@ namespace LibSvm
       sbyte[] y = new sbyte[2 * l];
       int i;
 
-      double sum = C * param.nu * l / 2;
+      double sum = C * param.Nu * l / 2;
       for (i = 0; i < l; i++)
       {
         alpha2[i] = alpha2[i + l] = Math.Min(sum, C);
@@ -201,7 +201,7 @@ namespace LibSvm
 
       var s = new SolverNu();
       s.Solve(2 * l, new SvrQ(prob, param), linear_term, y,
-        alpha2, C, C, param.eps, si, param.shrinking);
+        alpha2, C, C, param.Eps, si, param.Shrinking);
 
       Svm.info("epsilon = " + (-si.R) + "\n");
 
@@ -213,7 +213,7 @@ namespace LibSvm
     {
       double[] alpha = new double[prob.Lenght];
       var si = new SolutionInfo();
-      switch (param.svm_type)
+      switch (param.SvmType)
       {
         case SvmType.C_SVC:
           solve_c_svc(prob, param, alpha, si, Cp, Cn);
@@ -524,15 +524,15 @@ namespace LibSvm
         else
         {
           var subparam = (SvmParameter)param.Clone();
-          subparam.probability = false;
+          subparam.Probability = false;
           subparam.C = 1.0;
-          subparam.nr_weight = 2;
-          subparam.weight_label = new int[2];
-          subparam.weight = new double[2];
-          subparam.weight_label[0] = +1;
-          subparam.weight_label[1] = -1;
-          subparam.weight[0] = Cp;
-          subparam.weight[1] = Cn;
+          subparam.WeightsCount = 2;
+          subparam.WeightLabel = new int[2];
+          subparam.Weight = new double[2];
+          subparam.WeightLabel[0] = +1;
+          subparam.WeightLabel[1] = -1;
+          subparam.Weight[0] = Cp;
+          subparam.Weight[1] = Cn;
           var submodel = svm_train(subprob, subparam);
           for (int j = begin; j < end; j++)
           {
@@ -556,7 +556,7 @@ namespace LibSvm
       double mae = 0;
 
       var newparam = (SvmParameter)param.Clone();
-      newparam.probability = false;
+      newparam.Probability = false;
       svm_cross_validation(prob, newparam, nr_fold, ymv);
       for (i = 0; i < prob.Lenght; i++)
       {
@@ -651,7 +651,7 @@ namespace LibSvm
       var model = new SvmModel();
       model.param = param;
 
-      if (param.svm_type.IsSVROrOneClass())
+      if (param.SvmType.IsSVROrOneClass())
       {
         // regression or one-class-svm
         model.nr_class = 2;
@@ -660,7 +660,7 @@ namespace LibSvm
         model.probA = null; model.probB = null;
         model.sv_coef = new double[1][];
 
-        if (param.probability && param.svm_type.IsSVR())
+        if (param.Probability && param.SvmType.IsSVR())
         {
           model.probA = new double[1];
           model.probA[0] = svm_svr_probability(prob, param);
@@ -712,16 +712,16 @@ namespace LibSvm
         double[] weighted_C = new double[nr_class];
         for (i = 0; i < nr_class; i++)
           weighted_C[i] = param.C;
-        for (i = 0; i < param.nr_weight; i++)
+        for (i = 0; i < param.WeightsCount; i++)
         {
           int j;
           for (j = 0; j < nr_class; j++)
-            if (param.weight_label[i] == label[j])
+            if (param.WeightLabel[i] == label[j])
               break;
           if (j == nr_class)
-            Console.Error.WriteLine("warning: class label " + param.weight_label[i] + " specified in weight is not found\n");
+            Console.Error.WriteLine("warning: class label " + param.WeightLabel[i] + " specified in weight is not found\n");
           else
-            weighted_C[j] *= param.weight[i];
+            weighted_C[j] *= param.Weight[i];
         }
 
         // train k*(k-1)/2 models
@@ -732,7 +732,7 @@ namespace LibSvm
         DecisionFunction[] f = new DecisionFunction[nr_class * (nr_class - 1) / 2];
 
         double[] probA = null, probB = null;
-        if (param.probability)
+        if (param.Probability)
         {
           probA = new double[nr_class * (nr_class - 1) / 2];
           probB = new double[nr_class * (nr_class - 1) / 2];
@@ -764,7 +764,7 @@ namespace LibSvm
               sub_prob.Y[ci + k] = -1;
             }
 
-            if (param.probability)
+            if (param.Probability)
             {
               double[] probAB = new double[2];
               svm_binary_svc_probability(sub_prob, param, weighted_C[i], weighted_C[j], probAB);
@@ -794,7 +794,7 @@ namespace LibSvm
         for (i = 0; i < nr_class * (nr_class - 1) / 2; i++)
           model.rho[i] = f[i].Rho;
 
-        if (param.probability)
+        if (param.Probability)
         {
           model.probA = new double[nr_class * (nr_class - 1) / 2];
           model.probB = new double[nr_class * (nr_class - 1) / 2];
@@ -881,7 +881,7 @@ namespace LibSvm
 
       // stratified cv may not give leave-one-out rate
       // Each class to l folds -> some folds may have zero elements
-      if (param.svm_type.IsSVC() && nr_fold < l)
+      if (param.SvmType.IsSVC() && nr_fold < l)
       {
         int[] tmp_nr_class = new int[1];
         int[][] tmp_label = new int[1][];
@@ -983,7 +983,7 @@ namespace LibSvm
           ++k;
         }
         var submodel = svm_train(subprob, param);
-        if (param.probability && param.svm_type.IsSVC())
+        if (param.Probability && param.SvmType.IsSVC())
         {
           double[] prob_estimates = new double[submodel.NrClass];
           for (j = begin; j < end; j++)
