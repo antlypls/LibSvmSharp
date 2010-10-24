@@ -10,7 +10,13 @@ namespace LibSvm
   //
   internal class DecisionFunction
   {
-    public double[] alpha;
-    public double rho;
+    public DecisionFunction(double[] alpha, double rho)
+    {
+      Alpha = alpha;
+      Rho = rho;
+    }
+
+    public readonly double[] Alpha;
+    public readonly double Rho;
   }
 }

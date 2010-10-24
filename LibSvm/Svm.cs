@@ -258,9 +258,7 @@ namespace LibSvm
 
       Svm.info("nSV = " + nSV + ", nBSV = " + nBSV + "\n");
 
-      DecisionFunction f = new DecisionFunction();
-      f.alpha = alpha;
-      f.rho = si.rho;
+      var f = new DecisionFunction(alpha, si.rho);
       return f;
     }
 
@@ -670,21 +668,21 @@ namespace LibSvm
 
         DecisionFunction f = svm_train_one(prob, param, 0, 0);
         model.rho = new double[1];
-        model.rho[0] = f.rho;
+        model.rho[0] = f.Rho;
 
         int nSV = 0;
         int i;
         for (i = 0; i < prob.Lenght; i++)
-          if (Math.Abs(f.alpha[i]) > 0) ++nSV;
+          if (Math.Abs(f.Alpha[i]) > 0) ++nSV;
         model.l = nSV;
         model.SV = new SvmNode[nSV][];
         model.sv_coef[0] = new double[nSV];
         int j = 0;
         for (i = 0; i < prob.Lenght; i++)
-          if (Math.Abs(f.alpha[i]) > 0)
+          if (Math.Abs(f.Alpha[i]) > 0)
           {
             model.SV[j] = prob.X[i];
-            model.sv_coef[0][j] = f.alpha[i];
+            model.sv_coef[0][j] = f.Alpha[i];
             ++j;
           }
       }
@@ -776,10 +774,10 @@ namespace LibSvm
 
             f[p] = svm_train_one(sub_prob, param, weighted_C[i], weighted_C[j]);
             for (k = 0; k < ci; k++)
-              if (!nonzero[si + k] && Math.Abs(f[p].alpha[k]) > 0)
+              if (!nonzero[si + k] && Math.Abs(f[p].Alpha[k]) > 0)
                 nonzero[si + k] = true;
             for (k = 0; k < cj; k++)
-              if (!nonzero[sj + k] && Math.Abs(f[p].alpha[ci + k]) > 0)
+              if (!nonzero[sj + k] && Math.Abs(f[p].Alpha[ci + k]) > 0)
                 nonzero[sj + k] = true;
             ++p;
           }
@@ -794,7 +792,7 @@ namespace LibSvm
 
         model.rho = new double[nr_class * (nr_class - 1) / 2];
         for (i = 0; i < nr_class * (nr_class - 1) / 2; i++)
-          model.rho[i] = f[i].rho;
+          model.rho[i] = f[i].Rho;
 
         if (param.probability)
         {
@@ -862,11 +860,11 @@ namespace LibSvm
             int k;
             for (k = 0; k < ci; k++)
               if (nonzero[si + k])
-                model.sv_coef[j - 1][q++] = f[p].alpha[k];
+                model.sv_coef[j - 1][q++] = f[p].Alpha[k];
             q = nz_start[j];
             for (k = 0; k < cj; k++)
               if (nonzero[sj + k])
-                model.sv_coef[i][q++] = f[p].alpha[ci + k];
+                model.sv_coef[i][q++] = f[p].Alpha[ci + k];
             ++p;
           }
       }
