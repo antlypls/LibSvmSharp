@@ -31,9 +31,8 @@ namespace LibSvmDemo.Demo
 
       var problem = new SvmProblem
       {
-        l = trainData.Count(),
-        y = trainData.Select(p => p.Y).ToArray(),
-        x = trainData.Select(p => p.X.ToSvmNodes()).ToArray()
+        Y = trainData.Select(p => p.Y).ToArray(),
+        X = trainData.Select(p => p.X.ToSvmNodes()).ToArray()
       };
 
       parameters.Check(problem);

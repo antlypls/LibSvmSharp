@@ -17,10 +17,10 @@ namespace LibSvm
     private readonly double[] QD;
 
     public SvrQ(SvmProblem prob, SvmParameter param)
-      : base(prob.l, prob.x, param)
+      : base(prob.Lenght, prob.X, param)
     {
       //super(prob.l, prob.x, param);
-      l = prob.l;
+      l = prob.Lenght;
       cache = new Cache(l, (long)(param.cache_size * (1 << 20)));
       QD = new double[2 * l];
       sign = new sbyte[2 * l];

@@ -41,7 +41,7 @@ namespace LibSvm
     {
       if (svm_type.IsNuSVC())
       {
-        int l = prob.l;
+        int l = prob.Lenght;
         int max_nr_class = 16;
         int nr_class = 0;
         int[] label = new int[max_nr_class];
@@ -50,7 +50,7 @@ namespace LibSvm
         int i;
         for (i = 0; i < l; i++)
         {
-          int this_label = (int)prob.y[i];
+          int this_label = (int)prob.Y[i];
           int j;
           for (j = 0; j < nr_class; j++)
             if (this_label == label[j])

@@ -13,13 +13,13 @@ namespace LibSvm
     private readonly double[] QD;
 
     public SvcQ(SvmProblem prob, SvmParameter param, sbyte[] y_)
-      : base(prob.l, prob.x, param)
+      : base(prob.Lenght, prob.X, param)
     {
       //super(prob.l, prob.x, param);
       y = (sbyte[])y_.Clone();
-      cache = new Cache(prob.l, (long)(param.cache_size * (1 << 20)));
-      QD = new double[prob.l];
-      for (int i = 0; i < prob.l; i++)
+      cache = new Cache(prob.Lenght, (long)(param.cache_size * (1 << 20)));
+      QD = new double[prob.Lenght];
+      for (int i = 0; i < prob.Lenght; i++)
         QD[i] = kernel_function(i, i);
     }
 
