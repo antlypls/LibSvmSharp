@@ -42,22 +42,22 @@ namespace LibSvm
       int Gmin_idx = -1;
       double obj_diff_min = double.PositiveInfinity;
 
-      for (int t = 0; t < active_size; t++)
-        if (y[t] == +1)
+      for (int t = 0; t < _activeSize; t++)
+        if (_y[t] == +1)
         {
           if (!is_upper_bound(t))
-            if (-G[t] >= Gmaxp)
+            if (-_g[t] >= Gmaxp)
             {
-              Gmaxp = -G[t];
+              Gmaxp = -_g[t];
               Gmaxp_idx = t;
             }
         }
         else
         {
           if (!is_lower_bound(t))
-            if (G[t] >= Gmaxn)
+            if (_g[t] >= Gmaxn)
             {
-              Gmaxn = G[t];
+              Gmaxn = _g[t];
               Gmaxn_idx = t;
             }
         }
@@ -67,23 +67,23 @@ namespace LibSvm
       float[] Q_ip = null;
       float[] Q_in = null;
       if (ip != -1) // null Q_ip not accessed: Gmaxp=-INF if ip=-1
-        Q_ip = Q.GetQ(ip, active_size);
+        Q_ip = _q.GetQ(ip, _activeSize);
       if (@in != -1)
-        Q_in = Q.GetQ(@in, active_size);
+        Q_in = _q.GetQ(@in, _activeSize);
 
-      for (int j = 0; j < active_size; j++)
+      for (int j = 0; j < _activeSize; j++)
       {
-        if (y[j] == +1)
+        if (_y[j] == +1)
         {
           if (!is_lower_bound(j))
           {
-            double grad_diff = Gmaxp + G[j];
-            if (G[j] >= Gmaxp2)
-              Gmaxp2 = G[j];
+            double grad_diff = Gmaxp + _g[j];
+            if (_g[j] >= Gmaxp2)
+              Gmaxp2 = _g[j];
             if (grad_diff > 0)
             {
               double obj_diff;
-              double quad_coef = QD[ip] + QD[j] - 2 * Q_ip[j];
+              double quad_coef = _qd[ip] + _qd[j] - 2 * Q_ip[j];
               if (quad_coef > 0)
                 obj_diff = -(grad_diff * grad_diff) / quad_coef;
               else
@@ -101,13 +101,13 @@ namespace LibSvm
         {
           if (!is_upper_bound(j))
           {
-            double grad_diff = Gmaxn - G[j];
-            if (-G[j] >= Gmaxn2)
-              Gmaxn2 = -G[j];
+            double grad_diff = Gmaxn - _g[j];
+            if (-_g[j] >= Gmaxn2)
+              Gmaxn2 = -_g[j];
             if (grad_diff > 0)
             {
               double obj_diff;
-              double quad_coef = QD[@in] + QD[j] - 2 * Q_in[j];
+              double quad_coef = _qd[@in] + _qd[j] - 2 * Q_in[j];
               if (quad_coef > 0)
                 obj_diff = -(grad_diff * grad_diff) / quad_coef;
               else
@@ -123,10 +123,10 @@ namespace LibSvm
         }
       }
 
-      if (Math.Max(Gmaxp + Gmaxp2, Gmaxn + Gmaxn2) < eps)
+      if (Math.Max(Gmaxp + Gmaxp2, Gmaxn + Gmaxn2) < _eps)
         return 1;
 
-      if (y[Gmin_idx] == +1)
+      if (_y[Gmin_idx] == +1)
         working_set[0] = Gmaxp_idx;
       else
         working_set[0] = Gmaxn_idx;
@@ -139,17 +139,17 @@ namespace LibSvm
     {
       if (is_upper_bound(i))
       {
-        if (y[i] == +1)
-          return (-G[i] > Gmax1);
+        if (_y[i] == +1)
+          return (-_g[i] > Gmax1);
         else
-          return (-G[i] > Gmax4);
+          return (-_g[i] > Gmax4);
       }
       else if (is_lower_bound(i))
       {
-        if (y[i] == +1)
-          return (G[i] > Gmax2);
+        if (_y[i] == +1)
+          return (_g[i] > Gmax2);
         else
-          return (G[i] > Gmax3);
+          return (_g[i] > Gmax3);
       }
       else
         return (false);
@@ -164,45 +164,45 @@ namespace LibSvm
 
       // find maximal violating pair first
       int i;
-      for (i = 0; i < active_size; i++)
+      for (i = 0; i < _activeSize; i++)
       {
         if (!is_upper_bound(i))
         {
-          if (y[i] == +1)
+          if (_y[i] == +1)
           {
-            if (-G[i] > Gmax1) Gmax1 = -G[i];
+            if (-_g[i] > Gmax1) Gmax1 = -_g[i];
           }
-          else if (-G[i] > Gmax4) Gmax4 = -G[i];
+          else if (-_g[i] > Gmax4) Gmax4 = -_g[i];
         }
         if (!is_lower_bound(i))
         {
-          if (y[i] == +1)
+          if (_y[i] == +1)
           {
-            if (G[i] > Gmax2) Gmax2 = G[i];
+            if (_g[i] > Gmax2) Gmax2 = _g[i];
           }
-          else if (G[i] > Gmax3) Gmax3 = G[i];
+          else if (_g[i] > Gmax3) Gmax3 = _g[i];
         }
       }
 
-      if (unshrink == false && Math.Max(Gmax1 + Gmax2, Gmax3 + Gmax4) <= eps * 10)
+      if (_unshrink == false && Math.Max(Gmax1 + Gmax2, Gmax3 + Gmax4) <= _eps * 10)
       {
-        unshrink = true;
+        _unshrink = true;
         reconstruct_gradient();
-        active_size = l;
+        _activeSize = _length;
       }
 
-      for (i = 0; i < active_size; i++)
+      for (i = 0; i < _activeSize; i++)
         if (be_shrunk(i, Gmax1, Gmax2, Gmax3, Gmax4))
         {
-          active_size--;
-          while (active_size > i)
+          _activeSize--;
+          while (_activeSize > i)
           {
-            if (!be_shrunk(active_size, Gmax1, Gmax2, Gmax3, Gmax4))
+            if (!be_shrunk(_activeSize, Gmax1, Gmax2, Gmax3, Gmax4))
             {
-              swap_index(i, active_size);
+              swap_index(i, _activeSize);
               break;
             }
-            active_size--;
+            _activeSize--;
           }
         }
     }
@@ -214,30 +214,30 @@ namespace LibSvm
       double lb1 = double.NegativeInfinity, lb2 = double.NegativeInfinity;
       double sum_free1 = 0, sum_free2 = 0;
 
-      for (int i = 0; i < active_size; i++)
+      for (int i = 0; i < _activeSize; i++)
       {
-        if (y[i] == +1)
+        if (_y[i] == +1)
         {
           if (is_lower_bound(i))
-            ub1 = Math.Min(ub1, G[i]);
+            ub1 = Math.Min(ub1, _g[i]);
           else if (is_upper_bound(i))
-            lb1 = Math.Max(lb1, G[i]);
+            lb1 = Math.Max(lb1, _g[i]);
           else
           {
             ++nr_free1;
-            sum_free1 += G[i];
+            sum_free1 += _g[i];
           }
         }
         else
         {
           if (is_lower_bound(i))
-            ub2 = Math.Min(ub2, G[i]);
+            ub2 = Math.Min(ub2, _g[i]);
           else if (is_upper_bound(i))
-            lb2 = Math.Max(lb2, G[i]);
+            lb2 = Math.Max(lb2, _g[i]);
           else
           {
             ++nr_free2;
-            sum_free2 += G[i];
+            sum_free2 += _g[i];
           }
         }
       }
