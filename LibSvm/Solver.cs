@@ -51,15 +51,15 @@ namespace LibSvm
     void update_alpha_status(int i)
     {
       if (alpha[i] >= get_C(i))
-        alpha_status[i] = BoundType.UPPER_BOUND;
+        alpha_status[i] = BoundType.UpperBound;
       else if (alpha[i] <= 0)
-        alpha_status[i] = BoundType.LOWER_BOUND;
-      else alpha_status[i] = BoundType.FREE;
+        alpha_status[i] = BoundType.LowerBound;
+      else alpha_status[i] = BoundType.Free;
     }
 
-    protected bool is_upper_bound(int i) { return alpha_status[i] == BoundType.UPPER_BOUND; }
-    protected bool is_lower_bound(int i) { return alpha_status[i] == BoundType.LOWER_BOUND; }
-    protected bool is_free(int i) { return alpha_status[i] == BoundType.FREE; }
+    protected bool is_upper_bound(int i) { return alpha_status[i] == BoundType.UpperBound; }
+    protected bool is_lower_bound(int i) { return alpha_status[i] == BoundType.LowerBound; }
+    protected bool is_free(int i) { return alpha_status[i] == BoundType.Free; }
 
     protected void swap_index(int i, int j)
     {

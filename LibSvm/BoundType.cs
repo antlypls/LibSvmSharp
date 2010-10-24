@@ -7,8 +7,8 @@ namespace LibSvm
 {
   public enum BoundType : byte
   {
-    LOWER_BOUND = 0,
-    UPPER_BOUND = 1,
-    FREE = 2
+    LowerBound = 0,
+    UpperBound = 1,
+    Free = 2
   }
 }
