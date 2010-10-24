@@ -579,7 +579,7 @@ namespace LibSvm
 
     // label: label name, start: begin of each class, count: #data of classes, perm: indices to the original data
     // perm, length l, must be allocated before calling this subroutine
-    private static void svm_group_classes(SvmProblem prob, int[] nr_class_ret, int[][] label_ret, int[][] start_ret, int[][] count_ret, int[] perm)
+    private static void svm_group_classes(SvmProblem prob, out int nr_class_ret, out int[] label_ret, out int[] start_ret, out int[] count_ret, int[] perm)
     {
       int l = prob.Lenght;
       int max_nr_class = 16;
@@ -634,10 +634,10 @@ namespace LibSvm
       for (i = 1; i < nr_class; i++)
         start[i] = start[i - 1] + count[i - 1];
 
-      nr_class_ret[0] = nr_class;
-      label_ret[0] = label;
-      start_ret[0] = start;
-      count_ret[0] = count;
+      nr_class_ret = nr_class;
+      label_ret = label;
+      start_ret = start;
+      count_ret = count;
     }
 
     #endregion
@@ -690,18 +690,16 @@ namespace LibSvm
       {
         // classification
         int l = prob.Lenght;
-        int[] tmp_nr_class = new int[1];
-        int[][] tmp_label = new int[1][];
-        int[][] tmp_start = new int[1][];
-        int[][] tmp_count = new int[1][];
         int[] perm = new int[l];
 
+        int nr_class;
+        int[] label;
+        int[] start;
+        int[] count;
+
         // group training data of the same class
-        svm_group_classes(prob, tmp_nr_class, tmp_label, tmp_start, tmp_count, perm);
-        int nr_class = tmp_nr_class[0];
-        int[] label = tmp_label[0];
-        int[] start = tmp_start[0];
-        int[] count = tmp_count[0];
+        svm_group_classes(prob, out nr_class, out label, out start, out count, perm);
+
         SvmNode[][] x = new SvmNode[l][];
         int i;
         for (i = 0; i < l; i++)
@@ -726,10 +724,10 @@ namespace LibSvm
 
         // train k*(k-1)/2 models
 
-        bool[] nonzero = new bool[l];
+        var nonzero = new bool[l];
         for (i = 0; i < l; i++)
           nonzero[i] = false;
-        DecisionFunction[] f = new DecisionFunction[nr_class * (nr_class - 1) / 2];
+        var f = new DecisionFunction[nr_class * (nr_class - 1) / 2];
 
         double[] probA = null, probB = null;
         if (param.Probability)
@@ -883,16 +881,12 @@ namespace LibSvm
       // Each class to l folds -> some folds may have zero elements
       if (param.SvmType.IsSVC() && nr_fold < l)
       {
-        int[] tmp_nr_class = new int[1];
-        int[][] tmp_label = new int[1][];
-        int[][] tmp_start = new int[1][];
-        int[][] tmp_count = new int[1][];
+        int nr_class;
+        int[] tmp_label;
+        int[] start;
+        int[] count;
 
-        svm_group_classes(prob, tmp_nr_class, tmp_label, tmp_start, tmp_count, perm);
-
-        int nr_class = tmp_nr_class[0];
-        int[] start = tmp_start[0];
-        int[] count = tmp_count[0];
+        svm_group_classes(prob, out nr_class, out tmp_label, out start, out count, perm);
 
         // random shuffle and then data grouped by fold using the array perm
         int[] fold_count = new int[nr_fold];
