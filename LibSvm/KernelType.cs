@@ -7,10 +7,10 @@ namespace LibSvm
 {
   public enum KernelType
   {
-    LINEAR,
-    POLY,
-    RBF,
-    SIGMOID,
-    PRECOMPUTED,
+    Linear,
+    Poly,
+    Rbf,
+    Sigmoid,
+    Precomputed,
   }
 }

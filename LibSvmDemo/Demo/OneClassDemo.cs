@@ -16,7 +16,7 @@ namespace LibSvmDemo.Demo
       var parameters = new SvmParameter
       {
         svm_type = SvmType.ONE_CLASS,
-        kernel_type = KernelType.RBF,
+        kernel_type = KernelType.Rbf,
         gamma = 0.5,
         nu = 0.5,
         cache_size = 128,

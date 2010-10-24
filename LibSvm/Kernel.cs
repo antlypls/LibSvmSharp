@@ -46,15 +46,15 @@ namespace LibSvm
     {
       switch (kernel_type)
       {
-        case KernelType.LINEAR:
+        case KernelType.Linear:
           return dot(x[i], x[j]);
-        case KernelType.POLY:
+        case KernelType.Poly:
           return powi(gamma * dot(x[i], x[j]) + coef0, degree);
-        case KernelType.RBF:
+        case KernelType.Rbf:
           return Math.Exp(-gamma * (x_square[i] + x_square[j] - 2 * dot(x[i], x[j])));
-        case KernelType.SIGMOID:
+        case KernelType.Sigmoid:
           return Math.Tanh(gamma * dot(x[i], x[j]) + coef0);
-        case KernelType.PRECOMPUTED:
+        case KernelType.Precomputed:
           return x[i][(int)(x[j][0].Value)].Value;
         default:
           throw new ApplicationException("Bad kernel_type");
@@ -70,7 +70,7 @@ namespace LibSvm
 
       x = (SvmNode[][])x_.Clone();
 
-      if (kernel_type == KernelType.RBF)
+      if (kernel_type == KernelType.Rbf)
       {
         x_square = new double[l];
         for (int i = 0; i < l; i++)
@@ -105,11 +105,11 @@ namespace LibSvm
     {
       switch (param.kernel_type)
       {
-        case KernelType.LINEAR:
+        case KernelType.Linear:
           return dot(x, y);
-        case KernelType.POLY:
+        case KernelType.Poly:
           return powi(param.gamma * dot(x, y) + param.coef0, param.degree);
-        case KernelType.RBF:
+        case KernelType.Rbf:
           {
             double sum = 0;
             int xlen = x.Length;
@@ -149,9 +149,9 @@ namespace LibSvm
 
             return Math.Exp(-param.gamma * sum);
           }
-        case KernelType.SIGMOID:
+        case KernelType.Sigmoid:
           return Math.Tanh(param.gamma * dot(x, y) + param.coef0);
-        case KernelType.PRECOMPUTED:
+        case KernelType.Precomputed:
           return x[(int)(y[0].Value)].Value;
         default:
           throw new ApplicationException("Bad kernel_type");
