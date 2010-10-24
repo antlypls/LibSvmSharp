@@ -18,7 +18,7 @@ namespace LibSvmDemo.Demo
       return x == 0 ? 1 : Math.Sin(x) / x;
     }
 
-    public static List<Point> GenerateClass(int label, double x, double y, int count)
+    public static IEnumerable<Point> GenerateClass(int label, double x, double y, int count)
     {
       var rndx = new Random();
       var data = Enumerable.Range(0, count).Select(_ => new Point
@@ -28,7 +28,15 @@ namespace LibSvmDemo.Demo
         Label = label
       });
 
-      return data.ToList();
+      return data;
+    }
+
+    public static IEnumerable<double> Range(double begin, double end, double step)
+    {
+      for (double val = begin; val <= end; val += step)
+      {
+        yield return val;
+      }
     }
   }
 }

@@ -13,28 +13,28 @@ namespace LibSvmDemo.Demo
       Console.WriteLine("OneClassDemo");
       var trainData = DemoHelper.GenerateClass(0, 0.5, 0.5, 100);
 
-      var param = new SvmParameter();
+      var parameters = new SvmParameter
+      {
+        svm_type = SvmType.ONE_CLASS,
+        kernel_type = KernelType.RBF,
+        gamma = 0.5,
+        nu = 0.5,
+        cache_size = 128,
+        eps = 1e-3,
+        shrinking = true,
+        probability = false
+      };
 
-      param.svm_type = SvmType.ONE_CLASS;
-      param.kernel_type = KernelType.RBF;
-      param.gamma = 0.5;
-      param.nu = 0.5;
-      param.cache_size = 128;
-      param.eps = 1e-3;
-      param.shrinking = true;
-      param.probability = false;
+      var problem = new SvmProblem
+      {
+        l = trainData.Count(),
+        y = trainData.Select(p => 1.0).ToArray(),
+        x = trainData.Select(p => p.ToSvmNodes()).ToArray()
+      };
 
-      var prob = new SvmProblem();
+      parameters.Check(problem);
 
-      prob.l = trainData.Count();
-
-      prob.y = trainData.Select(p => 1.0).ToArray();
-
-      prob.x = trainData.Select(p => p.ToSvmNodes()).ToArray();
-
-      param.Check(prob);
-
-      var model = Svm.svm_train(prob, param);
+      var model = Svm.svm_train(problem, parameters);
 
       var x = new Point(0.9, 0.9).ToSvmNodes();
       var resx = model.Predict(x);

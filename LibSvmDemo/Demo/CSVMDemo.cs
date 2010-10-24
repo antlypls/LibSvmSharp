@@ -16,32 +16,32 @@ namespace LibSvmDemo.Demo
 
       var trainData = class1.Concat(class2);
 
-      var param = new SvmParameter();
+      var parameters = new SvmParameter
+      {
+        svm_type = SvmType.C_SVC,
+        kernel_type = KernelType.RBF,
+        gamma = 0.5,
+        cache_size = 128,
+        C = 1,
+        eps = 1e-3,
+        shrinking = true,
+        probability = false
+      };
 
-      param.svm_type = SvmType.C_SVC;
-      param.kernel_type = KernelType.RBF;
-      param.gamma = 0.5;
-      param.cache_size = 128;
-      param.C = 1;
-      param.eps = 1e-3;
-      param.shrinking = true;
-      param.probability = false;
+      var problem = new SvmProblem
+      {
+        l = trainData.Count(),
+        y = trainData.Select(p => (double)p.Label).ToArray(),
+        x = trainData.Select(p => p.ToSvmNodes()).ToArray()
+      };
 
-      var prob = new SvmProblem();
+      parameters.Check(problem);
 
-      prob.l = trainData.Count();
-
-      prob.y = trainData.Select(p => (double)p.Label).ToArray();
-
-      prob.x = trainData.Select(p => p.ToSvmNodes()).ToArray();
-
-      param.Check(prob);
-
-      var model = Svm.svm_train(prob, param);
+      var model = Svm.svm_train(problem, parameters);
 
       var x = new Point(0.9, 0.9).ToSvmNodes();
-      var res = model.Predict(x);
-      Console.WriteLine(res);
+      var resx = model.Predict(x);
+      Console.WriteLine(resx);
 
       var y = new Point(0.1, 0.1).ToSvmNodes();
       var resy = model.Predict(y);

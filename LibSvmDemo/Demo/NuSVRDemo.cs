@@ -8,54 +8,46 @@ namespace LibSvmDemo.Demo
 {
   class NuSVRDemo
   {
-    private static IEnumerable<double> Range(double begin, double end, double step)
-    {
-      for (double val = begin; val <= end; val += step)
-      {
-        yield return val;
-      }
-    }
 
     public static void Run()
     {
       Console.WriteLine("NuSVRDemo");
       var rnd = new Random();
 
-      var trainData = Range(-10.0, 10.01, 0.1).Select(val => new { X = val, Y = DemoHelper.Sinc(val) + (rnd.NextDouble() - 0.5) / 4 });
+      var trainData = DemoHelper.Range(-10.0, 10.01, 0.1).Select(val => new { X = val, Y = DemoHelper.Sinc(val) + (rnd.NextDouble() - 0.5) / 4 });
 
-      var param = new SvmParameter();
+      var parameters = new SvmParameter
+      {
+        svm_type = SvmType.NU_SVR,
+        kernel_type = KernelType.RBF,
+        gamma = 0.5,
+        nu = 0.1,
+        cache_size = 128,
+        C = 1,
+        eps = 0.1,
+        shrinking = true,
+        probability = false
+      };
 
-      param.svm_type = SvmType.NU_SVR;
-      param.kernel_type = KernelType.RBF;
-      param.gamma = 0.5;
-      param.nu = 0.1;
-      param.cache_size = 128;
-      param.C = 1;
-      param.eps = 0.1;
-      param.shrinking = true;
-      param.probability = false;
+      var problem = new SvmProblem
+      {
+        l = trainData.Count(),
+        y = trainData.Select(p => p.Y).ToArray(),
+        x = trainData.Select(p => p.X.ToSvmNodes()).ToArray()
+      };
 
-      var prob = new SvmProblem();
+      parameters.Check(problem);
 
-      prob.l = trainData.Count();
+      var model = Svm.svm_train(problem, parameters);
 
-      prob.y = trainData.Select(p => p.Y).ToArray();
-
-      prob.x = trainData.Select(p => p.X.ToSvmNodes()).ToArray();
-
-      param.Check(prob);
-
-      var model = Svm.svm_train(prob, param);
-
-
-      foreach (var item in Range(-1.0, 1.01, 0.1))
+      foreach (var item in DemoHelper.Range(-1.0, 1.01, 0.1))
       {
         var x = item.ToSvmNodes();
-        var y_pred = model.Predict(x);
-        var y_real = DemoHelper.Sinc(item);
+        var yPred = model.Predict(x);
+        var yReal = DemoHelper.Sinc(item);
         Console.WriteLine("x: {0}", item);
-        Console.WriteLine("y_real: {0}", y_real);
-        Console.WriteLine("y_pred: {0}", y_pred);
+        Console.WriteLine("y_real: {0}", yReal);
+        Console.WriteLine("y_pred: {0}", yPred);
       }
     }
   }
