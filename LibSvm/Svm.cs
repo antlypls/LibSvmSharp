@@ -901,7 +901,6 @@ namespace LibSvm
           for (i = 0; i < count[c]; i++)
           {
             int j = i + (int)(rnd.NextDouble() * (count[c] - i));
-            //do { int _ = index[start[c] + j]; index[start[c] + j] = index[start[c] + i]; index[start[c] + i] = _; } while (false);
             Common.Swap(ref index[start[c] + j], ref index[start[c] + j]);
           }
         for (i = 0; i < nr_fold; i++)
@@ -940,7 +939,6 @@ namespace LibSvm
         for (i = 0; i < l; i++)
         {
           int j = i + (int)(rnd.NextDouble() * (l - i));
-          //do { int _ = perm[i]; perm[i] = perm[j]; perm[j] = _; } while (false);
           Common.Swap(ref perm[i], ref perm[j]);
         }
 
