@@ -9,11 +9,11 @@ namespace LibSvm
   {
     public SvmNode(int index, double value)
     { 
-      this.index = index;
-      this.value = value;
+      Index = index;
+      Value = value;
     }
 
-    public int index;
-    public double value;
+    public readonly int Index;
+    public readonly double Value;
   }
 }

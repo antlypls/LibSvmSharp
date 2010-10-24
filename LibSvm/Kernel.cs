@@ -55,7 +55,7 @@ namespace LibSvm
         case KernelType.SIGMOID:
           return Math.Tanh(gamma * dot(x[i], x[j]) + coef0);
         case KernelType.PRECOMPUTED:
-          return x[i][(int)(x[j][0].value)].value;
+          return x[i][(int)(x[j][0].Value)].Value;
         default:
           throw new ApplicationException("Bad kernel_type");
       }
@@ -88,11 +88,11 @@ namespace LibSvm
       int j = 0;
       while (i < xlen && j < ylen)
       {
-        if (x[i].index == y[j].index)
-          sum += x[i++].value * y[j++].value;
+        if (x[i].Index == y[j].Index)
+          sum += x[i++].Value * y[j++].Value;
         else
         {
-          if (x[i].index > y[j].index)
+          if (x[i].Index > y[j].Index)
             ++j;
           else
             ++i;
@@ -118,32 +118,32 @@ namespace LibSvm
             int j = 0;
             while (i < xlen && j < ylen)
             {
-              if (x[i].index == y[j].index)
+              if (x[i].Index == y[j].Index)
               {
-                double d = x[i++].value - y[j++].value;
+                double d = x[i++].Value - y[j++].Value;
                 sum += d * d;
               }
-              else if (x[i].index > y[j].index)
+              else if (x[i].Index > y[j].Index)
               {
-                sum += y[j].value * y[j].value;
+                sum += y[j].Value * y[j].Value;
                 ++j;
               }
               else
               {
-                sum += x[i].value * x[i].value;
+                sum += x[i].Value * x[i].Value;
                 ++i;
               }
             }
 
             while (i < xlen)
             {
-              sum += x[i].value * x[i].value;
+              sum += x[i].Value * x[i].Value;
               ++i;
             }
 
             while (j < ylen)
             {
-              sum += y[j].value * y[j].value;
+              sum += y[j].Value * y[j].Value;
               ++j;
             }
 
@@ -152,7 +152,7 @@ namespace LibSvm
         case KernelType.SIGMOID:
           return Math.Tanh(param.gamma * dot(x, y) + param.coef0);
         case KernelType.PRECOMPUTED:
-          return x[(int)(y[0].value)].value;
+          return x[(int)(y[0].Value)].Value;
         default:
           throw new ApplicationException("Bad kernel_type");
       }
