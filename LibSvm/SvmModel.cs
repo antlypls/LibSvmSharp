@@ -189,52 +189,47 @@ namespace LibSvm
     public double Predict(SvmNode[] x)
     {
       int nr_class = NrClass;
-      double[] dec_values;
-      if (SvmType.IsSVROrOneClass())
-        dec_values = new double[1];
-      else
-        dec_values = new double[nr_class * (nr_class - 1) / 2];
-      double pred_result = PredictValues(x, dec_values);
-      return pred_result;
+      int length = SvmType.IsSVROrOneClass() ? 1 : nr_class*(nr_class - 1)/2;
+      var dec_values = new double[length];
+      return PredictValues(x, dec_values);
     }
 
     //from Svm.svm_predict_probability
     public double PredictProbability(SvmNode[] x, double[] prob_estimates)
     {
-      if (SvmType.IsSVC() &&
-          ProbA != null && ProbB != null)
+      if (!SvmType.IsSVC() || ProbA == null || ProbB == null)
       {
-        int i;
-        int nr_class = NrClass;
-        double[] dec_values = new double[nr_class * (nr_class - 1) / 2];
-        PredictValues(x, dec_values);
-
-        double min_prob = 1e-7;
-        //double[][] pairwise_prob=new double[nr_class][nr_class];
-        double[][] pairwise_prob = new double[nr_class][];
-        for (i = 0; i < nr_class; i++)
-        {
-          pairwise_prob[i] = new double[nr_class];
-        }
-
-        int k = 0;
-        for (i = 0; i < nr_class; i++)
-          for (int j = i + 1; j < nr_class; j++)
-          {
-            pairwise_prob[i][j] = Math.Min(Math.Max(Svm.sigmoid_predict(dec_values[k], ProbA[k], ProbB[k]), min_prob), 1 - min_prob);
-            pairwise_prob[j][i] = 1 - pairwise_prob[i][j];
-            k++;
-          }
-        Svm.multiclass_probability(nr_class, pairwise_prob, prob_estimates);
-
-        int prob_max_idx = 0;
-        for (i = 1; i < nr_class; i++)
-          if (prob_estimates[i] > prob_estimates[prob_max_idx])
-            prob_max_idx = i;
-        return Label[prob_max_idx];
-      }
-      else
         return Predict(x);
+      }
+
+      int nr_class = NrClass;
+      double[] dec_values = new double[nr_class*(nr_class - 1)/2];
+      PredictValues(x, dec_values);
+
+      double min_prob = 1e-7;
+      double[][] pairwise_prob = new double[nr_class][];
+      for (int i = 0; i < nr_class; i++)
+      {
+        pairwise_prob[i] = new double[nr_class];
+      }
+
+      int k = 0;
+      for (int i = 0; i < nr_class; i++)
+      {
+        for (int j = i + 1; j < nr_class; j++)
+        {
+          pairwise_prob[i][j] = Math.Min(Math.Max(Svm.sigmoid_predict(dec_values[k], ProbA[k], ProbB[k]), min_prob), 1 - min_prob);
+          pairwise_prob[j][i] = 1 - pairwise_prob[i][j];
+          k++;
+        }
+      }
+      Svm.multiclass_probability(nr_class, pairwise_prob, prob_estimates);
+
+      int prob_max_idx = 0;
+      for (int i = 1; i < nr_class; i++)
+        if (prob_estimates[i] > prob_estimates[prob_max_idx])
+          prob_max_idx = i;
+      return Label[prob_max_idx];
     }
 
     //from Svm.svm_check_probability_model
