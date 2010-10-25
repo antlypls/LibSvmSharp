@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace LibSvm
 {
@@ -109,76 +110,79 @@ namespace LibSvm
       throw new ApplicationException("Model doesn't contain information for SVR probability inference\n");
     }
 
+    private double PredictValuesSvrOrOneClass(SvmNode[] x, double[] dec_values)
+    {
+      Debug.Assert(SvmType.IsSVROrOneClass(), "SvmType.IsSVROrOneClass()");
+
+      double[] sv_coef = SupportVectorsCoefficients[0];
+      double sum = 0;
+      for (int i = 0; i < TotalSupportVectorsNumber; i++)
+        sum += sv_coef[i] * Kernel.k_function(x, SupportVectors[i], Param);
+      sum -= Rho[0];
+      dec_values[0] = sum;
+
+      return SvmType.IsOneClass() ? ((sum > 0) ? 1 : -1) : sum;
+    }
+
+    private double PredictValuesNonSvrOrOneClass(SvmNode[] x, double[] dec_values)
+    {
+      Debug.Assert(!SvmType.IsSVROrOneClass(), "!SvmType.IsSVROrOneClass()");
+
+      int nr_class = NrClass;
+      int l = TotalSupportVectorsNumber;
+
+      double[] kvalue = new double[l];
+      for (int i = 0; i < l; i++)
+        kvalue[i] = Kernel.k_function(x, SupportVectors[i], Param);
+
+      int[] start = new int[nr_class];
+      start[0] = 0;
+      for (int i = 1; i < nr_class; i++)
+        start[i] = start[i - 1] + SupportVectorsNumbers[i - 1];
+
+      int[] vote = new int[nr_class];
+      for (int i = 0; i < nr_class; i++)
+        vote[i] = 0;
+
+      int p = 0;
+      for (int i = 0; i < nr_class; i++)
+        for (int j = i + 1; j < nr_class; j++)
+        {
+          double sum = 0;
+          int si = start[i];
+          int sj = start[j];
+          int ci = SupportVectorsNumbers[i];
+          int cj = SupportVectorsNumbers[j];
+
+          int k;
+          double[] coef1 = SupportVectorsCoefficients[j - 1];
+          double[] coef2 = SupportVectorsCoefficients[i];
+          for (k = 0; k < ci; k++)
+            sum += coef1[si + k] * kvalue[si + k];
+          for (k = 0; k < cj; k++)
+            sum += coef2[sj + k] * kvalue[sj + k];
+          sum -= Rho[p];
+          dec_values[p] = sum;
+
+          if (dec_values[p] > 0)
+            ++vote[i];
+          else
+            ++vote[j];
+          p++;
+        }
+
+      int vote_max_idx = 0;
+      for (int i = 1; i < nr_class; i++)
+        if (vote[i] > vote[vote_max_idx])
+          vote_max_idx = i;
+
+      return Label[vote_max_idx];
+    }
+
     //from Svm.svm_predict_values
     public double PredictValues(SvmNode[] x, double[] dec_values)
     {
-      if (SvmType.IsSVROrOneClass())
-      {
-        double[] sv_coef = SupportVectorsCoefficients[0];
-        double sum = 0;
-        for (int i = 0; i < TotalSupportVectorsNumber; i++)
-          sum += sv_coef[i] * Kernel.k_function(x, SupportVectors[i], Param);
-        sum -= Rho[0];
-        dec_values[0] = sum;
-
-        if (SvmType.IsOneClass())
-          return (sum > 0) ? 1 : -1;
-        else
-          return sum;
-      }
-      else
-      {
-        int i;
-        int nr_class = NrClass;
-        int l = TotalSupportVectorsNumber;
-
-        double[] kvalue = new double[l];
-        for (i = 0; i < l; i++)
-          kvalue[i] = Kernel.k_function(x, SupportVectors[i], Param);
-
-        int[] start = new int[nr_class];
-        start[0] = 0;
-        for (i = 1; i < nr_class; i++)
-          start[i] = start[i - 1] + SupportVectorsNumbers[i - 1];
-
-        int[] vote = new int[nr_class];
-        for (i = 0; i < nr_class; i++)
-          vote[i] = 0;
-
-        int p = 0;
-        for (i = 0; i < nr_class; i++)
-          for (int j = i + 1; j < nr_class; j++)
-          {
-            double sum = 0;
-            int si = start[i];
-            int sj = start[j];
-            int ci = SupportVectorsNumbers[i];
-            int cj = SupportVectorsNumbers[j];
-
-            int k;
-            double[] coef1 = SupportVectorsCoefficients[j - 1];
-            double[] coef2 = SupportVectorsCoefficients[i];
-            for (k = 0; k < ci; k++)
-              sum += coef1[si + k] * kvalue[si + k];
-            for (k = 0; k < cj; k++)
-              sum += coef2[sj + k] * kvalue[sj + k];
-            sum -= Rho[p];
-            dec_values[p] = sum;
-
-            if (dec_values[p] > 0)
-              ++vote[i];
-            else
-              ++vote[j];
-            p++;
-          }
-
-        int vote_max_idx = 0;
-        for (i = 1; i < nr_class; i++)
-          if (vote[i] > vote[vote_max_idx])
-            vote_max_idx = i;
-
-        return Label[vote_max_idx];
-      }
+      return SvmType.IsSVROrOneClass() ? PredictValuesSvrOrOneClass(x ,dec_values) : PredictValuesNonSvrOrOneClass(x, dec_values);
     }
 
     //from Svm.svm_predict
