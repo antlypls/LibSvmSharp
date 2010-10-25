@@ -7,77 +7,121 @@ namespace LibSvm
 {
   public class SvmModel
   {
-    public SvmParameter param;	// parameter
-    public int nr_class;		// number of classes, = 2 in regression/one class svm
-    public int l;			// total #SV
-    public SvmNode[][] SV;	// SVs (SV[l])
-    public double[][] sv_coef;	// coefficients for SVs in decision functions (sv_coef[k-1][l])
-    public double[] rho;		// constants in decision functions (rho[k*(k-1)/2])
-    public double[] probA;         // pariwise probability information
-    public double[] probB;
+    // parameterS
+    public SvmParameter Param 
+    {
+      get;
+      internal set;
+    }
+
+    // number of classes, = 2 in regression/one class svm
+    public int NrClass
+    {
+      get; 
+      internal set;
+    }		
+
+    // total #SV
+    public int TotalSupportVectorsNumber
+    {
+      get; 
+      internal set;
+    }			
+
+    // SVs (SV[TotalSupportVectorsNumber])
+    public SvmNode[][] SupportVectors
+    {
+      get; 
+      internal set;
+    }	
+
+    // coefficients for SVs in decision functions (sv_coef[k-1][l])
+    public double[][] SupportVectorsCoefficients
+    {
+      get; 
+      internal set;
+    }	
+
+    // constants in decision functions (rho[k*(k-1)/2])
+    public double[] Rho
+    {
+      get; 
+      internal set;
+    }		
+
+    // pariwise probability information
+    public double[] ProbA
+    {
+      get; 
+      internal set;
+    }         
+    public double[] ProbB
+    {
+      get; 
+      internal set;
+    }
 
     // for classification only
 
-    public int[] label;		// label of each class (label[k])
-    public int[] nSV;		// number of SVs for each class (nSV[k])
-    // nSV[0] + nSV[1] + ... + nSV[k-1] = l
+    // label of each class (label[k])
+    public int[] Label
+    {
+      get;
+      internal set;
+    }
+
+    // number of SVs for each class (SupportVectorsNumbers[k])
+    public int[] SupportVectorsNumbers
+    {
+      get; 
+      internal set;
+    }		
+    // SupportVectorsNumbers[0] + SupportVectorsNumbers[1] + ... + SupportVectorsNumbers[k-1] = TotalSupportVectorsNumber
 
     //from Svm.svm_get_svm_type
     public SvmType SvmType
     {
       get
       {
-        return param.SvmType;
-      }
-    }
-
-    //from Svm.svm_get_nr_class
-    public int NrClass
-    {
-      get
-      {
-        return nr_class;
+        return Param.SvmType;
       }
     }
 
     //from Svm.svm_get_labels
     public void GetLabels(int[] label)
     {
-      if (this.label != null)
+      if (Label == null) return;
+
+      for (int i = 0; i < NrClass; i++)
       {
-        for (int i = 0; i < this.nr_class; i++)
-        {
-          label[i] = this.label[i];
-        }
+        label[i] = Label[i];
       }
     }
 
     //from Svm.svm_get_svr_probability
     public double GetSvrProbability()
     {
-      if ((param.SvmType.IsSVR()) && probA != null)
+      if ((Param.SvmType.IsSVR()) && ProbA != null)
       {
-        return probA[0];
+        return ProbA[0];
       }
-      else
-      {
-        throw new ApplicationException("Model doesn't contain information for SVR probability inference\n");
-      }
+
+      throw new ApplicationException("Model doesn't contain information for SVR probability inference\n");
     }
 
     //from Svm.svm_predict_values
     public double PredictValues(SvmNode[] x, double[] dec_values)
     {
-      if (this.param.SvmType.IsSVROrOneClass())
+      if (Param.SvmType.IsSVROrOneClass())
       {
-        double[] sv_coef = this.sv_coef[0];
+        double[] sv_coef = SupportVectorsCoefficients[0];
         double sum = 0;
-        for (int i = 0; i < this.l; i++)
-          sum += sv_coef[i] * Kernel.k_function(x, this.SV[i], this.param);
-        sum -= this.rho[0];
+        for (int i = 0; i < TotalSupportVectorsNumber; i++)
+          sum += sv_coef[i] * Kernel.k_function(x, SupportVectors[i], Param);
+        sum -= Rho[0];
         dec_values[0] = sum;
 
-        if (this.param.SvmType.IsOneClass())
+        if (Param.SvmType.IsOneClass())
           return (sum > 0) ? 1 : -1;
         else
           return sum;
@@ -85,17 +129,17 @@ namespace LibSvm
       else
       {
         int i;
-        int nr_class = this.nr_class;
-        int l = this.l;
+        int nr_class = NrClass;
+        int l = TotalSupportVectorsNumber;
 
         double[] kvalue = new double[l];
         for (i = 0; i < l; i++)
-          kvalue[i] = Kernel.k_function(x, this.SV[i], this.param);
+          kvalue[i] = Kernel.k_function(x, SupportVectors[i], Param);
 
         int[] start = new int[nr_class];
         start[0] = 0;
         for (i = 1; i < nr_class; i++)
-          start[i] = start[i - 1] + this.nSV[i - 1];
+          start[i] = start[i - 1] + SupportVectorsNumbers[i - 1];
 
         int[] vote = new int[nr_class];
         for (i = 0; i < nr_class; i++)
@@ -108,17 +152,17 @@ namespace LibSvm
             double sum = 0;
             int si = start[i];
             int sj = start[j];
-            int ci = this.nSV[i];
-            int cj = this.nSV[j];
+            int ci = SupportVectorsNumbers[i];
+            int cj = SupportVectorsNumbers[j];
 
             int k;
-            double[] coef1 = this.sv_coef[j - 1];
-            double[] coef2 = this.sv_coef[i];
+            double[] coef1 = SupportVectorsCoefficients[j - 1];
+            double[] coef2 = SupportVectorsCoefficients[i];
             for (k = 0; k < ci; k++)
               sum += coef1[si + k] * kvalue[si + k];
             for (k = 0; k < cj; k++)
               sum += coef2[sj + k] * kvalue[sj + k];
-            sum -= this.rho[p];
+            sum -= Rho[p];
             dec_values[p] = sum;
 
             if (dec_values[p] > 0)
@@ -133,16 +177,16 @@ namespace LibSvm
           if (vote[i] > vote[vote_max_idx])
             vote_max_idx = i;
 
-        return this.label[vote_max_idx];
+        return Label[vote_max_idx];
       }
     }
 
     //from Svm.svm_predict
     public double Predict(SvmNode[] x)
     {
-      int nr_class = this.nr_class;
+      int nr_class = NrClass;
       double[] dec_values;
-      if (param.SvmType.IsSVROrOneClass())
+      if (Param.SvmType.IsSVROrOneClass())
         dec_values = new double[1];
       else
         dec_values = new double[nr_class * (nr_class - 1) / 2];
@@ -153,13 +197,13 @@ namespace LibSvm
     //from Svm.svm_predict_probability
     public double PredictProbability(SvmNode[] x, double[] prob_estimates)
     {
-      if (this.param.SvmType.IsSVC() &&
-          this.probA != null && this.probB != null)
+      if (Param.SvmType.IsSVC() &&
+          ProbA != null && ProbB != null)
       {
         int i;
-        int nr_class = this.nr_class;
+        int nr_class = NrClass;
         double[] dec_values = new double[nr_class * (nr_class - 1) / 2];
-        this.PredictValues(x, dec_values);
+        PredictValues(x, dec_values);
 
         double min_prob = 1e-7;
         //double[][] pairwise_prob=new double[nr_class][nr_class];
@@ -173,7 +217,7 @@ namespace LibSvm
         for (i = 0; i < nr_class; i++)
           for (int j = i + 1; j < nr_class; j++)
           {
-            pairwise_prob[i][j] = Math.Min(Math.Max(Svm.sigmoid_predict(dec_values[k], this.probA[k], this.probB[k]), min_prob), 1 - min_prob);
+            pairwise_prob[i][j] = Math.Min(Math.Max(Svm.sigmoid_predict(dec_values[k], ProbA[k], ProbB[k]), min_prob), 1 - min_prob);
             pairwise_prob[j][i] = 1 - pairwise_prob[i][j];
             k++;
           }
@@ -183,19 +227,17 @@ namespace LibSvm
         for (i = 1; i < nr_class; i++)
           if (prob_estimates[i] > prob_estimates[prob_max_idx])
             prob_max_idx = i;
-        return this.label[prob_max_idx];
+        return Label[prob_max_idx];
       }
       else
-        return this.Predict(x);
+        return Predict(x);
     }
 
     //from Svm.svm_check_probability_model
     public bool CheckProbabilityModel()
     {
-      return (param.SvmType.IsSVC() && probA != null && probB != null) ||
-             (param.SvmType.IsSVR() && probA != null);
+      return (Param.SvmType.IsSVC() && ProbA != null && ProbB != null) ||
+             (Param.SvmType.IsSVR() && ProbA != null);
     }
-
-
   }
 }

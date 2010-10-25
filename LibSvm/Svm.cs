@@ -539,7 +539,7 @@ namespace LibSvm
             submodel.PredictValues(prob.X[perm[j]], dec_value);
             dec_values[perm[j]] = dec_value[0];
             // ensure +1 -1 order; reason not using CV subroutine
-            dec_values[perm[j]] *= submodel.label[0];
+            dec_values[perm[j]] *= submodel.Label[0];
           }
         }
       }
@@ -648,40 +648,40 @@ namespace LibSvm
     public static SvmModel svm_train(SvmProblem prob, SvmParameter param)
     {
       var model = new SvmModel();
-      model.param = param;
+      model.Param = param;
 
       if (param.SvmType.IsSVROrOneClass())
       {
         // regression or one-class-svm
-        model.nr_class = 2;
-        model.label = null;
-        model.nSV = null;
-        model.probA = null; model.probB = null;
-        model.sv_coef = new double[1][];
+        model.NrClass = 2;
+        model.Label = null;
+        model.SupportVectorsNumbers = null;
+        model.ProbA = null; model.ProbB = null;
+        model.SupportVectorsCoefficients = new double[1][];
 
         if (param.Probability && param.SvmType.IsSVR())
         {
-          model.probA = new double[1];
-          model.probA[0] = svm_svr_probability(prob, param);
+          model.ProbA = new double[1];
+          model.ProbA[0] = svm_svr_probability(prob, param);
         }
 
         DecisionFunction f = svm_train_one(prob, param, 0, 0);
-        model.rho = new double[1];
-        model.rho[0] = f.Rho;
+        model.Rho = new double[1];
+        model.Rho[0] = f.Rho;
 
         int nSV = 0;
         int i;
         for (i = 0; i < prob.Lenght; i++)
           if (Math.Abs(f.Alpha[i]) > 0) ++nSV;
-        model.l = nSV;
-        model.SV = new SvmNode[nSV][];
-        model.sv_coef[0] = new double[nSV];
+        model.TotalSupportVectorsNumber = nSV;
+        model.SupportVectors = new SvmNode[nSV][];
+        model.SupportVectorsCoefficients[0] = new double[nSV];
         int j = 0;
         for (i = 0; i < prob.Lenght; i++)
           if (Math.Abs(f.Alpha[i]) > 0)
           {
-            model.SV[j] = prob.X[i];
-            model.sv_coef[0][j] = f.Alpha[i];
+            model.SupportVectors[j] = prob.X[i];
+            model.SupportVectorsCoefficients[0][j] = f.Alpha[i];
             ++j;
           }
       }
@@ -781,35 +781,35 @@ namespace LibSvm
 
         // build output
 
-        model.nr_class = nr_class;
+        model.NrClass = nr_class;
 
-        model.label = new int[nr_class];
+        model.Label = new int[nr_class];
         for (i = 0; i < nr_class; i++)
-          model.label[i] = label[i];
+          model.Label[i] = label[i];
 
-        model.rho = new double[nr_class * (nr_class - 1) / 2];
+        model.Rho = new double[nr_class * (nr_class - 1) / 2];
         for (i = 0; i < nr_class * (nr_class - 1) / 2; i++)
-          model.rho[i] = f[i].Rho;
+          model.Rho[i] = f[i].Rho;
 
         if (param.Probability)
         {
-          model.probA = new double[nr_class * (nr_class - 1) / 2];
-          model.probB = new double[nr_class * (nr_class - 1) / 2];
+          model.ProbA = new double[nr_class * (nr_class - 1) / 2];
+          model.ProbB = new double[nr_class * (nr_class - 1) / 2];
           for (i = 0; i < nr_class * (nr_class - 1) / 2; i++)
           {
-            model.probA[i] = probA[i];
-            model.probB[i] = probB[i];
+            model.ProbA[i] = probA[i];
+            model.ProbB[i] = probB[i];
           }
         }
         else
         {
-          model.probA = null;
-          model.probB = null;
+          model.ProbA = null;
+          model.ProbB = null;
         }
 
         int nnz = 0;
         int[] nz_count = new int[nr_class];
-        model.nSV = new int[nr_class];
+        model.SupportVectorsNumbers = new int[nr_class];
         for (i = 0; i < nr_class; i++)
         {
           int nSV = 0;
@@ -819,26 +819,26 @@ namespace LibSvm
               ++nSV;
               ++nnz;
             }
-          model.nSV[i] = nSV;
+          model.SupportVectorsNumbers[i] = nSV;
           nz_count[i] = nSV;
         }
 
         Svm.info("Total nSV = " + nnz + "\n");
 
-        model.l = nnz;
-        model.SV = new SvmNode[nnz][];
+        model.TotalSupportVectorsNumber = nnz;
+        model.SupportVectors = new SvmNode[nnz][];
         p = 0;
         for (i = 0; i < l; i++)
-          if (nonzero[i]) model.SV[p++] = x[i];
+          if (nonzero[i]) model.SupportVectors[p++] = x[i];
 
         int[] nz_start = new int[nr_class];
         nz_start[0] = 0;
         for (i = 1; i < nr_class; i++)
           nz_start[i] = nz_start[i - 1] + nz_count[i - 1];
 
-        model.sv_coef = new double[nr_class - 1][];
+        model.SupportVectorsCoefficients = new double[nr_class - 1][];
         for (i = 0; i < nr_class - 1; i++)
-          model.sv_coef[i] = new double[nnz];
+          model.SupportVectorsCoefficients[i] = new double[nnz];
 
         p = 0;
         for (i = 0; i < nr_class; i++)
@@ -857,11 +857,11 @@ namespace LibSvm
             int k;
             for (k = 0; k < ci; k++)
               if (nonzero[si + k])
-                model.sv_coef[j - 1][q++] = f[p].Alpha[k];
+                model.SupportVectorsCoefficients[j - 1][q++] = f[p].Alpha[k];
             q = nz_start[j];
             for (k = 0; k < cj; k++)
               if (nonzero[sj + k])
-                model.sv_coef[i][q++] = f[p].Alpha[ci + k];
+                model.SupportVectorsCoefficients[i][q++] = f[p].Alpha[ci + k];
             ++p;
           }
       }
