@@ -26,11 +26,13 @@ namespace LibSvm
     public override float[] GetQ(int i, int len)
     {
       float[] data;
-      int start, j;
-      if ((start = cache.get_data(i, out data, len)) < len)
+      int start = cache.get_data(i, out data, len);
+      if (start < len)
       {
-        for (j = start; j < len; j++)
+        for (int j = start; j < len; j++)
+        {
           data[j] = (float)(y[i] * y[j] * kernel_function(i, j));
+        }
       }
       return data;
     }
@@ -45,10 +47,7 @@ namespace LibSvm
       cache.swap_index(i, j);
       base.SwapIndex(i, j);
       
-      //do { sbyte _ = y[i]; y[i] = y[j]; y[j] = _; } while (false);
       Common.Swap(ref y[i], ref y[j]);
-
-      //do { double _ = QD[i]; QD[i] = QD[j]; QD[j] = _; } while (false);
       Common.Swap(ref QD[i], ref QD[j]);
     }
   }

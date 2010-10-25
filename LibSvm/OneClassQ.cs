@@ -42,7 +42,6 @@ namespace LibSvm
       _cache.swap_index(i, j);
       base.SwapIndex(i, j);
 
-      //do { double _ = QD[i]; QD[i] = QD[j]; QD[j] = _; } while (false);
       Common.Swap(ref _qd[i], ref _qd[j]);
     }
   }
