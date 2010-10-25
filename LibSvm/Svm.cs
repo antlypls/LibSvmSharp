@@ -526,7 +526,6 @@ namespace LibSvm
           var subparam = (SvmParameter)param.Clone();
           subparam.Probability = false;
           subparam.C = 1.0;
-          subparam.WeightsCount = 2;
           subparam.WeightLabel = new int[2];
           subparam.Weight = new double[2];
           subparam.WeightLabel[0] = +1;
