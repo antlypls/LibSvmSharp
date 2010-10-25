@@ -101,7 +101,7 @@ namespace LibSvm
     //from Svm.svm_get_svr_probability
     public double GetSvrProbability()
     {
-      if ((Param.SvmType.IsSVR()) && ProbA != null)
+      if ((SvmType.IsSVR()) && ProbA != null)
       {
         return ProbA[0];
       }
@@ -112,7 +112,7 @@ namespace LibSvm
     //from Svm.svm_predict_values
     public double PredictValues(SvmNode[] x, double[] dec_values)
     {
-      if (Param.SvmType.IsSVROrOneClass())
+      if (SvmType.IsSVROrOneClass())
       {
         double[] sv_coef = SupportVectorsCoefficients[0];
         double sum = 0;
@@ -121,7 +121,7 @@ namespace LibSvm
         sum -= Rho[0];
         dec_values[0] = sum;
 
-        if (Param.SvmType.IsOneClass())
+        if (SvmType.IsOneClass())
           return (sum > 0) ? 1 : -1;
         else
           return sum;
@@ -186,7 +186,7 @@ namespace LibSvm
     {
       int nr_class = NrClass;
       double[] dec_values;
-      if (Param.SvmType.IsSVROrOneClass())
+      if (SvmType.IsSVROrOneClass())
         dec_values = new double[1];
       else
         dec_values = new double[nr_class * (nr_class - 1) / 2];
@@ -197,7 +197,7 @@ namespace LibSvm
     //from Svm.svm_predict_probability
     public double PredictProbability(SvmNode[] x, double[] prob_estimates)
     {
-      if (Param.SvmType.IsSVC() &&
+      if (SvmType.IsSVC() &&
           ProbA != null && ProbB != null)
       {
         int i;
@@ -236,8 +236,8 @@ namespace LibSvm
     //from Svm.svm_check_probability_model
     public bool CheckProbabilityModel()
     {
-      return (Param.SvmType.IsSVC() && ProbA != null && ProbB != null) ||
-             (Param.SvmType.IsSVR() && ProbA != null);
+      return (SvmType.IsSVC() && ProbA != null && ProbB != null) ||
+             (SvmType.IsSVR() && ProbA != null);
     }
   }
 }
