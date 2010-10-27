@@ -22,10 +22,10 @@ namespace LibSvm
     public override double[] GetQ(int i, int len)
     {
       double[] data;
-      int start, j;
+      int start;
       if ((start = _cache.get_data(i, out data, len)) < len)
       {
-        for (j = start; j < len; j++)
+        for (int j = start; j < len; j++)
           data[j] = (double)kernel_function(i, j);
       }
       return data;

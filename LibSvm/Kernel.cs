@@ -7,7 +7,7 @@ namespace LibSvm
 {
   abstract class Kernel : QMatrix
   {
-    private SvmNode[][] x;
+    private readonly SvmNode[][] x;
     private readonly double[] x_square;
 
     // svm_parameter
@@ -56,7 +56,7 @@ namespace LibSvm
       }
     }
 
-    public Kernel(int l, SvmNode[][] x_, SvmParameter param)
+    protected Kernel(int l, SvmNode[][] x_, SvmParameter param)
     {
       this.kernel_type = param.KernelType;
       this.degree = param.Degree;

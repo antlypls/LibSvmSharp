@@ -282,8 +282,7 @@ namespace LibSvm
       double hiTarget = (prior1 + 1.0) / (prior1 + 2.0);
       double loTarget = 1 / (prior0 + 2.0);
       double[] t = new double[l];
-      double fApB, p, q, h11, h22, h21, g1, g2, det, dA, dB, gd, stepsize;
-      double newA, newB, newf, d1, d2;
+      double fApB;
       int iter;
 
       // Initial Point and Initial Fun Value
@@ -306,11 +305,16 @@ namespace LibSvm
       for (iter = 0; iter < max_iter; iter++)
       {
         // Update Gradient and Hessian (use H' = H + sigma I)
-        h11 = sigma; // numerically ensures strict PD
-        h22 = sigma;
-        h21 = 0.0; g1 = 0.0; g2 = 0.0;
+        double h11 = sigma; // numerically ensures strict PD
+        double h22 = sigma;
+        double h21 = 0.0; 
+        
+        double g1 = 0.0;
+        double g2 = 0.0;
+
         for (int i = 0; i < l; i++)
         {
+          double p, q;
           fApB = dec_values[i] * A + B;
           if (fApB >= 0)
           {
@@ -322,11 +326,11 @@ namespace LibSvm
             p = 1.0 / (1.0 + Math.Exp(fApB));
             q = Math.Exp(fApB) / (1.0 + Math.Exp(fApB));
           }
-          d2 = p * q;
+          double d2 = p * q;
           h11 += dec_values[i] * dec_values[i] * d2;
           h22 += d2;
           h21 += dec_values[i] * d2;
-          d1 = t[i] - p;
+          double d1 = t[i] - p;
           g1 += dec_values[i] * d1;
           g2 += d1;
         }
@@ -336,20 +340,19 @@ namespace LibSvm
           break;
 
         // Finding Newton direction: -inv(H') * g
-        det = h11 * h22 - h21 * h21;
-        dA = -(h22 * g1 - h21 * g2) / det;
-        dB = -(-h21 * g1 + h11 * g2) / det;
-        gd = g1 * dA + g2 * dB;
+        double det = h11 * h22 - h21 * h21;
+        double dA = -(h22 * g1 - h21 * g2) / det;
+        double dB = -(-h21 * g1 + h11 * g2) / det;
+        double gd = g1 * dA + g2 * dB;
 
-
-        stepsize = 1;		// Line Search
+        double stepsize = 1;  // Line Search
         while (stepsize >= min_step)
         {
-          newA = A + stepsize * dA;
-          newB = B + stepsize * dB;
+          double newA = A + stepsize * dA;
+          double newB = B + stepsize * dB;
 
           // New function value
-          newf = 0.0;
+          double newf = 0.0;
           for (int i = 0; i < l; i++)
           {
             fApB = dec_values[i] * newA + newB;

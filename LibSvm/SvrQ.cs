@@ -19,12 +19,13 @@ namespace LibSvm
     public SvrQ(SvmProblem prob, SvmParameter param)
       : base(prob.Lenght, prob.X, param)
     {
-      //super(prob.l, prob.x, param);
       l = prob.Lenght;
       cache = new Cache(l, (long)(param.CacheSize * (1 << 20)));
+      
       QD = new double[2 * l];
       sign = new sbyte[2 * l];
       index = new int[2 * l];
+
       for (int k = 0; k < l; k++)
       {
         sign[k] = 1;
@@ -34,7 +35,7 @@ namespace LibSvm
         QD[k] = kernel_function(k, k);
         QD[k + l] = QD[k];
       }
-      //buffer = new double[2][2*l];
+
       buffer = new double[2][] { new double[2 * l], new double[2 * l] };
 
       next_buffer = 0;
@@ -42,15 +43,9 @@ namespace LibSvm
 
     public override void SwapIndex(int i, int j)
     {
-      //do { sbyte _ = sign[i]; sign[i] = sign[j]; sign[j] = _; } while (false);
       Common.Swap(ref sign[i], ref sign[j]);
-
-      //do { int _ = index[i]; index[i] = index[j]; index[j] = _; } while (false);
       Common.Swap(ref index[i], ref index[j]);
-
-      //do { double _ = QD[i]; QD[i] = QD[j]; QD[j] = _; } while (false);
       Common.Swap(ref QD[i], ref QD[j]);
-
     }
 
     public override double[] GetQ(int i, int len)

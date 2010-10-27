@@ -24,7 +24,7 @@ namespace LibSvm
     }
 
     private readonly head_t[] head;
-    private head_t lru_head;
+    private readonly head_t lru_head;
 
     public Cache(int l_, long size_)
     {
@@ -39,7 +39,7 @@ namespace LibSvm
       lru_head.next = lru_head.prev = lru_head;
     }
 
-    private void lru_delete(head_t h)
+    private static void lru_delete(head_t h)
     {
       // delete from current location
       h.prev.next = h.next;
