@@ -99,7 +99,7 @@ namespace LibSvm
       {
         for (i = _activeSize; i < _length; i++)
         {
-          float[] Q_i = _q.GetQ(i, _activeSize);
+          double[] Q_i = _q.GetQ(i, _activeSize);
           for (j = 0; j < _activeSize; j++)
             if (is_free(j))
               _g[i] += _alpha[j] * Q_i[j];
@@ -110,7 +110,7 @@ namespace LibSvm
         for (i = 0; i < _activeSize; i++)
           if (is_free(i))
           {
-            float[] Q_i = _q.GetQ(i, _length);
+            double[] Q_i = _q.GetQ(i, _length);
             double alpha_i = _alpha[i];
             for (j = _activeSize; j < _length; j++)
               _g[j] += alpha_i * Q_i[j];
@@ -160,7 +160,7 @@ namespace LibSvm
         for (i = 0; i < length; i++)
           if (!is_lower_bound(i))
           {
-            float[] Q_i = Q.GetQ(i, length);
+            double[] Q_i = Q.GetQ(i, length);
             double alpha_i = _alpha[i];
             int j;
             for (j = 0; j < length; j++)
@@ -208,8 +208,8 @@ namespace LibSvm
 
         // update alpha[i] and alpha[j], handle bounds carefully
 
-        float[] Q_i = Q.GetQ(i, _activeSize);
-        float[] Q_j = Q.GetQ(j, _activeSize);
+        double[] Q_i = Q.GetQ(i, _activeSize);
+        double[] Q_j = Q.GetQ(j, _activeSize);
 
         double C_i = GetC(i);
         double C_j = GetC(j);
@@ -417,7 +417,7 @@ namespace LibSvm
         }
 
       int i = Gmax_idx;
-      float[] Q_i = null;
+      double[] Q_i = null;
       if (i != -1) // null Q_i not accessed: Gmax=-INF if i=-1
         Q_i = _q.GetQ(i, _activeSize);
 

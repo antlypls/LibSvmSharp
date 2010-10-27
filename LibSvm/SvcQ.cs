@@ -23,15 +23,15 @@ namespace LibSvm
         QD[i] = kernel_function(i, i);
     }
 
-    public override float[] GetQ(int i, int len)
+    public override double[] GetQ(int i, int len)
     {
-      float[] data;
+      double[] data;
       int start = cache.get_data(i, out data, len);
       if (start < len)
       {
         for (int j = start; j < len; j++)
         {
-          data[j] = (float)(y[i] * y[j] * kernel_function(i, j));
+          data[j] = (double)(y[i] * y[j] * kernel_function(i, j));
         }
       }
       return data;

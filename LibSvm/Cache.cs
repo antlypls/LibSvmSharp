@@ -19,7 +19,7 @@ namespace LibSvm
     private sealed class head_t
     {
       public head_t prev, next;	// a cicular list
-      public float[] data;
+      public double[] data;
       public int len;		// data[0,len) is cached in this entry
     }
 
@@ -58,7 +58,7 @@ namespace LibSvm
     // request data [0,len)
     // return some position p where [p,len) need to be filled
     // (p >= len if nothing needs to be filled)
-    public int get_data(int index, out float[] data, int len)
+    public int get_data(int index, out double[] data, int len)
     {
       head_t h = head[index];
       if (h.len > 0) lru_delete(h);
@@ -77,7 +77,7 @@ namespace LibSvm
         }
 
         // allocate new space
-        float[] new_data = new float[len];
+        double[] new_data = new double[len];
 
         if (h.data != null) Array.Copy(h.data, 0, new_data, 0, h.len);
         h.data = new_data;

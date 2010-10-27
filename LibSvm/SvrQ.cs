@@ -13,7 +13,7 @@ namespace LibSvm
     private readonly sbyte[] sign;
     private readonly int[] index;
     private int next_buffer;
-    private float[][] buffer;
+    private double[][] buffer;
     private readonly double[] QD;
 
     public SvrQ(SvmProblem prob, SvmParameter param)
@@ -34,8 +34,8 @@ namespace LibSvm
         QD[k] = kernel_function(k, k);
         QD[k + l] = QD[k];
       }
-      //buffer = new float[2][2*l];
-      buffer = new float[2][] { new float[2 * l], new float[2 * l] };
+      //buffer = new double[2][2*l];
+      buffer = new double[2][] { new double[2 * l], new double[2 * l] };
 
       next_buffer = 0;
     }
@@ -53,22 +53,22 @@ namespace LibSvm
 
     }
 
-    public override float[] GetQ(int i, int len)
+    public override double[] GetQ(int i, int len)
     {
-      float[] data;
+      double[] data;
       int j, real_i = index[i];
       if (cache.get_data(real_i, out data, l) < l)
       {
         for (j = 0; j < l; j++)
-          data[j] = (float)kernel_function(real_i, j);
+          data[j] = (double)kernel_function(real_i, j);
       }
 
       // reorder and copy
-      float[] buf = buffer[next_buffer];
+      double[] buf = buffer[next_buffer];
       next_buffer = 1 - next_buffer;
       sbyte si = sign[i];
       for (j = 0; j < len; j++)
-        buf[j] = (float)si * sign[j] * data[index[j]];
+        buf[j] = (double)si * sign[j] * data[index[j]];
       return buf;
     }
 
