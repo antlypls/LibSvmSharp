@@ -83,7 +83,6 @@ namespace LibSvm
         h.data = new_data;
         size -= more;
 
-        //do { int _ = h.len; h.len = len; len = _; } while (false);
         Common.Swap(ref h.len, ref len);
       }
 
@@ -100,16 +99,13 @@ namespace LibSvm
       if (head[j].len > 0) lru_delete(head[j]);
 
       Common.Swap(ref head[i].data, ref head[j].data);
-      //do { float[] _ = head[i].data; head[i].data = head[j].data; head[j].data = _; } while (false);
-
       Common.Swap(ref head[i].len, ref head[j].len);
-      //do { int _ = head[i].len; head[i].len = head[j].len; head[j].len = _; } while (false);
+
       if (head[i].len > 0) lru_insert(head[i]);
       if (head[j].len > 0) lru_insert(head[j]);
 
       if (i > j) 
       {
-        //do { int _ = i; i = j; j = _; } while (false);
         Common.Swap(ref i, ref j);
       }
 
@@ -119,7 +115,6 @@ namespace LibSvm
         {
           if (h.len > j)
           {
-            //do { float _ = h.data[i]; h.data[i] = h.data[j]; h.data[j] = _; } while (false);
             Common.Swap(ref h.data[i], ref h.data[j]);
           }
           else

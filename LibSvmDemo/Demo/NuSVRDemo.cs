@@ -36,7 +36,7 @@ namespace LibSvmDemo.Demo
 
       parameters.Check(problem);
 
-      var model = Svm.svm_train(problem, parameters);
+      var model = Svm.Train(problem, parameters);
 
       foreach (var item in DemoHelper.Range(-1.0, 1.01, 0.1))
       {

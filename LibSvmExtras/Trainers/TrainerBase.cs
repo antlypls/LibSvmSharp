@@ -15,7 +15,7 @@ namespace LibSvmExtras.Trainers
     protected SvmModel TrainSvmModel(SvmProblem problem)
     {
       _parameters.Check(problem);
-      var model = LibSvm.Svm.svm_train(problem, _parameters);
+      var model = LibSvm.Svm.Train(problem, _parameters);
       return model;
     }
   }

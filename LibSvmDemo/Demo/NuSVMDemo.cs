@@ -36,7 +36,7 @@ namespace LibSvmDemo.Demo
 
       parameters.Check(problem);
 
-      var model = Svm.svm_train(problem, parameters);
+      var model = Svm.Train(problem, parameters);
 
       var x = new Point(0.9, 0.9).ToSvmNodes();
       var resx = model.Predict(x);

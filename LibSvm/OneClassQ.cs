@@ -13,7 +13,6 @@ namespace LibSvm
     public OneClassQ(SvmProblem prob, SvmParameter param)
       : base(prob.Lenght, prob.X, param)
     {
-      //super(prob.l, prob.x, param);
       _cache = new Cache(prob.Lenght, (long)(param.CacheSize * (1 << 20)));
       _qd = new double[prob.Lenght];
       for (int i = 0; i < prob.Lenght; i++)

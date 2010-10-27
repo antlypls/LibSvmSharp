@@ -16,12 +16,11 @@ namespace LibSvm
 
     #region private_members
 
-
     private static readonly svm_print_interface svm_print_stdout = str => Console.WriteLine(str);
 
     private static svm_print_interface svm_print_string = svm_print_stdout;
 
-    public static void info(String s)
+    internal static void info(String s)
     {
       svm_print_string(s);
     }
@@ -532,7 +531,7 @@ namespace LibSvm
           subparam.WeightLabel[1] = -1;
           subparam.Weight[0] = Cp;
           subparam.Weight[1] = Cn;
-          var submodel = svm_train(subprob, subparam);
+          var submodel = Train(subprob, subparam);
           for (int j = begin; j < end; j++)
           {
             double[] dec_value = new double[1];
@@ -556,7 +555,7 @@ namespace LibSvm
 
       var newparam = (SvmParameter)param.Clone();
       newparam.Probability = false;
-      svm_cross_validation(prob, newparam, nr_fold, ymv);
+      CrossValidation(prob, newparam, nr_fold, ymv);
       for (i = 0; i < prob.Lenght; i++)
       {
         ymv[i] = prob.Y[i] - ymv[i];
@@ -645,7 +644,7 @@ namespace LibSvm
     //
     // Interface functions
     //
-    public static SvmModel svm_train(SvmProblem prob, SvmParameter param)
+    public static SvmModel Train(SvmProblem prob, SvmParameter param)
     {
       var model = new SvmModel();
       model.Param = param;
@@ -869,7 +868,7 @@ namespace LibSvm
     }
 
     // Stratified cross validation
-    public static void svm_cross_validation(SvmProblem prob, SvmParameter param, int nr_fold, double[] target)
+    public static void CrossValidation(SvmProblem prob, SvmParameter param, int nr_fold, double[] target)
     {
       int i;
       int[] fold_start = new int[nr_fold + 1];
@@ -973,7 +972,7 @@ namespace LibSvm
           subprob.Y[k] = prob.Y[perm[j]];
           ++k;
         }
-        var submodel = svm_train(subprob, param);
+        var submodel = Train(subprob, param);
         if (param.Probability && param.SvmType.IsSVC())
         {
           double[] prob_estimates = new double[submodel.NrClass];
@@ -1234,12 +1233,9 @@ namespace LibSvm
     //}
 
 
-    public static void svm_set_print_string_function(svm_print_interface print_func)
+    public static void SetPrintStringFunction(svm_print_interface print_func)
     {
-      if (print_func == null)
-        svm_print_string = svm_print_stdout;
-      else
-        svm_print_string = print_func;
+      svm_print_string = print_func ?? svm_print_stdout;
     }
   }
 }
