@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using LibSvm;
-using LibSvmDemo.Demo;
+using LibSvmExtrasDemo.Demo;
 
-namespace LibSvmDemo
+namespace LibSvmExtrasDemo
 {
   class Program
   {
@@ -16,7 +15,7 @@ namespace LibSvmDemo
       EpsSVRDemo.Run();
       NuSVRDemo.Run();
       OneClassDemo.Run();
-
+      
       Console.ReadKey();
     }
   }
