@@ -8,7 +8,9 @@ namespace LibSvmExtras
 
   public static class SVM
   {
-    public static ITrainer<TIn, TOut> Create<TIn, TOut>(ISvm<TIn, TOut> svm, IKernel kernel) where TOut : struct
+    public static ITrainer<TIn, TOut> Create<TIn, TOut>(ISvm<TIn, TOut> svm, IKernel kernel, 
+      double cacheSize = 128, double tolerance = 0.001, bool shrinking = true, bool probability = false)
+      where TOut : struct
     {
       var svmBase = svm as SvmBase<TIn, TOut>;
       var kernelBase = kernel as KernelBase;
@@ -20,10 +22,10 @@ namespace LibSvmExtras
 
       var parameters = new SvmParameter
       {
-        CacheSize = 128,
-        Eps = 1e-3,
-        Shrinking = true,
-        Probability = false
+        CacheSize = cacheSize,
+        Eps = tolerance,
+        Shrinking = shrinking,
+        Probability = probability
       };
 
       svmBase.FillParameters(parameters);

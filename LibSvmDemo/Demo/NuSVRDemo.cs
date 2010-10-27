@@ -46,6 +46,7 @@ namespace LibSvmDemo.Demo
         Console.WriteLine("x: {0}", item);
         Console.WriteLine("y_real: {0}", yReal);
         Console.WriteLine("y_pred: {0}", yPred);
+        Console.WriteLine();
       }
     }
   }
