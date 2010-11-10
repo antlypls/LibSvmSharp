@@ -23,5 +23,11 @@ namespace LibSvmDemo.Demo
     {
       return new[] { new SvmNode(1, X), new SvmNode(2, Y) };
     }
+
+    public double[] ToArray()
+    {
+      return new[] { X, Y };
+    }
+
   }
 }

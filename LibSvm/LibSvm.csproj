@@ -45,6 +45,7 @@
     <Compile Include="Common.cs" />
     <Compile Include="DecisionFunction.cs" />
     <Compile Include="Kernel.cs" />
+    <Compile Include="Kernels.cs" />
     <Compile Include="KernelType.cs" />
     <Compile Include="OneClassQ.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="SvmProblem.cs" />
     <Compile Include="SvmType.cs" />
     <Compile Include="SvrQ.cs" />
+    <Compile Include="TPattern.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

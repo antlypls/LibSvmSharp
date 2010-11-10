@@ -16,11 +16,10 @@ namespace LibSvmDemo.Demo
 
       var trainData = class1.Concat(class2);
 
-      var parameters = new SvmParameter
+      var parameters = new SvmParameter<double[]>
       {
+        KernelFunc = Kernels.Rbf(0.5),
         SvmType = SvmType.C_SVC,
-        KernelType = KernelType.Rbf,
-        Gamma = 0.5,
         CacheSize = 128,
         C = 1,
         Eps = 1e-3,
@@ -28,21 +27,21 @@ namespace LibSvmDemo.Demo
         Probability = false
       };
 
-      var problem = new SvmProblem
+      var problem = new SvmProblem<double[]>
       {
         Y = trainData.Select(p => (double)p.Label).ToArray(),
-        X = trainData.Select(p => p.ToSvmNodes()).ToArray()
+        X = trainData.Select(p => p.ToArray()).ToArray()
       };
 
       parameters.Check(problem);
 
       var model = Svm.Train(problem, parameters);
 
-      var x = new Point(0.9, 0.9).ToSvmNodes();
+      var x = new Point(0.9, 0.9).ToArray();
       var resx = model.Predict(x);
       Console.WriteLine(resx);
 
-      var y = new Point(0.1, 0.1).ToSvmNodes();
+      var y = new Point(0.1, 0.1).ToArray();
       var resy = model.Predict(y);
       Console.WriteLine(resy);
     }

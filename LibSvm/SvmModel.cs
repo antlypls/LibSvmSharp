@@ -6,10 +6,10 @@ using System.Diagnostics;
 
 namespace LibSvm
 {
-  public class SvmModel
+  public class SvmModel<TPattern>
   {
     // parameterS
-    public SvmParameter Param 
+    public SvmParameter<TPattern> Param 
     {
       get;
       internal set;
@@ -30,7 +30,7 @@ namespace LibSvm
     }			
 
     // SVs (SV[TotalSupportVectorsNumber])
-    public SvmNode[][] SupportVectors
+    public TPattern[] SupportVectors
     {
       get; 
       internal set;
@@ -110,21 +110,24 @@ namespace LibSvm
       throw new ApplicationException("Model doesn't contain information for SVR probability inference\n");
     }
 
-    private double PredictValuesSvrOrOneClass(SvmNode[] x, double[] dec_values)
+    private double PredictValuesSvrOrOneClass(TPattern x, double[] dec_values)
     {
       Debug.Assert(SvmType.IsSVROrOneClass(), "SvmType.IsSVROrOneClass()");
 
       double[] sv_coef = SupportVectorsCoefficients[0];
       double sum = 0;
       for (int i = 0; i < TotalSupportVectorsNumber; i++)
-        sum += sv_coef[i] * Kernel.k_function(x, SupportVectors[i], Param);
+      {
+        //sum += sv_coef[i] * Kernel.k_function(x, SupportVectors[i], Param);
+        sum += sv_coef[i] * Param.KernelFunc(x, SupportVectors[i]);
+      }
       sum -= Rho[0];
       dec_values[0] = sum;
 
       return SvmType.IsOneClass() ? ((sum > 0) ? 1 : -1) : sum;
     }
 
-    private double PredictValuesNonSvrOrOneClass(SvmNode[] x, double[] dec_values)
+    private double PredictValuesNonSvrOrOneClass(TPattern x, double[] dec_values)
     {
       Debug.Assert(!SvmType.IsSVROrOneClass(), "!SvmType.IsSVROrOneClass()");
 
@@ -133,7 +136,10 @@ namespace LibSvm
 
       double[] kvalue = new double[l];
       for (int i = 0; i < l; i++)
-        kvalue[i] = Kernel.k_function(x, SupportVectors[i], Param);
+      {
+        //kvalue[i] = Kernel.k_function(x, SupportVectors[i], Param);
+        kvalue[i] = Param.KernelFunc(x, SupportVectors[i]);
+      }
 
       int[] start = new int[nr_class];
       start[0] = 0;
@@ -180,13 +186,13 @@ namespace LibSvm
     }
 
     //from Svm.svm_predict_values
-    public double PredictValues(SvmNode[] x, double[] dec_values)
+    public double PredictValues(TPattern x, double[] dec_values)
     {
       return SvmType.IsSVROrOneClass() ? PredictValuesSvrOrOneClass(x ,dec_values) : PredictValuesNonSvrOrOneClass(x, dec_values);
     }
 
     //from Svm.svm_predict
-    public double Predict(SvmNode[] x)
+    public double Predict(TPattern x)
     {
       int nr_class = NrClass;
       int length = SvmType.IsSVROrOneClass() ? 1 : nr_class*(nr_class - 1)/2;
@@ -195,7 +201,7 @@ namespace LibSvm
     }
 
     //from Svm.svm_predict_probability
-    public double PredictProbability(SvmNode[] x, double[] prob_estimates)
+    public double PredictProbability(TPattern x, double[] prob_estimates)
     {
       if (!SvmType.IsSVC() || ProbA == null || ProbB == null)
       {

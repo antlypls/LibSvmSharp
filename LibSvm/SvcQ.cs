@@ -6,13 +6,13 @@ using System.Text;
 namespace LibSvm
 {
   //SvcQ
-  class SvcQ : Kernel
+  class SvcQ<TPattern> : Kernel<TPattern>
   {
     private readonly sbyte[] y;
     private readonly Cache cache;
     private readonly double[] QD;
 
-    public SvcQ(SvmProblem prob, SvmParameter param, sbyte[] y_)
+    public SvcQ(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, sbyte[] y_)
       : base(prob.Lenght, prob.X, param)
     {
       //super(prob.l, prob.x, param);

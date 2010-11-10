@@ -6,7 +6,7 @@ using System.Text;
 namespace LibSvm
 {
   //SvrQ
-  class SvrQ : Kernel
+  class SvrQ<TPattern> : Kernel<TPattern>
   {
     private readonly int l;
     private readonly Cache cache;
@@ -16,7 +16,7 @@ namespace LibSvm
     private double[][] buffer;
     private readonly double[] QD;
 
-    public SvrQ(SvmProblem prob, SvmParameter param)
+    public SvrQ(SvmProblem<TPattern> prob, SvmParameter<TPattern> param)
       : base(prob.Lenght, prob.X, param)
     {
       l = prob.Lenght;

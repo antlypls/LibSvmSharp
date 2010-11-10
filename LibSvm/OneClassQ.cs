@@ -5,12 +5,12 @@ using System.Text;
 
 namespace LibSvm
 {
-  class OneClassQ : Kernel
+  class OneClassQ<TPattern> : Kernel<TPattern>
   {
     private readonly Cache _cache;
     private readonly double[] _qd;
 
-    public OneClassQ(SvmProblem prob, SvmParameter param)
+    public OneClassQ(SvmProblem<TPattern> prob, SvmParameter<TPattern> param)
       : base(prob.Lenght, prob.X, param)
     {
       _cache = new Cache(prob.Lenght, (long)(param.CacheSize * (1 << 20)));

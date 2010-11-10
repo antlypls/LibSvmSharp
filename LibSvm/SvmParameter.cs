@@ -6,13 +6,14 @@ using System.Diagnostics;
 
 namespace LibSvm
 {
-  public class SvmParameter : ICloneable
+  public class SvmParameter<TPattern> : ICloneable
   {
+    public Func<TPattern, TPattern, double> KernelFunc;
     public SvmType SvmType;
-    public KernelType KernelType;
-    public int Degree;	            // for poly
-    public double Gamma;	          // for poly/rbf/sigmoid
-    public double Coef0;	          // for poly/sigmoid
+    //public KernelType KernelType;
+    //public int Degree;	            // for poly
+    //public double Gamma;	          // for poly/rbf/sigmoid
+    //public double Coef0;	          // for poly/sigmoid
 
     // these are for training only
     public double CacheSize;    // in MB
@@ -39,7 +40,7 @@ namespace LibSvm
 
     public object Clone()
     {
-      var clone = (SvmParameter)MemberwiseClone();
+      var clone = (SvmParameter<TPattern>)MemberwiseClone();
 
       if (WeightLabel != null)
       {
@@ -55,7 +56,7 @@ namespace LibSvm
     }
 
     // check whether nu-svc is feasible
-    private void IsNuFeasible(SvmProblem prob)
+    private void IsNuFeasible(SvmProblem<TPattern> prob)
     {
       if (!SvmType.IsNuSVC())
       {
@@ -112,17 +113,17 @@ namespace LibSvm
     }
 
     //from Svm.svm_check_parameter
-    public void Check(SvmProblem prob)
+    public void Check(SvmProblem<TPattern> prob)
     {
-      if (Gamma < 0)
-      {
-        throw new ApplicationException("gamma < 0");
-      }
+      //if (Gamma < 0)
+      //{
+      //  throw new ApplicationException("gamma < 0");
+      //}
 
-      if (Degree < 0)
-      {
-        throw new ApplicationException("degree of polynomial kernel < 0");
-      }
+      //if (Degree < 0)
+      //{
+      //  throw new ApplicationException("degree of polynomial kernel < 0");
+      //}
 
       // cache_size,eps,C,nu,p,shrinking
 

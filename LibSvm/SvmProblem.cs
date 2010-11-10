@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace LibSvm
 {
-  public class SvmProblem
+  public class SvmProblem<TPattern>
   {
     public int Lenght
     {
@@ -17,6 +17,6 @@ namespace LibSvm
       }
     }
     public double[] Y;
-    public SvmNode[][] X;
+    public TPattern[] X;
   }
 }

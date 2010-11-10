@@ -25,7 +25,7 @@ namespace LibSvm
       svm_print_string(s);
     }
 
-    private static void solve_c_svc(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si, double Cp, double Cn)
+    private static void solve_c_svc<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, double[] alpha, SolutionInfo si, double Cp, double Cn)
     {
       int l = prob.Lenght;
       double[] minus_ones = new double[l];
@@ -47,7 +47,7 @@ namespace LibSvm
       }
 
       Solver s = new Solver();
-      s.Solve(l, new SvcQ(prob, param, y), minus_ones, y,
+      s.Solve(l, new SvcQ<TPattern>(prob, param, y), minus_ones, y,
         alpha, Cp, Cn, param.Eps, si, param.Shrinking);
 
       double sum_alpha = 0;
@@ -67,7 +67,7 @@ namespace LibSvm
       }
     }
 
-    private static void solve_nu_svc(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
+    private static void solve_nu_svc<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, double[] alpha, SolutionInfo si)
     {
       int i;
       int l = prob.Lenght;
@@ -102,7 +102,7 @@ namespace LibSvm
         zeros[i] = 0;
 
       var s = new SolverNu();
-      s.Solve(l, new SvcQ(prob, param, y), zeros, y,
+      s.Solve(l, new SvcQ<TPattern>(prob, param, y), zeros, y,
         alpha, 1.0, 1.0, param.Eps, si, param.Shrinking);
       double r = si.R;
 
@@ -117,7 +117,7 @@ namespace LibSvm
       si.UpperBoundN = 1 / r;
     }
 
-    private static void solve_one_class(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
+    private static void solve_one_class<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, double[] alpha, SolutionInfo si)
     {
       int l = prob.Lenght;
       double[] zeros = new double[l];
@@ -140,11 +140,11 @@ namespace LibSvm
       }
 
       var s = new Solver();
-      s.Solve(l, new OneClassQ(prob, param), zeros, ones,
+      s.Solve(l, new OneClassQ<TPattern>(prob, param), zeros, ones,
         alpha, 1.0, 1.0, param.Eps, si, param.Shrinking);
     }
 
-    private static void solve_epsilon_svr(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
+    private static void solve_epsilon_svr<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, double[] alpha, SolutionInfo si)
     {
       int l = prob.Lenght;
       double[] alpha2 = new double[2 * l];
@@ -164,7 +164,7 @@ namespace LibSvm
       }
 
       Solver s = new Solver();
-      s.Solve(2 * l, new SvrQ(prob, param), linear_term, y,
+      s.Solve(2 * l, new SvrQ<TPattern>(prob, param), linear_term, y,
         alpha2, param.C, param.C, param.Eps, si, param.Shrinking);
 
       double sum_alpha = 0;
@@ -176,7 +176,7 @@ namespace LibSvm
       Svm.info("nu = " + sum_alpha / (param.C * l) + "\n");
     }
 
-    private static void solve_nu_svr(SvmProblem prob, SvmParameter param, double[] alpha, SolutionInfo si)
+    private static void solve_nu_svr<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, double[] alpha, SolutionInfo si)
     {
       int l = prob.Lenght;
       double C = param.C;
@@ -199,7 +199,7 @@ namespace LibSvm
       }
 
       var s = new SolverNu();
-      s.Solve(2 * l, new SvrQ(prob, param), linear_term, y,
+      s.Solve(2 * l, new SvrQ<TPattern>(prob, param), linear_term, y,
         alpha2, C, C, param.Eps, si, param.Shrinking);
 
       Svm.info("epsilon = " + (-si.R) + "\n");
@@ -208,7 +208,7 @@ namespace LibSvm
         alpha[i] = alpha2[i] - alpha2[i + l];
     }
 
-    private static DecisionFunction svm_train_one(SvmProblem prob, SvmParameter param, double Cp, double Cn)
+    private static DecisionFunction svm_train_one<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, double Cp, double Cn)
     {
       double[] alpha = new double[prob.Lenght];
       var si = new SolutionInfo();
@@ -460,7 +460,7 @@ namespace LibSvm
     }
 
     // Cross-validation decision values for probability estimates
-    private static void svm_binary_svc_probability(SvmProblem prob, SvmParameter param, double Cp, double Cn, double[] probAB)
+    private static void svm_binary_svc_probability<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, double Cp, double Cn, double[] probAB)
     {
       //int i;
       int nr_fold = 5;
@@ -485,9 +485,9 @@ namespace LibSvm
         //int j;
 
         var subprobLenght = prob.Lenght - (end - begin);
-        var subprob = new SvmProblem
+        var subprob = new SvmProblem<TPattern>
         {
-          X = new SvmNode[subprobLenght][],
+          X = new TPattern[subprobLenght],
           Y = new double[subprobLenght]
         };
 
@@ -525,7 +525,7 @@ namespace LibSvm
             dec_values[perm[j]] = -1;
         else
         {
-          var subparam = (SvmParameter)param.Clone();
+          var subparam = (SvmParameter<TPattern>)param.Clone();
           subparam.Probability = false;
           subparam.C = 1.0;
           subparam.WeightLabel = new int[2];
@@ -549,14 +549,14 @@ namespace LibSvm
     }
 
     // Return parameter of a Laplace distribution 
-    private static double svm_svr_probability(SvmProblem prob, SvmParameter param)
+    private static double svm_svr_probability<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param)
     {
       int i;
       int nr_fold = 5;
       double[] ymv = new double[prob.Lenght];
       double mae = 0;
 
-      var newparam = (SvmParameter)param.Clone();
+      var newparam = (SvmParameter<TPattern>)param.Clone();
       newparam.Probability = false;
       CrossValidation(prob, newparam, nr_fold, ymv);
       for (i = 0; i < prob.Lenght; i++)
@@ -580,7 +580,7 @@ namespace LibSvm
 
     // label: label name, start: begin of each class, count: #data of classes, perm: indices to the original data
     // perm, length l, must be allocated before calling this subroutine
-    private static void svm_group_classes(SvmProblem prob, out int nr_class_ret, out int[] label_ret, out int[] start_ret, out int[] count_ret, int[] perm)
+    private static void svm_group_classes<TPattern>(SvmProblem<TPattern> prob, out int nr_class_ret, out int[] label_ret, out int[] start_ret, out int[] count_ret, int[] perm)
     {
       int l = prob.Lenght;
       int max_nr_class = 16;
@@ -647,9 +647,9 @@ namespace LibSvm
     //
     // Interface functions
     //
-    public static SvmModel Train(SvmProblem prob, SvmParameter param)
+    public static SvmModel<TPattern> Train<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param)
     {
-      var model = new SvmModel();
+      var model = new SvmModel<TPattern>();
       model.Param = param;
 
       if (param.SvmType.IsSVROrOneClass())
@@ -676,7 +676,7 @@ namespace LibSvm
         for (i = 0; i < prob.Lenght; i++)
           if (Math.Abs(f.Alpha[i]) > 0) ++nSV;
         model.TotalSupportVectorsNumber = nSV;
-        model.SupportVectors = new SvmNode[nSV][];
+        model.SupportVectors = new TPattern[nSV];
         model.SupportVectorsCoefficients[0] = new double[nSV];
         int j = 0;
         for (i = 0; i < prob.Lenght; i++)
@@ -701,7 +701,7 @@ namespace LibSvm
         // group training data of the same class
         svm_group_classes(prob, out nr_class, out label, out start, out count, perm);
 
-        SvmNode[][] x = new SvmNode[l][];
+        TPattern[] x = new TPattern[l];
         int i;
         for (i = 0; i < l; i++)
           x[i] = prob.X[perm[i]];
@@ -745,9 +745,9 @@ namespace LibSvm
             int si = start[i], sj = start[j];
             int ci = count[i], cj = count[j];
             var subprobLenght = ci + cj;
-            var sub_prob = new SvmProblem
+            var sub_prob = new SvmProblem<TPattern>
             {
-              X = new SvmNode[subprobLenght][],
+              X = new TPattern[subprobLenght],
               Y = new double[subprobLenght]
             };
 
@@ -828,7 +828,7 @@ namespace LibSvm
         Svm.info("Total nSV = " + nnz + "\n");
 
         model.TotalSupportVectorsNumber = nnz;
-        model.SupportVectors = new SvmNode[nnz][];
+        model.SupportVectors = new TPattern[nnz];
         p = 0;
         for (i = 0; i < l; i++)
           if (nonzero[i]) model.SupportVectors[p++] = x[i];
@@ -871,7 +871,7 @@ namespace LibSvm
     }
 
     // Stratified cross validation
-    public static void CrossValidation(SvmProblem prob, SvmParameter param, int nr_fold, double[] target)
+    public static void CrossValidation<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, int nr_fold, double[] target)
     {
       int i;
       int[] fold_start = new int[nr_fold + 1];
@@ -956,9 +956,9 @@ namespace LibSvm
         int j, k;
         
         var subprobLenght = l - (end - begin);
-        var subprob = new SvmProblem
+        var subprob = new SvmProblem<TPattern>
         {
-          X = new SvmNode[subprobLenght][],
+          X = new TPattern[subprobLenght],
           Y = new double[subprobLenght]
         };
 
