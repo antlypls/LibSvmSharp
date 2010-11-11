@@ -12,10 +12,10 @@ namespace LibSvmDemo
     static void Main(string[] args)
     {
       CSVMDemo.Run();
-      //NuSVMDemo.Run();
-      //EpsSVRDemo.Run();
-      //NuSVRDemo.Run();
-      //OneClassDemo.Run();
+      NuSVMDemo.Run();
+      EpsSVRDemo.Run();
+      NuSVRDemo.Run();
+      OneClassDemo.Run();
 
       Console.ReadKey();
     }

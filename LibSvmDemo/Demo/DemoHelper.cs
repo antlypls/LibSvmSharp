@@ -13,6 +13,11 @@ namespace LibSvmDemo.Demo
       return new[] { new SvmNode(1, x) };
     }
 
+    public static double[] ToArray(this double x)
+    {
+      return new[] { x };
+    }
+
     public static double Sinc(double x)
     {
       return x == 0 ? 1 : Math.Sin(x) / x;
