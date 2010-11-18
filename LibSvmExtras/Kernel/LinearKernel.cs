@@ -3,11 +3,11 @@ using LibSvm;
 
 namespace LibSvmExtras.Kernel
 {
-  public sealed class LinearKernel : KernelBase
+  public sealed class LinearKernel : KernelBase<double[]>
   {
-    internal override void FillParameters(SvmParameter param)
+    internal override void FillParameters(SvmParameter<double[]> param)
     {
-      param.KernelType = KernelType.Linear;
+      param.KernelFunc = Kernels.Linear();
     }
   }
 }

@@ -3,7 +3,7 @@ using LibSvm;
 
 namespace LibSvmExtras.Kernel
 {
-  public sealed class RbfKernel : KernelBase
+  public sealed class RbfKernel : KernelBase<double[]>
   {
     public double Gamma 
     {
@@ -16,10 +16,9 @@ namespace LibSvmExtras.Kernel
       Gamma = gamma;
     }
 
-    internal override void FillParameters(SvmParameter param)
+    internal override void FillParameters(SvmParameter<double[]> param)
     {
-      param.KernelType = KernelType.Rbf;
-      param.Gamma = Gamma;
+      param.KernelFunc = Kernels.Rbf(Gamma);
     }
   }
 }

@@ -18,7 +18,7 @@ namespace LibSvmExtrasDemo.Demo
 
       var trainData = class1.Concat(class2);
 
-      var trainer = SVM.Create(new NuSupportVectorClassification(0.1), new RbfKernel(0.5));
+      var trainer = SVM.Create(new NuSupportVectorClassification<double[]>(0.1), new RbfKernel(0.5));
       var model = trainer.Train(trainData.Select(p => Tuple.Create(p.ToArray(), p.Label)));
 
       var x = new Point(0.9, 0.9).ToArray();

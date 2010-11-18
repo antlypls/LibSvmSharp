@@ -6,24 +6,24 @@ using LibSvmExtras.Models;
 
 namespace LibSvmExtras.Trainers
 {
-  internal class SvrTrainer : TrainerBase, ITrainer<Tuple<double[], double>, double>
+  internal class SvrTrainer<TPattern> : TrainerBase<TPattern>, ITrainer<Tuple<TPattern, double>, double, TPattern>
   {
-    internal SvrTrainer(SvmParameter parameters)
+    internal SvrTrainer(SvmParameter<TPattern> parameters)
       : base(parameters)
     { 
     
     }
-    public IModel<double> Train(IEnumerable<Tuple<double[], double>> data)
+    public IModel<TPattern, double> Train(IEnumerable<Tuple<TPattern, double>> data)
     {
-      var problem = new SvmProblem
+      var problem = new SvmProblem<TPattern>
       {
         Y = data.Select(p => p.Item2).ToArray(),
-        X = data.Select(p => p.Item1.ToSvmNodes()).ToArray()
+        X = data.Select(p => p.Item1).ToArray()
       };
 
       var model = TrainSvmModel(problem);
 
-      return new RegressionModel(model);
+      return new RegressionModel<TPattern>(model);
     }
   }
 }

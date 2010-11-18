@@ -15,7 +15,7 @@ namespace LibSvmExtrasDemo.Demo
       Console.WriteLine("OneClassDemo");
       var trainData = DemoHelper.GenerateClass(0, 0.5, 0.5, 100);
 
-      var trainer = SVM.Create(new OneClass(0.5), new RbfKernel(0.5));
+      var trainer = SVM.Create(new OneClass<double[]>(0.5), new RbfKernel(0.5));
       var model = trainer.Train(trainData.Select(p => p.ToArray()));
 
       var x = new Point(0.9, 0.9).ToArray();

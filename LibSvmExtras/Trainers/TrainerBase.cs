@@ -3,16 +3,16 @@ using LibSvm;
 
 namespace LibSvmExtras.Trainers
 {
-  internal class TrainerBase
+  internal class TrainerBase<TPattern>
   {
-    private readonly SvmParameter _parameters;
+    private readonly SvmParameter<TPattern> _parameters;
 
-    protected TrainerBase(SvmParameter parameters)
+    protected TrainerBase(SvmParameter<TPattern> parameters)
     {
       _parameters = parameters;
     }
 
-    protected SvmModel TrainSvmModel(SvmProblem problem)
+    protected SvmModel<TPattern> TrainSvmModel(SvmProblem<TPattern> problem)
     {
       _parameters.Check(problem);
       var model = LibSvm.Svm.Train(problem, _parameters);

@@ -4,7 +4,7 @@ using LibSvmExtras.Trainers;
 
 namespace LibSvmExtras.Svm
 {
-  public sealed class OneClass : SvmBase<double[], bool>
+  public sealed class OneClass<TPattern> : SvmBase<TPattern, bool, TPattern>
   {
     public double Nu
     {
@@ -17,15 +17,15 @@ namespace LibSvmExtras.Svm
       Nu = nu;
     }
 
-    internal override void FillParameters(SvmParameter param)
+    internal override void FillParameters(SvmParameter<TPattern> param)
     {
       param.SvmType = SvmType.ONE_CLASS;
       param.Nu = Nu;
     }
 
-    internal override ITrainer<double[], bool> GetTrainer(SvmParameter param)
+    internal override ITrainer<TPattern, bool, TPattern> GetTrainer(SvmParameter<TPattern> param)
     {
-      return new OneClassTrainer(param);
+      return new OneClassTrainer<TPattern>(param);
     }
   }
 }

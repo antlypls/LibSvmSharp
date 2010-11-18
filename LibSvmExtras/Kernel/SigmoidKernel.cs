@@ -3,7 +3,7 @@ using LibSvm;
 
 namespace LibSvmExtras.Kernel
 {
-  public sealed class SigmoidKernel : KernelBase
+  public sealed class SigmoidKernel : KernelBase<double[]>
   {
     public double Gamma
     {
@@ -23,11 +23,9 @@ namespace LibSvmExtras.Kernel
       R = r;
     }
 
-    internal override void FillParameters(SvmParameter param)
+    internal override void FillParameters(SvmParameter<double[]> param)
     {
-      param.KernelType = KernelType.Sigmoid;
-      param.Gamma = Gamma;
-      param.Coef0 = R;
+      param.KernelFunc = Kernels.Sigmoid(Gamma, R);
     }
   }
 }

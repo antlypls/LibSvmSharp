@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace LibSvmExtras
 {
-  public interface ITrainer<TIn, TOut> where TOut:struct
+  public interface ITrainer<TIn, TOut, TPattern> where TOut : struct
   {
-    IModel<TOut> Train(IEnumerable<TIn> data);
+    IModel<TPattern, TOut> Train(IEnumerable<TIn> data);
   }
 }

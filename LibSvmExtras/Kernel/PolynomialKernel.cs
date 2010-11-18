@@ -3,7 +3,7 @@ using LibSvm;
 
 namespace LibSvmExtras.Kernel
 {
-  public sealed class PolynomialKernel : KernelBase
+  public sealed class PolynomialKernel : KernelBase<double[]>
   {
     public double Gamma
     {
@@ -30,12 +30,9 @@ namespace LibSvmExtras.Kernel
       R = r;
     }
 
-    internal override void FillParameters(SvmParameter param)
+    internal override void FillParameters(SvmParameter<double[]> param)
     {
-      param.KernelType = KernelType.Poly;
-      param.Gamma = Gamma;
-      param.Degree = Degree;
-      param.Coef0 = R;
+      param.KernelFunc = Kernels.Polynomial(Gamma, Degree, R);
     }
   }
 }

@@ -4,7 +4,7 @@ using LibSvmExtras.Trainers;
 
 namespace LibSvmExtras.Svm
 {
-  public sealed class CSupportVectorClassification : SvmBase<Tuple<double[], int>, int>
+  public sealed class CSupportVectorClassification<TPattern> : SvmBase<Tuple<TPattern, int>, int, TPattern>
   {
     public double C
     {
@@ -17,15 +17,15 @@ namespace LibSvmExtras.Svm
       C = c;
     }
 
-    internal override void FillParameters(SvmParameter param)
+    internal override void FillParameters(SvmParameter<TPattern> param)
     {
       param.SvmType = SvmType.C_SVC;
       param.C = C;
     }
 
-    internal override ITrainer<Tuple<double[], int>, int> GetTrainer(SvmParameter param)
+    internal override ITrainer<Tuple<TPattern, int>, int, TPattern> GetTrainer(SvmParameter<TPattern> param)
     {
-      return new SvcTrainer(param);
+      return new SvcTrainer<TPattern>(param);
     }
   }
 }

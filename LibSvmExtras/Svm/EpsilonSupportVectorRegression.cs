@@ -4,7 +4,7 @@ using LibSvmExtras.Trainers;
 
 namespace LibSvmExtras.Svm
 {
-  public sealed class EpsilonSupportVectorRegression : SvmBase<Tuple<double[], double>, double>
+  public sealed class EpsilonSupportVectorRegression<TPattern> : SvmBase<Tuple<TPattern, double>, double, TPattern>
   {
     public double C
     {
@@ -24,16 +24,16 @@ namespace LibSvmExtras.Svm
       Eps = eps;
     }
 
-    internal override void FillParameters(SvmParameter param)
+    internal override void FillParameters(SvmParameter<TPattern> param)
     {
       param.SvmType = SvmType.EPSILON_SVR;
       param.C = C;
       param.P = Eps;
     }
 
-    internal override ITrainer<Tuple<double[], double>, double> GetTrainer(SvmParameter param)
+    internal override ITrainer<Tuple<TPattern, double>, double, TPattern> GetTrainer(SvmParameter<TPattern> param)
     {
-      return new SvrTrainer(param);
+      return new SvrTrainer<TPattern>(param);
     }
   }
 }

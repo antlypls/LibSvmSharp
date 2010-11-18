@@ -3,8 +3,8 @@ using LibSvm;
 
 namespace LibSvmExtras.Kernel
 {
-  public abstract class KernelBase : IKernel
+  public abstract class KernelBase<TPattern> : IKernel<TPattern>
   {
-    internal abstract void FillParameters(SvmParameter param);
+    internal abstract void FillParameters(SvmParameter<TPattern> param);
   }
 }

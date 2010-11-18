@@ -3,15 +3,15 @@ using LibSvm;
 
 namespace LibSvmExtras.Models
 {
-  internal class ClassificationModel : ModelBase, IModel<int>
+  internal class ClassificationModel<TPattern> : ModelBase<TPattern>, IModel<TPattern, int>
   {
-    public ClassificationModel(SvmModel model)
+    public ClassificationModel(SvmModel<TPattern> model)
       : base(model)
     { 
     
     }
 
-    public int Predict(double[] point)
+    public int Predict(TPattern point)
     {
       return (int)PredictInternal(point);
     }

@@ -6,25 +6,25 @@ using LibSvmExtras.Models;
 
 namespace LibSvmExtras.Trainers
 {
-  internal class OneClassTrainer : TrainerBase, ITrainer<double[], bool>
+  internal class OneClassTrainer<TPattern> : TrainerBase<TPattern>, ITrainer<TPattern, bool, TPattern>
   {
-    internal OneClassTrainer(SvmParameter parameters)
+    internal OneClassTrainer(SvmParameter<TPattern> parameters)
       : base(parameters)
     {
 
     }
 
-    public IModel<bool> Train(IEnumerable<double[]> data)
+    public IModel<TPattern, bool> Train(IEnumerable<TPattern> data)
     {
-      var problem = new SvmProblem
+      var problem = new SvmProblem<TPattern>
       {
         Y = data.Select(p => 1.0).ToArray(),
-        X = data.Select(p => p.ToSvmNodes()).ToArray()
+        X = data.Select(p => p).ToArray()
       };
 
       var model = TrainSvmModel(problem);
 
-      return new OneClassModel(model);
+      return new OneClassModel<TPattern>(model);
     }
   }
 }

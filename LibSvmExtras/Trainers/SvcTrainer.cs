@@ -6,25 +6,25 @@ using LibSvmExtras.Models;
 
 namespace LibSvmExtras.Trainers
 {
-  internal class SvcTrainer : TrainerBase, ITrainer<Tuple<double[], int>, int>
+  internal class SvcTrainer<TPattern> : TrainerBase<TPattern>, ITrainer<Tuple<TPattern, int>, int, TPattern>
   {
-    internal SvcTrainer(SvmParameter parameters)
+    internal SvcTrainer(SvmParameter<TPattern> parameters)
       : base(parameters)
     { 
     
     }
 
-    public IModel<int> Train(IEnumerable<Tuple<double[], int>> data)
+    public IModel<TPattern, int> Train(IEnumerable<Tuple<TPattern, int>> data)
     {
-      var problem = new SvmProblem
+      var problem = new SvmProblem<TPattern>
       {
         Y = data.Select(p => (double)p.Item2).ToArray(),
-        X = data.Select(p => p.Item1.ToSvmNodes()).ToArray()
+        X = data.Select(p => p.Item1).ToArray()
       };
 
       var model = TrainSvmModel(problem);
 
-      return new ClassificationModel(model);
+      return new ClassificationModel<TPattern>(model);
     }
   }
 }

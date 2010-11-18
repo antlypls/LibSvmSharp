@@ -17,7 +17,7 @@ namespace LibSvmExtrasDemo.Demo
 
       var trainData = DemoHelper.Range(-10.0, 10.01, 0.1).Select(val => new { X = val, Y = DemoHelper.Sinc(val) + (rnd.NextDouble() - 0.5) / 4 });
 
-      var trainer = SVM.Create(new NuSupportVectorRegression(1, 0.1), new RbfKernel(0.5));
+      var trainer = SVM.Create(new NuSupportVectorRegression<double[]>(1, 0.1), new RbfKernel(0.5));
       var model = trainer.Train(trainData.Select(p => Tuple.Create(p.X.ToArray(), p.Y)));
 
       foreach (var item in DemoHelper.Range(-1.0, 1.01, 0.1))

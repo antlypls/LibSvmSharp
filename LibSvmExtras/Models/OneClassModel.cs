@@ -3,15 +3,15 @@ using LibSvm;
 
 namespace LibSvmExtras.Models
 {
-  internal class OneClassModel : ModelBase, IModel<bool>
+  internal class OneClassModel<TPattern> : ModelBase<TPattern>, IModel<TPattern, bool>
   {
-    public OneClassModel(SvmModel model)
+    public OneClassModel(SvmModel<TPattern> model)
       : base(model)
     {
 
     }
 
-    public bool Predict(double[] point)
+    public bool Predict(TPattern point)
     {
       var res = PredictInternal(point);
       return  res > 0;

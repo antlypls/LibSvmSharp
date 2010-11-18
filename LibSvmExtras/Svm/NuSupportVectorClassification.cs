@@ -4,7 +4,7 @@ using LibSvmExtras.Trainers;
 
 namespace LibSvmExtras.Svm
 {
-  public sealed class NuSupportVectorClassification : SvmBase<Tuple<double[], int>, int>
+  public sealed class NuSupportVectorClassification<TPattern> : SvmBase<Tuple<TPattern, int>, int, TPattern>
   {
     public double Nu
     {
@@ -17,15 +17,15 @@ namespace LibSvmExtras.Svm
       Nu = nu;
     }
 
-    internal override void FillParameters(SvmParameter param)
+    internal override void FillParameters(SvmParameter<TPattern> param)
     {
       param.SvmType = SvmType.NU_SVC;
       param.Nu = Nu;
     }
 
-    internal override ITrainer<Tuple<double[], int>, int> GetTrainer(SvmParameter param)
+    internal override ITrainer<Tuple<TPattern, int>, int, TPattern> GetTrainer(SvmParameter<TPattern> param)
     {
-      return new SvcTrainer(param);
+      return new SvcTrainer<TPattern>(param);
     }
   }
 }
