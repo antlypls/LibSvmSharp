@@ -1,6 +1,17 @@
 h1. LibSvmSharp
 
-LibSVMSharp is a port of java version of "libsvm":http://www.csie.ntu.edu.tw/~cjlin/libsvm/ to C#. This port based on libsvm 3.0.
+LibSVMSharp is a C# port of java version of "libsvm":http://www.csie.ntu.edu.tw/~cjlin/libsvm/, library for several "SVM":http://en.wikipedia.org/wiki/Support_vector_machine methods. The LibSvmSharp also provides F# bindings.
 
-The work is just started.
+For more information about SVM, see original libsvm "practical guide":http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf and "implementation details":http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf.
 
+Current LibSvmSharp version is based on libsvm 3.0.
+
+h2. Solution Details
+
+The Solution consists of 6 projects, 3 libraries and 3 demos for each library:
+* *LibSvm* -- main LibSvmSharp project. It's a port of original libsvm java source (with some modifications and refactorings to make it looks in C# style).
+* *LibSvmDemo* -- demo project for LibSvm assembly.
+* *LibSvmExtras* -- contains some helpers, provides more easy way to create and configure SVMs.
+* *LibSvmExtrasDemo* -- demo project for LibSvmExtras assembly.
+* *LibSvmFs* -- F# wrapper for LibSvm.
+* *LibSvmFsDemo* -- demo project for LibSvmFs.
