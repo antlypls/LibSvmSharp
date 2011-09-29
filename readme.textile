@@ -15,3 +15,10 @@ The Solution consists of 6 projects, 3 libraries and 3 demos for each library:
 * *LibSvmExtrasDemo* -- demo project for LibSvmExtras assembly.
 * *LibSvmFs* -- F# wrapper for LibSvm.
 * *LibSvmFsDemo* -- demo project for LibSvmFs.
+
+h2. Contributors
+
+Kudos goes to:
+* "Samuel Jack":https://github.com/samueldjack -- implemented Svm.LoadModel method
+
+
