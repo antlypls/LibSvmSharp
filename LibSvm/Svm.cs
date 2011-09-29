@@ -289,7 +289,7 @@ namespace LibSvm
       int iter;
 
       // Initial Point and Initial Fun Value
-      double A = 0.0; 
+      double A = 0.0;
       double B = Math.Log((prior0 + 1.0) / (prior1 + 1.0));
 
       double fval = 0.0;
@@ -310,8 +310,8 @@ namespace LibSvm
         // Update Gradient and Hessian (use H' = H + sigma I)
         double h11 = sigma; // numerically ensures strict PD
         double h22 = sigma;
-        double h21 = 0.0; 
-        
+        double h21 = 0.0;
+
         double g1 = 0.0;
         double g2 = 0.0;
 
@@ -473,7 +473,7 @@ namespace LibSvm
       // random shuffle
       var rnd = new Random();
       for (int i = 0; i < prob.Lenght; i++) perm[i] = i;
-      
+
       for (int i = 0; i < prob.Lenght; i++)
       {
         int j = i + (int)(rnd.NextDouble() * (prob.Lenght - i));
@@ -510,7 +510,7 @@ namespace LibSvm
         }
 
         int p_count = 0, n_count = 0;
-        
+
         for (int j = 0; j < k; j++)
           if (subprob.Y[j] > 0)
             p_count++;
@@ -744,7 +744,7 @@ namespace LibSvm
         for (i = 0; i < nr_class; i++)
           for (int j = i + 1; j < nr_class; j++)
           {
-            
+
             int si = start[i], sj = start[j];
             int ci = count[i], cj = count[j];
             var subprobLenght = ci + cj;
@@ -957,7 +957,7 @@ namespace LibSvm
         int begin = fold_start[i];
         int end = fold_start[i + 1];
         int j, k;
-        
+
         var subprobLenght = l - (end - begin);
         var subprob = new SvmProblem
         {
@@ -1098,125 +1098,124 @@ namespace LibSvm
 
     public static SvmModel LoadModel(StreamReader fp)
     {
-        // read parameters
+      // read parameters
 
-        SvmModel model = new SvmModel();
-        SvmParameter param = new SvmParameter();
-        model.Param = param;
-        model.Rho = null;
-        model.ProbA = null;
-        model.ProbB = null;
-        model.Label = null;
-        model.SupportVectors = null;
+      SvmModel model = new SvmModel();
+      SvmParameter param = new SvmParameter();
+      model.Param = param;
+      model.Rho = null;
+      model.ProbA = null;
+      model.ProbB = null;
+      model.Label = null;
+      model.SupportVectors = null;
 
-        while (true)
+      while (true)
+      {
+        String cmd = fp.ReadLine();
+        String arg = cmd.Substring(cmd.IndexOf(' ') + 1);
+
+        if (cmd.StartsWith("svm_type"))
         {
-            String cmd = fp.ReadLine();
-            String arg = cmd.Substring(cmd.IndexOf(' ') + 1);
-
-            if (cmd.StartsWith("svm_type"))
-            {
-                param.SvmType = (SvmType) Enum.Parse(typeof (SvmType), arg, ignoreCase:true);
-            }
-            else if (cmd.StartsWith("kernel_type"))
-            {
-                param.KernelType = (KernelType)Enum.Parse(typeof(KernelType), arg, ignoreCase: true);
-            }
-            else if (cmd.StartsWith("degree"))
-                param.Degree = atoi(arg);
-            else if (cmd.StartsWith("gamma"))
-                param.Gamma = atof(arg);
-            else if (cmd.StartsWith("coef0"))
-                param.Coef0 = atof(arg);
-            else if (cmd.StartsWith("nr_class"))
-                model.NrClass = atoi(arg);
-            else if (cmd.StartsWith("total_sv"))
-                model.TotalSupportVectorsNumber = atoi(arg);
-            else if (cmd.StartsWith("rho"))
-            {
-                int n = model.NrClass*(model.NrClass - 1)/2;
-                model.Rho = new double[n];
-                StringTokenizer st = new StringTokenizer(arg);
-                for (int i = 0; i < n; i++)
-                    model.Rho[i] = atof(st.NextToken());
-            }
-            else if (cmd.StartsWith("label"))
-            {
-                int n = model.NrClass;
-                model.Label = new int[n];
-                StringTokenizer st = new StringTokenizer(arg);
-                for (int i = 0; i < n; i++)
-                    model.Label[i] = atoi(st.NextToken());
-            }
-            else if (cmd.StartsWith("probA"))
-            {
-                int n = model.NrClass*(model.NrClass - 1)/2;
-                model.ProbA = new double[n];
-                StringTokenizer st = new StringTokenizer(arg);
-                for (int i = 0; i < n; i++)
-                    model.ProbA[i] = atof(st.NextToken());
-            }
-            else if (cmd.StartsWith("probB"))
-            {
-                int n = model.NrClass*(model.NrClass - 1)/2;
-                model.ProbB = new double[n];
-                StringTokenizer st = new StringTokenizer(arg);
-                for (int i = 0; i < n; i++)
-                    model.ProbB[i] = atof(st.NextToken());
-            }
-            else if (cmd.StartsWith("nr_sv"))
-            {
-                int n = model.NrClass;
-                model.SupportVectorsNumbers = new int[n];
-                StringTokenizer st = new StringTokenizer(arg);
-                for (int i = 0; i < n; i++)
-                    model.SupportVectorsNumbers[i] = atoi(st.NextToken());
-            }
-            else if (cmd.StartsWith("SV"))
-            {
-                break;
-            }
-            else
-            {
-                Debug.WriteLine("unknown text in model file: [" + cmd + "]\n");
-                return null;
-            }
+          param.SvmType = (SvmType)Enum.Parse(typeof(SvmType), arg, ignoreCase: true);
         }
-
-        //  // read sv_coef and SV
-
-        int m = model.NrClass - 1;
-        int l = model.TotalSupportVectorsNumber;
-        model.SupportVectorsCoefficients = new double[m][];
-        for (int i = 0; i < m; i++)
+        else if (cmd.StartsWith("kernel_type"))
         {
-            model.SupportVectorsCoefficients[i] = new double[l];
+          param.KernelType = (KernelType)Enum.Parse(typeof(KernelType), arg, ignoreCase: true);
         }
-        model.SupportVectors = new SvmNode[l][];
-
-        for (int i = 0; i < l; i++)
+        else if (cmd.StartsWith("degree"))
+          param.Degree = atoi(arg);
+        else if (cmd.StartsWith("gamma"))
+          param.Gamma = atof(arg);
+        else if (cmd.StartsWith("coef0"))
+          param.Coef0 = atof(arg);
+        else if (cmd.StartsWith("nr_class"))
+          model.NrClass = atoi(arg);
+        else if (cmd.StartsWith("total_sv"))
+          model.TotalSupportVectorsNumber = atoi(arg);
+        else if (cmd.StartsWith("rho"))
         {
-            String line = fp.ReadLine();
-            var st = new StringTokenizer(line, new[] {' ', '\t', '\n', '\r', '\f', ':'});
-
-            for (int k = 0; k < m; k++)
-                model.SupportVectorsCoefficients[k][i] = atof(st.NextToken());
-            int n = st.CountTokens()/2;
-            model.SupportVectors[i] = new SvmNode[n];
-            for (int j = 0; j < n; j++)
-            {
-                model.SupportVectors[i][j] = new SvmNode(atoi(st.NextToken()), atof(st.NextToken()));
-            }
+          int n = model.NrClass * (model.NrClass - 1) / 2;
+          model.Rho = new double[n];
+          StringTokenizer st = new StringTokenizer(arg);
+          for (int i = 0; i < n; i++)
+            model.Rho[i] = atof(st.NextToken());
         }
+        else if (cmd.StartsWith("label"))
+        {
+          int n = model.NrClass;
+          model.Label = new int[n];
+          StringTokenizer st = new StringTokenizer(arg);
+          for (int i = 0; i < n; i++)
+            model.Label[i] = atoi(st.NextToken());
+        }
+        else if (cmd.StartsWith("probA"))
+        {
+          int n = model.NrClass * (model.NrClass - 1) / 2;
+          model.ProbA = new double[n];
+          StringTokenizer st = new StringTokenizer(arg);
+          for (int i = 0; i < n; i++)
+            model.ProbA[i] = atof(st.NextToken());
+        }
+        else if (cmd.StartsWith("probB"))
+        {
+          int n = model.NrClass * (model.NrClass - 1) / 2;
+          model.ProbB = new double[n];
+          StringTokenizer st = new StringTokenizer(arg);
+          for (int i = 0; i < n; i++)
+            model.ProbB[i] = atof(st.NextToken());
+        }
+        else if (cmd.StartsWith("nr_sv"))
+        {
+          int n = model.NrClass;
+          model.SupportVectorsNumbers = new int[n];
+          StringTokenizer st = new StringTokenizer(arg);
+          for (int i = 0; i < n; i++)
+            model.SupportVectorsNumbers[i] = atoi(st.NextToken());
+        }
+        else if (cmd.StartsWith("SV"))
+        {
+          break;
+        }
+        else
+        {
+          Debug.WriteLine("unknown text in model file: [" + cmd + "]\n");
+          return null;
+        }
+      }
 
-        fp.Close();
-        return model;
+      //  // read sv_coef and SV
+
+      int m = model.NrClass - 1;
+      int l = model.TotalSupportVectorsNumber;
+      model.SupportVectorsCoefficients = new double[m][];
+      for (int i = 0; i < m; i++)
+      {
+        model.SupportVectorsCoefficients[i] = new double[l];
+      }
+      model.SupportVectors = new SvmNode[l][];
+
+      for (int i = 0; i < l; i++)
+      {
+        String line = fp.ReadLine();
+        var st = new StringTokenizer(line, new[] { ' ', '\t', '\n', '\r', '\f', ':' });
+
+        for (int k = 0; k < m; k++)
+          model.SupportVectorsCoefficients[k][i] = atof(st.NextToken());
+        int n = st.CountTokens() / 2;
+        model.SupportVectors[i] = new SvmNode[n];
+        for (int j = 0; j < n; j++)
+        {
+          model.SupportVectors[i][j] = new SvmNode(atoi(st.NextToken()), atof(st.NextToken()));
+        }
+      }
+
+      fp.Close();
+      return model;
     }
-
 
     public static void SetPrintStringFunction(svm_print_interface print_func)
     {
-        svm_print_string = print_func ?? svm_print_stdout;
+      svm_print_string = print_func ?? svm_print_stdout;
     }
   }
 }
