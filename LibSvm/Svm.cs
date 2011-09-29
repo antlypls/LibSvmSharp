@@ -646,7 +646,6 @@ namespace LibSvm
 
     #endregion
 
-
     //
     // Interface functions
     //
@@ -1090,18 +1089,23 @@ namespace LibSvm
       return int.Parse(s);
     }
 
-    //implement later
-    //public static svm_model svm_load_model(String model_file_name)
-    //{
-    //  return svm_load_model(new BufferedReader(new FileReader(model_file_name)));
-    //}
+    public static SvmModel LoadModel(string modelFileName)
+    {
+      using (var fs = new FileStream(modelFileName, FileMode.Open))
+      {
+        using (var sr = new StreamReader(fs))
+        {
+          return LoadModel(sr);
+        }
+      }
+    }
 
     public static SvmModel LoadModel(StreamReader fp)
     {
       // read parameters
 
-      SvmModel model = new SvmModel();
-      SvmParameter param = new SvmParameter();
+      var model = new SvmModel();
+      var param = new SvmParameter();
       model.Param = param;
       model.Rho = null;
       model.ProbA = null;
@@ -1109,81 +1113,95 @@ namespace LibSvm
       model.Label = null;
       model.SupportVectors = null;
 
-      while (true)
+      var done = false;
+      while (!done)
       {
-        String cmd = fp.ReadLine();
-        String arg = cmd.Substring(cmd.IndexOf(' ') + 1);
+        var cmd = fp.ReadLine();
+        var splitted = cmd.Split(new[] {' '}, 2);
+        var prefix = splitted[0];
+        var arg = splitted[1];
 
-        if (cmd.StartsWith("svm_type"))
+        switch (prefix)
         {
-          param.SvmType = (SvmType)Enum.Parse(typeof(SvmType), arg, ignoreCase: true);
-        }
-        else if (cmd.StartsWith("kernel_type"))
-        {
-          param.KernelType = (KernelType)Enum.Parse(typeof(KernelType), arg, ignoreCase: true);
-        }
-        else if (cmd.StartsWith("degree"))
-          param.Degree = atoi(arg);
-        else if (cmd.StartsWith("gamma"))
-          param.Gamma = atof(arg);
-        else if (cmd.StartsWith("coef0"))
-          param.Coef0 = atof(arg);
-        else if (cmd.StartsWith("nr_class"))
-          model.NrClass = atoi(arg);
-        else if (cmd.StartsWith("total_sv"))
-          model.TotalSupportVectorsNumber = atoi(arg);
-        else if (cmd.StartsWith("rho"))
-        {
-          int n = model.NrClass * (model.NrClass - 1) / 2;
-          model.Rho = new double[n];
-          StringTokenizer st = new StringTokenizer(arg);
-          for (int i = 0; i < n; i++)
-            model.Rho[i] = atof(st.NextToken());
-        }
-        else if (cmd.StartsWith("label"))
-        {
-          int n = model.NrClass;
-          model.Label = new int[n];
-          StringTokenizer st = new StringTokenizer(arg);
-          for (int i = 0; i < n; i++)
-            model.Label[i] = atoi(st.NextToken());
-        }
-        else if (cmd.StartsWith("probA"))
-        {
-          int n = model.NrClass * (model.NrClass - 1) / 2;
-          model.ProbA = new double[n];
-          StringTokenizer st = new StringTokenizer(arg);
-          for (int i = 0; i < n; i++)
-            model.ProbA[i] = atof(st.NextToken());
-        }
-        else if (cmd.StartsWith("probB"))
-        {
-          int n = model.NrClass * (model.NrClass - 1) / 2;
-          model.ProbB = new double[n];
-          StringTokenizer st = new StringTokenizer(arg);
-          for (int i = 0; i < n; i++)
-            model.ProbB[i] = atof(st.NextToken());
-        }
-        else if (cmd.StartsWith("nr_sv"))
-        {
-          int n = model.NrClass;
-          model.SupportVectorsNumbers = new int[n];
-          StringTokenizer st = new StringTokenizer(arg);
-          for (int i = 0; i < n; i++)
-            model.SupportVectorsNumbers[i] = atoi(st.NextToken());
-        }
-        else if (cmd.StartsWith("SV"))
-        {
-          break;
-        }
-        else
-        {
-          Debug.WriteLine("unknown text in model file: [" + cmd + "]\n");
-          return null;
+          case "svm_type":
+            param.SvmType = (SvmType)Enum.Parse(typeof(SvmType), arg, ignoreCase: true);
+            break;
+
+          case "kernel_type":
+            param.KernelType = (KernelType)Enum.Parse(typeof(KernelType), arg, ignoreCase: true);
+            break;
+
+          case "degree":
+            param.Degree = atoi(arg);
+            break;
+
+          case "gamma":
+            param.Gamma = atof(arg);
+            break;
+
+          case "coef0":
+            param.Coef0 = atof(arg);
+            break;
+
+          case "nr_class":
+            model.NrClass = atoi(arg);
+            break;
+
+          case "total_sv":
+            model.TotalSupportVectorsNumber = atoi(arg);
+            break;
+
+          case "rho":
+            int n = model.NrClass * (model.NrClass - 1) / 2;
+            model.Rho = new double[n];
+            var st = new StringTokenizer(arg);
+            for (int i = 0; i < n; i++)
+              model.Rho[i] = atof(st.NextToken());
+            break;
+
+          case "label":
+            int n2 = model.NrClass;
+            model.Label = new int[n2];
+            var st2 = new StringTokenizer(arg);
+            for (int i = 0; i < n2; i++)
+              model.Label[i] = atoi(st2.NextToken());
+            break;
+
+          case "probA":
+            int n3 = model.NrClass * (model.NrClass - 1) / 2;
+            model.ProbA = new double[n3];
+            var st3 = new StringTokenizer(arg);
+            for (int i = 0; i < n3; i++)
+              model.ProbA[i] = atof(st3.NextToken());
+            break;
+
+          case "probB":
+            int n4 = model.NrClass * (model.NrClass - 1) / 2;
+            model.ProbB = new double[n4];
+            var st4 = new StringTokenizer(arg);
+            for (int i = 0; i < n4; i++)
+              model.ProbB[i] = atof(st4.NextToken());
+            break;
+
+          case "nr_sv":
+            int n5 = model.NrClass;
+            model.SupportVectorsNumbers = new int[n5];
+            var st5 = new StringTokenizer(arg);
+            for (int i = 0; i < n5; i++)
+              model.SupportVectorsNumbers[i] = atoi(st5.NextToken());
+            break;
+
+          case "SV":
+            done = true;
+            break;
+
+          default:
+            Trace.WriteLine("unknown text in model file: [" + cmd + "]");
+            return null;
         }
       }
 
-      //  // read sv_coef and SV
+      // read sv_coef and SV
 
       int m = model.NrClass - 1;
       int l = model.TotalSupportVectorsNumber;
