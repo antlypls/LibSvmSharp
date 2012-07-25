@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using LibSvm.JavaPorts;
 
 namespace LibSvm
 {
@@ -988,94 +991,94 @@ namespace LibSvm
       }
     }
 
-    //static readonly string[] svm_type_table = { "c_svc", "nu_svc", "one_class", "epsilon_svr", "nu_svr", };
-    //static readonly string[] kernel_type_table = { "linear", "polynomial", "rbf", "sigmoid", "precomputed" };
+    static readonly string[] svm_type_table = { "c_svc", "nu_svc", "one_class", "epsilon_svr", "nu_svr", };
+    static readonly string[] kernel_type_table = { "linear", "polynomial", "rbf", "sigmoid", "precomputed" };
 
-    //implement later
-    //public static void svm_save_model(String model_file_name, svm_model model) 
-    //{
-    //  DataOutputStream fp = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(model_file_name)));
 
-    //  svm_parameter param = model.param;
+    public static void SaveModel(String model_file_name, SvmModel model)
+    {
+        using (var fp = new StreamWriter(model_file_name, false))
+        {
+            var param = model.Param;
 
-    //  fp.writeBytes("svm_type "+svm_type_table[param.svm_type]+"\n");
-    //  fp.writeBytes("kernel_type "+kernel_type_table[param.kernel_type]+"\n");
+            fp.Write("svm_type " + svm_type_table[(int)param.SvmType] + "\n");
+            fp.Write("kernel_type " + kernel_type_table[(int)param.KernelType] + "\n");
 
-    //  if(param.kernel_type == svm_parameter.POLY)
-    //    fp.writeBytes("degree "+param.degree+"\n");
+            if (param.KernelType == KernelType.Poly)
+                fp.Write("degree " + param.Degree + "\n");
 
-    //  if(param.kernel_type == svm_parameter.POLY ||
-    //     param.kernel_type == svm_parameter.RBF ||
-    //     param.kernel_type == svm_parameter.SIGMOID)
-    //    fp.writeBytes("gamma "+param.gamma+"\n");
+            if (param.KernelType == KernelType.Poly ||
+                param.KernelType == KernelType.Rbf ||
+                param.KernelType == KernelType.Sigmoid)
+                fp.Write("gamma " + param.Gamma + "\n");
 
-    //  if(param.kernel_type == svm_parameter.POLY ||
-    //     param.kernel_type == svm_parameter.SIGMOID)
-    //    fp.writeBytes("coef0 "+param.coef0+"\n");
+            if (param.KernelType == KernelType.Poly ||
+                param.KernelType == KernelType.Sigmoid)
+                fp.Write("coef0 " + param.Coef0 + "\n");
 
-    //  int nr_class = model.nr_class;
-    //  int l = model.l;
-    //  fp.writeBytes("nr_class "+nr_class+"\n");
-    //  fp.writeBytes("total_sv "+l+"\n");
+            int nr_class = model.NrClass;
+            int l = model.TotalSupportVectorsNumber;
+            fp.Write("nr_class " + nr_class + "\n");
+            fp.Write("total_sv " + l + "\n");
 
-    //  {
-    //    fp.writeBytes("rho");
-    //    for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-    //      fp.writeBytes(" "+model.rho[i]);
-    //    fp.writeBytes("\n");
-    //  }
+            {
+                fp.Write("rho");
+                for (int i = 0; i < nr_class*(nr_class - 1)/2; i++)
+                    fp.Write(" " + model.Rho[i]);
+                fp.Write("\n");
+            }
 
-    //  if(model.label != null)
-    //  {
-    //    fp.writeBytes("label");
-    //    for(int i=0;i<nr_class;i++)
-    //      fp.writeBytes(" "+model.label[i]);
-    //    fp.writeBytes("\n");
-    //  }
+            if (model.Label != null)
+            {
+                fp.Write("label");
+                for (int i = 0; i < nr_class; i++)
+                    fp.Write(" " + model.Label[i]);
+                fp.Write("\n");
+            }
 
-    //  if(model.probA != null) // regression has probA only
-    //  {
-    //    fp.writeBytes("probA");
-    //    for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-    //      fp.writeBytes(" "+model.probA[i]);
-    //    fp.writeBytes("\n");
-    //  }
-    //  if(model.probB != null) 
-    //  {
-    //    fp.writeBytes("probB");
-    //    for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-    //      fp.writeBytes(" "+model.probB[i]);
-    //    fp.writeBytes("\n");
-    //  }
+            if (model.ProbA != null) // regression has probA only
+            {
+                fp.Write("probA");
+                for (int i = 0; i < nr_class*(nr_class - 1)/2; i++)
+                    fp.Write(" " + model.ProbA[i]);
+                fp.Write("\n");
+            }
+            if (model.ProbB != null)
+            {
+                fp.Write("probB");
+                for (int i = 0; i < nr_class*(nr_class - 1)/2; i++)
+                    fp.Write(" " + model.ProbB[i]);
+                fp.Write("\n");
+            }
 
-    //  if(model.nSV != null)
-    //  {
-    //    fp.writeBytes("nr_sv");
-    //    for(int i=0;i<nr_class;i++)
-    //      fp.writeBytes(" "+model.nSV[i]);
-    //    fp.writeBytes("\n");
-    //  }
+            if (model.SupportVectorsNumbers != null)
+            {
+                fp.Write("nr_sv");
+                for (int i = 0; i < nr_class; i++)
+                    fp.Write(" " + model.SupportVectorsNumbers[i]);
+                fp.Write("\n");
+            }
 
-    //  fp.writeBytes("SV\n");
-    //  double[][] sv_coef = model.sv_coef;
-    //  svm_node[][] SV = model.SV;
+            fp.Write("SV\n");
+            double[][] sv_coef = model.SupportVectorsCoefficients;
+            SvmNode[][] SV = model.SupportVectors;
 
-    //  for(int i=0;i<l;i++)
-    //  {
-    //    for(int j=0;j<nr_class-1;j++)
-    //      fp.writeBytes(sv_coef[j][i]+" ");
+            for (int i = 0; i < l; i++)
+            {
+                for (int j = 0; j < nr_class - 1; j++)
+                    fp.Write(sv_coef[j][i] + " ");
 
-    //    svm_node[] p = SV[i];
-    //    if(param.kernel_type == svm_parameter.PRECOMPUTED)
-    //      fp.writeBytes("0:"+(int)(p[0].value));
-    //    else	
-    //      for(int j=0;j<p.length;j++)
-    //        fp.writeBytes(p[j].index+":"+p[j].value+" ");
-    //    fp.writeBytes("\n");
-    //  }
+                SvmNode[] p = SV[i];
+                if (param.KernelType == KernelType.Precomputed)
+                    fp.Write("0:" + (int) (p[0].Value));
+                else
+                    for (int j = 0; j < p.Length; j++)
+                        fp.Write(p[j].Index + ":" + p[j].Value + " ");
+                fp.Write("\n");
+            }
 
-    //  fp.close();
-    //}
+        }
+    }
 
     private static double atof(string s)
     {
@@ -1093,152 +1096,127 @@ namespace LibSvm
     //  return svm_load_model(new BufferedReader(new FileReader(model_file_name)));
     //}
 
-    //implement later
-    //public static svm_model svm_load_model(BufferedReader fp)
-    //{
-    //  // read parameters
+    public static SvmModel LoadModel(StreamReader fp)
+    {
+        // read parameters
 
-    //  svm_model model = new svm_model();
-    //  svm_parameter param = new svm_parameter();
-    //  model.param = param;
-    //  model.rho = null;
-    //  model.probA = null;
-    //  model.probB = null;
-    //  model.label = null;
-    //  model.nSV = null;
+        SvmModel model = new SvmModel();
+        SvmParameter param = new SvmParameter();
+        model.Param = param;
+        model.Rho = null;
+        model.ProbA = null;
+        model.ProbB = null;
+        model.Label = null;
+        model.SupportVectors = null;
 
-    //  while(true)
-    //  {
-    //    String cmd = fp.readLine();
-    //    String arg = cmd.substring(cmd.indexOf(' ')+1);
+        while (true)
+        {
+            String cmd = fp.ReadLine();
+            String arg = cmd.Substring(cmd.IndexOf(' ') + 1);
 
-    //    if(cmd.startsWith("svm_type"))
-    //    {
-    //      int i;
-    //      for(i=0;i<svm_type_table.length;i++)
-    //      {
-    //        if(arg.indexOf(svm_type_table[i])!=-1)
-    //        {
-    //          param.svm_type=i;
-    //          break;
-    //        }
-    //      }
-    //      if(i == svm_type_table.length)
-    //      {
-    //        System.err.print("unknown svm type.\n");
-    //        return null;
-    //      }
-    //    }
-    //    else if(cmd.startsWith("kernel_type"))
-    //    {
-    //      int i;
-    //      for(i=0;i<kernel_type_table.length;i++)
-    //      {
-    //        if(arg.indexOf(kernel_type_table[i])!=-1)
-    //        {
-    //          param.kernel_type=i;
-    //          break;
-    //        }
-    //      }
-    //      if(i == kernel_type_table.length)
-    //      {
-    //        System.err.print("unknown kernel function.\n");
-    //        return null;
-    //      }
-    //    }
-    //    else if(cmd.startsWith("degree"))
-    //      param.degree = atoi(arg);
-    //    else if(cmd.startsWith("gamma"))
-    //      param.gamma = atof(arg);
-    //    else if(cmd.startsWith("coef0"))
-    //      param.coef0 = atof(arg);
-    //    else if(cmd.startsWith("nr_class"))
-    //      model.nr_class = atoi(arg);
-    //    else if(cmd.startsWith("total_sv"))
-    //      model.l = atoi(arg);
-    //    else if(cmd.startsWith("rho"))
-    //    {
-    //      int n = model.nr_class * (model.nr_class-1)/2;
-    //      model.rho = new double[n];
-    //      StringTokenizer st = new StringTokenizer(arg);
-    //      for(int i=0;i<n;i++)
-    //        model.rho[i] = atof(st.nextToken());
-    //    }
-    //    else if(cmd.startsWith("label"))
-    //    {
-    //      int n = model.nr_class;
-    //      model.label = new int[n];
-    //      StringTokenizer st = new StringTokenizer(arg);
-    //      for(int i=0;i<n;i++)
-    //        model.label[i] = atoi(st.nextToken());					
-    //    }
-    //    else if(cmd.startsWith("probA"))
-    //    {
-    //      int n = model.nr_class*(model.nr_class-1)/2;
-    //      model.probA = new double[n];
-    //      StringTokenizer st = new StringTokenizer(arg);
-    //      for(int i=0;i<n;i++)
-    //        model.probA[i] = atof(st.nextToken());					
-    //    }
-    //    else if(cmd.startsWith("probB"))
-    //    {
-    //      int n = model.nr_class*(model.nr_class-1)/2;
-    //      model.probB = new double[n];
-    //      StringTokenizer st = new StringTokenizer(arg);
-    //      for(int i=0;i<n;i++)
-    //        model.probB[i] = atof(st.nextToken());					
-    //    }
-    //    else if(cmd.startsWith("nr_sv"))
-    //    {
-    //      int n = model.nr_class;
-    //      model.nSV = new int[n];
-    //      StringTokenizer st = new StringTokenizer(arg);
-    //      for(int i=0;i<n;i++)
-    //        model.nSV[i] = atoi(st.nextToken());
-    //    }
-    //    else if(cmd.startsWith("SV"))
-    //    {
-    //      break;
-    //    }
-    //    else
-    //    {
-    //      System.err.print("unknown text in model file: ["+cmd+"]\n");
-    //      return null;
-    //    }
-    //  }
+            if (cmd.StartsWith("svm_type"))
+            {
+                param.SvmType = (SvmType) Enum.Parse(typeof (SvmType), arg, ignoreCase:true);
+            }
+            else if (cmd.StartsWith("kernel_type"))
+            {
+                param.KernelType = (KernelType)Enum.Parse(typeof(KernelType), arg, ignoreCase: true);
+            }
+            else if (cmd.StartsWith("degree"))
+                param.Degree = atoi(arg);
+            else if (cmd.StartsWith("gamma"))
+                param.Gamma = atof(arg);
+            else if (cmd.StartsWith("coef0"))
+                param.Coef0 = atof(arg);
+            else if (cmd.StartsWith("nr_class"))
+                model.NrClass = atoi(arg);
+            else if (cmd.StartsWith("total_sv"))
+                model.TotalSupportVectorsNumber = atoi(arg);
+            else if (cmd.StartsWith("rho"))
+            {
+                int n = model.NrClass*(model.NrClass - 1)/2;
+                model.Rho = new double[n];
+                StringTokenizer st = new StringTokenizer(arg);
+                for (int i = 0; i < n; i++)
+                    model.Rho[i] = atof(st.NextToken());
+            }
+            else if (cmd.StartsWith("label"))
+            {
+                int n = model.NrClass;
+                model.Label = new int[n];
+                StringTokenizer st = new StringTokenizer(arg);
+                for (int i = 0; i < n; i++)
+                    model.Label[i] = atoi(st.NextToken());
+            }
+            else if (cmd.StartsWith("probA"))
+            {
+                int n = model.NrClass*(model.NrClass - 1)/2;
+                model.ProbA = new double[n];
+                StringTokenizer st = new StringTokenizer(arg);
+                for (int i = 0; i < n; i++)
+                    model.ProbA[i] = atof(st.NextToken());
+            }
+            else if (cmd.StartsWith("probB"))
+            {
+                int n = model.NrClass*(model.NrClass - 1)/2;
+                model.ProbB = new double[n];
+                StringTokenizer st = new StringTokenizer(arg);
+                for (int i = 0; i < n; i++)
+                    model.ProbB[i] = atof(st.NextToken());
+            }
+            else if (cmd.StartsWith("nr_sv"))
+            {
+                int n = model.NrClass;
+                model.SupportVectorsNumbers = new int[n];
+                StringTokenizer st = new StringTokenizer(arg);
+                for (int i = 0; i < n; i++)
+                    model.SupportVectorsNumbers[i] = atoi(st.NextToken());
+            }
+            else if (cmd.StartsWith("SV"))
+            {
+                break;
+            }
+            else
+            {
+                Debug.WriteLine("unknown text in model file: [" + cmd + "]\n");
+                return null;
+            }
+        }
 
-    //  // read sv_coef and SV
+        //  // read sv_coef and SV
 
-    //  int m = model.nr_class - 1;
-    //  int l = model.l;
-    //  model.sv_coef = new double[m][l];
-    //  model.SV = new svm_node[l][];
+        int m = model.NrClass - 1;
+        int l = model.TotalSupportVectorsNumber;
+        model.SupportVectorsCoefficients = new double[m][];
+        for (int i = 0; i < m; i++)
+        {
+            model.SupportVectorsCoefficients[i] = new double[l];
+        }
+        model.SupportVectors = new SvmNode[l][];
 
-    //  for(int i=0;i<l;i++)
-    //  {
-    //    String line = fp.readLine();
-    //    StringTokenizer st = new StringTokenizer(line," \t\n\r\f:");
+        for (int i = 0; i < l; i++)
+        {
+            String line = fp.ReadLine();
+            var st = new StringTokenizer(line, new[] {' ', '\t', '\n', '\r', '\f', ':'});
 
-    //    for(int k=0;k<m;k++)
-    //      model.sv_coef[k][i] = atof(st.nextToken());
-    //    int n = st.countTokens()/2;
-    //    model.SV[i] = new svm_node[n];
-    //    for(int j=0;j<n;j++)
-    //    {
-    //      model.SV[i][j] = new svm_node();
-    //      model.SV[i][j].index = atoi(st.nextToken());
-    //      model.SV[i][j].value = atof(st.nextToken());
-    //    }
-    //  }
+            for (int k = 0; k < m; k++)
+                model.SupportVectorsCoefficients[k][i] = atof(st.NextToken());
+            int n = st.CountTokens()/2;
+            model.SupportVectors[i] = new SvmNode[n];
+            for (int j = 0; j < n; j++)
+            {
+                model.SupportVectors[i][j] = new SvmNode(atoi(st.NextToken()), atof(st.NextToken()));
+            }
+        }
 
-    //  fp.close();
-    //  return model;
-    //}
+        fp.Close();
+        return model;
+    }
 
 
     public static void SetPrintStringFunction(svm_print_interface print_func)
     {
-      svm_print_string = print_func ?? svm_print_stdout;
+        svm_print_string = print_func ?? svm_print_stdout;
     }
   }
 }
