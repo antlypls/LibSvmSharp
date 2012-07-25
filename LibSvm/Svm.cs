@@ -991,94 +991,94 @@ namespace LibSvm
       }
     }
 
-    //static readonly string[] svm_type_table = { "c_svc", "nu_svc", "one_class", "epsilon_svr", "nu_svr", };
-    //static readonly string[] kernel_type_table = { "linear", "polynomial", "rbf", "sigmoid", "precomputed" };
+    static readonly string[] svm_type_table = { "c_svc", "nu_svc", "one_class", "epsilon_svr", "nu_svr", };
+    static readonly string[] kernel_type_table = { "linear", "polynomial", "rbf", "sigmoid", "precomputed" };
 
-    //implement later
-    //public static void svm_save_model(String model_file_name, svm_model model) 
-    //{
-    //  DataOutputStream fp = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(model_file_name)));
 
-    //  svm_parameter param = model.param;
+    public static void SaveModel(String model_file_name, SvmModel model)
+    {
+        using (var fp = new StreamWriter(model_file_name, false))
+        {
+            var param = model.Param;
 
-    //  fp.writeBytes("svm_type "+svm_type_table[param.svm_type]+"\n");
-    //  fp.writeBytes("kernel_type "+kernel_type_table[param.kernel_type]+"\n");
+            fp.Write("svm_type " + svm_type_table[(int)param.SvmType] + "\n");
+            fp.Write("kernel_type " + kernel_type_table[(int)param.KernelType] + "\n");
 
-    //  if(param.kernel_type == svm_parameter.POLY)
-    //    fp.writeBytes("degree "+param.degree+"\n");
+            if (param.KernelType == KernelType.Poly)
+                fp.Write("degree " + param.Degree + "\n");
 
-    //  if(param.kernel_type == svm_parameter.POLY ||
-    //     param.kernel_type == svm_parameter.RBF ||
-    //     param.kernel_type == svm_parameter.SIGMOID)
-    //    fp.writeBytes("gamma "+param.gamma+"\n");
+            if (param.KernelType == KernelType.Poly ||
+                param.KernelType == KernelType.Rbf ||
+                param.KernelType == KernelType.Sigmoid)
+                fp.Write("gamma " + param.Gamma + "\n");
 
-    //  if(param.kernel_type == svm_parameter.POLY ||
-    //     param.kernel_type == svm_parameter.SIGMOID)
-    //    fp.writeBytes("coef0 "+param.coef0+"\n");
+            if (param.KernelType == KernelType.Poly ||
+                param.KernelType == KernelType.Sigmoid)
+                fp.Write("coef0 " + param.Coef0 + "\n");
 
-    //  int nr_class = model.nr_class;
-    //  int l = model.l;
-    //  fp.writeBytes("nr_class "+nr_class+"\n");
-    //  fp.writeBytes("total_sv "+l+"\n");
+            int nr_class = model.NrClass;
+            int l = model.TotalSupportVectorsNumber;
+            fp.Write("nr_class " + nr_class + "\n");
+            fp.Write("total_sv " + l + "\n");
 
-    //  {
-    //    fp.writeBytes("rho");
-    //    for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-    //      fp.writeBytes(" "+model.rho[i]);
-    //    fp.writeBytes("\n");
-    //  }
+            {
+                fp.Write("rho");
+                for (int i = 0; i < nr_class*(nr_class - 1)/2; i++)
+                    fp.Write(" " + model.Rho[i]);
+                fp.Write("\n");
+            }
 
-    //  if(model.label != null)
-    //  {
-    //    fp.writeBytes("label");
-    //    for(int i=0;i<nr_class;i++)
-    //      fp.writeBytes(" "+model.label[i]);
-    //    fp.writeBytes("\n");
-    //  }
+            if (model.Label != null)
+            {
+                fp.Write("label");
+                for (int i = 0; i < nr_class; i++)
+                    fp.Write(" " + model.Label[i]);
+                fp.Write("\n");
+            }
 
-    //  if(model.probA != null) // regression has probA only
-    //  {
-    //    fp.writeBytes("probA");
-    //    for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-    //      fp.writeBytes(" "+model.probA[i]);
-    //    fp.writeBytes("\n");
-    //  }
-    //  if(model.probB != null) 
-    //  {
-    //    fp.writeBytes("probB");
-    //    for(int i=0;i<nr_class*(nr_class-1)/2;i++)
-    //      fp.writeBytes(" "+model.probB[i]);
-    //    fp.writeBytes("\n");
-    //  }
+            if (model.ProbA != null) // regression has probA only
+            {
+                fp.Write("probA");
+                for (int i = 0; i < nr_class*(nr_class - 1)/2; i++)
+                    fp.Write(" " + model.ProbA[i]);
+                fp.Write("\n");
+            }
+            if (model.ProbB != null)
+            {
+                fp.Write("probB");
+                for (int i = 0; i < nr_class*(nr_class - 1)/2; i++)
+                    fp.Write(" " + model.ProbB[i]);
+                fp.Write("\n");
+            }
 
-    //  if(model.nSV != null)
-    //  {
-    //    fp.writeBytes("nr_sv");
-    //    for(int i=0;i<nr_class;i++)
-    //      fp.writeBytes(" "+model.nSV[i]);
-    //    fp.writeBytes("\n");
-    //  }
+            if (model.SupportVectorsNumbers != null)
+            {
+                fp.Write("nr_sv");
+                for (int i = 0; i < nr_class; i++)
+                    fp.Write(" " + model.SupportVectorsNumbers[i]);
+                fp.Write("\n");
+            }
 
-    //  fp.writeBytes("SV\n");
-    //  double[][] sv_coef = model.sv_coef;
-    //  svm_node[][] SV = model.SV;
+            fp.Write("SV\n");
+            double[][] sv_coef = model.SupportVectorsCoefficients;
+            SvmNode[][] SV = model.SupportVectors;
 
-    //  for(int i=0;i<l;i++)
-    //  {
-    //    for(int j=0;j<nr_class-1;j++)
-    //      fp.writeBytes(sv_coef[j][i]+" ");
+            for (int i = 0; i < l; i++)
+            {
+                for (int j = 0; j < nr_class - 1; j++)
+                    fp.Write(sv_coef[j][i] + " ");
 
-    //    svm_node[] p = SV[i];
-    //    if(param.kernel_type == svm_parameter.PRECOMPUTED)
-    //      fp.writeBytes("0:"+(int)(p[0].value));
-    //    else	
-    //      for(int j=0;j<p.length;j++)
-    //        fp.writeBytes(p[j].index+":"+p[j].value+" ");
-    //    fp.writeBytes("\n");
-    //  }
+                SvmNode[] p = SV[i];
+                if (param.KernelType == KernelType.Precomputed)
+                    fp.Write("0:" + (int) (p[0].Value));
+                else
+                    for (int j = 0; j < p.Length; j++)
+                        fp.Write(p[j].Index + ":" + p[j].Value + " ");
+                fp.Write("\n");
+            }
 
-    //  fp.close();
-    //}
+        }
+    }
 
     private static double atof(string s)
     {
