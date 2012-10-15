@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using LibSvmExtras;
-using LibSvmExtras.Svm;
 using LibSvmExtras.Kernel;
+using LibSvmExtras.Svm;
 
 namespace LibSvmExtrasDemo.Demo
 {

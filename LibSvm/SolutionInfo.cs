@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LibSvm
+﻿namespace LibSvm
 {
   // java: information about solution except alpha,
   // because we cannot return multiple values otherwise...

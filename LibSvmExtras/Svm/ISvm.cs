@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LibSvmExtras.Svm
+﻿namespace LibSvmExtras.Svm
 {
   public interface ISvm<TIn, TOut> where TOut:struct
   {

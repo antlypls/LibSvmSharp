@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LibSvmExtras.Kernel
+﻿namespace LibSvmExtras.Kernel
 {
   public interface  IKernel<TPattern>
   {

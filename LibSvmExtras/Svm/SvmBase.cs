@@ -1,5 +1,4 @@
-﻿using System;
-using LibSvm;
+﻿using LibSvm;
 
 namespace LibSvmExtras.Svm
 {

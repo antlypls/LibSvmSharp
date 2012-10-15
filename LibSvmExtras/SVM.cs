@@ -1,11 +1,10 @@
 ﻿using System;
+using LibSvm;
+using LibSvmExtras.Kernel;
+using LibSvmExtras.Svm;
 
 namespace LibSvmExtras
 {
-  using Svm;
-  using Kernel;
-  using LibSvm;
-
   public static class SVM
   {
     public static ITrainer<TIn, TOut, TPattern> Create<TIn, TOut, TPattern>(ISvm<TIn, TOut> svm, IKernel<TPattern> kernel,

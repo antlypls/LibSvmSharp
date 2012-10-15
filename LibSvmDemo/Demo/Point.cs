@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LibSvm;
-
-namespace LibSvmDemo.Demo
+﻿namespace LibSvmDemo.Demo
 {
   internal struct Point
   {
