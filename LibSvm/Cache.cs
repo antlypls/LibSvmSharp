@@ -18,9 +18,9 @@ namespace LibSvm
 
     private sealed class head_t
     {
-      public head_t prev, next;	// a cicular list
+      public head_t prev, next;  // a cicular list
       public double[] data;
-      public int len;		// data[0,len) is cached in this entry
+      public int len;            // data[0,len) is cached in this entry
     }
 
     private readonly head_t[] head;

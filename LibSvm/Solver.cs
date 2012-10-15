@@ -8,18 +8,18 @@ namespace LibSvm
   // An SMO algorithm in Fan et al., JMLR 6(2005), p. 1889--1918
   // Solves:
   //
-  //	min 0.5(\alpha^T Q \alpha) + p^T \alpha
+  //    min 0.5(\alpha^T Q \alpha) + p^T \alpha
   //
-  //		y^T \alpha = \delta
-  //		y_i = +1 or -1
-  //		0 <= alpha_i <= Cp for y_i = 1
-  //		0 <= alpha_i <= Cn for y_i = -1
+  //        y^T \alpha = \delta
+  //        y_i = +1 or -1
+  //        0 <= alpha_i <= Cp for y_i = 1
+  //        0 <= alpha_i <= Cn for y_i = -1
   //
   // Given:
   //
-  //	Q, p, y, Cp, Cn, and an initial feasible point \alpha
-  //	length is the size of vectors and matrices
-  //	eps is the stopping tolerance
+  //    Q, p, y, Cp, Cn, and an initial feasible point \alpha
+  //    length is the size of vectors and matrices
+  //    eps is the stopping tolerance
   //
   // solution will be put in \alpha, objective value will be put in obj
   //
@@ -28,9 +28,9 @@ namespace LibSvm
   {
     protected int _activeSize;
     protected sbyte[] _y;
-    protected double[] _g;		// gradient of objective function
+    protected double[] _g;              // gradient of objective function
 
-    private BoundType[] _alphaStatus;	// LOWER_BOUND, UPPER_BOUND, FREE
+    private BoundType[] _alphaStatus;   // LOWER_BOUND, UPPER_BOUND, FREE
 
     private double[] _alpha;
     protected QMatrix _q;
@@ -39,9 +39,9 @@ namespace LibSvm
     private double _cp, _cn;
     private double[] _p;
     private int[] _activeSet;
-    private double[] _gBar;		// gradient, if we treat free variables as 0
+    private double[] _gBar;     // gradient, if we treat free variables as 0
     protected int _length;
-    protected bool _unshrink;	// XXX
+    protected bool _unshrink;   // XXX
 
     private double GetC(int i)
     {
@@ -516,8 +516,8 @@ namespace LibSvm
     protected virtual void do_shrinking()
     {
       int i;
-      double Gmax1 = double.NegativeInfinity;		// max { -y_i * grad(f)_i | i in I_up(\alpha) }
-      double Gmax2 = double.NegativeInfinity;		// max { y_i * grad(f)_i | i in I_low(\alpha) }
+      double Gmax1 = double.NegativeInfinity;       // max { -y_i * grad(f)_i | i in I_up(\alpha) }
+      double Gmax2 = double.NegativeInfinity;       // max { y_i * grad(f)_i | i in I_low(\alpha) }
 
       // find maximal violating pair first
       for (i = 0; i < _activeSize; i++)

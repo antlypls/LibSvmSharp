@@ -124,7 +124,7 @@ namespace LibSvm
       sbyte[] ones = new sbyte[l];
       int i;
 
-      int n = (int)(param.Nu * prob.Lenght);	// # of alpha's at upper bound
+      int n = (int)(param.Nu * prob.Lenght);    // # of alpha's at upper bound
 
       for (i = 0; i < n; i++)
         alpha[i] = 1;
@@ -274,9 +274,9 @@ namespace LibSvm
         else prior0 += 1;
       }
 
-      const int max_iter = 100;	// Maximal number of iterations
-      const double min_step = 1e-10;	// Minimal step taken in line search
-      const double sigma = 1e-12;	// For numerically strict PD of Hessian
+      const int max_iter = 100;         // Maximal number of iterations
+      const double min_step = 1e-10;    // Minimal step taken in line search
+      const double sigma = 1e-12;       // For numerically strict PD of Hessian
       const double eps = 1e-5;
 
       double hiTarget = (prior1 + 1.0) / (prior1 + 2.0);
@@ -1071,7 +1071,7 @@ namespace LibSvm
     //    svm_node[] p = SV[i];
     //    if(param.kernel_type == svm_parameter.PRECOMPUTED)
     //      fp.writeBytes("0:"+(int)(p[0].value));
-    //    else	
+    //    else
     //      for(int j=0;j<p.length;j++)
     //        fp.writeBytes(p[j].index+":"+p[j].value+" ");
     //    fp.writeBytes("\n");
@@ -1173,7 +1173,7 @@ namespace LibSvm
     //      model.label = new int[n];
     //      StringTokenizer st = new StringTokenizer(arg);
     //      for(int i=0;i<n;i++)
-    //        model.label[i] = atoi(st.nextToken());					
+    //        model.label[i] = atoi(st.nextToken());
     //    }
     //    else if(cmd.startsWith("probA"))
     //    {
@@ -1181,7 +1181,7 @@ namespace LibSvm
     //      model.probA = new double[n];
     //      StringTokenizer st = new StringTokenizer(arg);
     //      for(int i=0;i<n;i++)
-    //        model.probA[i] = atof(st.nextToken());					
+    //        model.probA[i] = atof(st.nextToken());
     //    }
     //    else if(cmd.startsWith("probB"))
     //    {
@@ -1189,7 +1189,7 @@ namespace LibSvm
     //      model.probB = new double[n];
     //      StringTokenizer st = new StringTokenizer(arg);
     //      for(int i=0;i<n;i++)
-    //        model.probB[i] = atof(st.nextToken());					
+    //        model.probB[i] = atof(st.nextToken());
     //    }
     //    else if(cmd.startsWith("nr_sv"))
     //    {

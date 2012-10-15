@@ -20,35 +20,35 @@ namespace LibSvm
     {
       get;
       internal set;
-    }		
+    }
 
     // total #SV
     public int TotalSupportVectorsNumber
     {
       get;
       internal set;
-    }			
+    }
 
     // SVs (SV[TotalSupportVectorsNumber])
     public TPattern[] SupportVectors
     {
       get;
       internal set;
-    }	
+    }
 
     // coefficients for SVs in decision functions (sv_coef[k-1][l])
     public double[][] SupportVectorsCoefficients
     {
       get;
       internal set;
-    }	
+    }
 
     // constants in decision functions (rho[k*(k-1)/2])
     public double[] Rho
     {
       get;
       internal set;
-    }		
+    }
 
     // pariwise probability information
     public double[] ProbA
@@ -76,7 +76,7 @@ namespace LibSvm
     {
       get;
       internal set;
-    }		
+    }
     // SupportVectorsNumbers[0] + SupportVectorsNumbers[1] + ... + SupportVectorsNumbers[k-1] = TotalSupportVectorsNumber
 
     //from Svm.svm_get_svm_type
