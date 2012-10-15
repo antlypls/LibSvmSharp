@@ -4,7 +4,7 @@ LibSVMSharp is a C# port of java version of "libsvm":http://www.csie.ntu.edu.tw/
 
 For more information about SVM, see original libsvm "practical guide":http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf and "implementation details":http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf.
 
-Current LibSvmSharp version is based on libsvm 3.0.
+Current LibSvmSharp version is based on libsvm 3.12.
 
 h2. Solution Details
 

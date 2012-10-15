@@ -12,7 +12,7 @@ namespace LibSvm
   //
   public static class Svm
   {
-    public const int LIBSVM_VERSION = 300;
+    public const int LIBSVM_VERSION = 312;
 
     #region private_members
 
@@ -701,6 +701,9 @@ namespace LibSvm
         // group training data of the same class
         svm_group_classes(prob, out nr_class, out label, out start, out count, perm);
 
+        if (nr_class == 1)
+          Svm.info("WARNING: training data in only one class. See README for details.\n");
+
         TPattern[] x = new TPattern[l];
         int i;
         for (i = 0; i < l; i++)
@@ -718,7 +721,7 @@ namespace LibSvm
             if (param.WeightLabel[i] == label[j])
               break;
           if (j == nr_class)
-            Console.Error.WriteLine("warning: class label " + param.WeightLabel[i] + " specified in weight is not found\n");
+            Console.Error.WriteLine("WARNING: class label " + param.WeightLabel[i] + " specified in weight is not found\n");
           else
             weighted_C[j] *= param.Weight[i];
         }
