@@ -14,7 +14,7 @@ let run =
   let class1 = generateClass 0 (0.1, 0.1) 50
   let class2 = generateClass 1 (0.9, 0.9) 50 
   
-  let rbfKernel = Rbf 0.5
+  let rbfKernel = Kernels.Rbf 0.5
   
   let common = {CacheSize = 128.0; Eps = 0.001; Shrinking = true; Probability = false}
   

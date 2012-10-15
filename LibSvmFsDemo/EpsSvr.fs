@@ -8,7 +8,7 @@ open LibSvmFs.SVMFS
 let run = 
   printfn "--- Eps-SVR Demo ---"
 
-  let rbfKernel = Rbf 0.5
+  let rbfKernel = Kernels.Rbf 0.5
   
   let common = {CacheSize = 128.0; Eps = 0.001; Shrinking = true; Probability = false}
   

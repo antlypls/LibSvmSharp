@@ -13,7 +13,7 @@ let run =
 
   let class1 = generateClass 0 (0.5, 0.5) 100
   
-  let rbfKernel = Rbf 0.5
+  let rbfKernel = Kernels.Rbf 0.5
                                                           
   let common = {CacheSize = 128.0; Eps = 0.001; Shrinking = true; Probability = false}
   
