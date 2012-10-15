@@ -10,8 +10,8 @@ namespace LibSvmExtras.Trainers
   {
     internal SvcTrainer(SvmParameter parameters)
       : base(parameters)
-    { 
-    
+    {
+
     }
 
     public IModel<int> Train(IEnumerable<Tuple<double[], int>> data)

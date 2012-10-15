@@ -8,7 +8,7 @@ namespace LibSvm
   public struct SvmNode
   {
     public SvmNode(int index, double value)
-    { 
+    {
       Index = index;
       Value = value;
     }

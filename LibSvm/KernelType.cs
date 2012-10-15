@@ -11,6 +11,6 @@ namespace LibSvm
     Poly,
     Rbf,
     Sigmoid,
-    Precomputed,
+    Precomputed
   }
 }

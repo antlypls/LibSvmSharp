@@ -7,8 +7,8 @@ namespace LibSvmExtras.Models
   {
     public RegressionModel(SvmModel model)
       : base(model)
-    { 
-    
+    {
+
     }
 
     public double Predict(double[] point)

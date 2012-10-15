@@ -15,7 +15,7 @@ namespace LibSvmExtrasDemo
       EpsSVRDemo.Run();
       NuSVRDemo.Run();
       OneClassDemo.Run();
-      
+
       Console.ReadKey();
     }
   }

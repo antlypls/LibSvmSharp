@@ -21,7 +21,7 @@ namespace LibSvm
     {
       l = prob.Lenght;
       cache = new Cache(l, (long)(param.CacheSize * (1 << 20)));
-      
+
       QD = new double[2 * l];
       sign = new sbyte[2 * l];
       index = new int[2 * l];
