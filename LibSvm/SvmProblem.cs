@@ -4,7 +4,7 @@ namespace LibSvm
 {
   public class SvmProblem<TPattern>
   {
-    public int Lenght
+    public int Length
     {
       get
       {

@@ -56,7 +56,7 @@ namespace LibSvm
         return;
       }
 
-      int l = prob.Lenght;
+      int l = prob.Length;
       int max_nr_class = 16;
       int nr_class = 0;
       int[] label = new int[max_nr_class];

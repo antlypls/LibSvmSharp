@@ -1,6 +1,6 @@
 ﻿namespace LibSvmExtras.Kernel
 {
-  public interface  IKernel<TPattern>
+  public interface IKernel<TPattern>
   {
   }
 }

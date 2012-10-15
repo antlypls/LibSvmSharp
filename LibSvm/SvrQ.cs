@@ -12,9 +12,9 @@
     private readonly double[] QD;
 
     public SvrQ(SvmProblem<TPattern> prob, SvmParameter<TPattern> param)
-      : base(prob.Lenght, prob.X, param)
+      : base(prob.X, param)
     {
-      l = prob.Lenght;
+      l = prob.Length;
       cache = new Cache(l, (long)(param.CacheSize * (1 << 20)));
 
       QD = new double[2 * l];
@@ -31,7 +31,7 @@
         QD[k + l] = QD[k];
       }
 
-      buffer = new double[2][] { new double[2 * l], new double[2 * l] };
+      buffer = new[] { new double[2 * l], new double[2 * l] };
 
       next_buffer = 0;
     }

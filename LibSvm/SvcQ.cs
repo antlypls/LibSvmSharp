@@ -8,13 +8,13 @@
     private readonly double[] QD;
 
     public SvcQ(SvmProblem<TPattern> prob, SvmParameter<TPattern> param, sbyte[] y_)
-      : base(prob.Lenght, prob.X, param)
+      : base(prob.X, param)
     {
       //super(prob.l, prob.x, param);
       y = (sbyte[])y_.Clone();
-      cache = new Cache(prob.Lenght, (long)(param.CacheSize * (1 << 20)));
-      QD = new double[prob.Lenght];
-      for (int i = 0; i < prob.Lenght; i++)
+      cache = new Cache(prob.Length, (long)(param.CacheSize * (1 << 20)));
+      QD = new double[prob.Length];
+      for (int i = 0; i < prob.Length; i++)
         QD[i] = kernel_function(i, i);
     }
 

@@ -6,11 +6,11 @@
     private readonly double[] _qd;
 
     public OneClassQ(SvmProblem<TPattern> prob, SvmParameter<TPattern> param)
-      : base(prob.Lenght, prob.X, param)
+      : base(prob.X, param)
     {
-      _cache = new Cache(prob.Lenght, (long)(param.CacheSize * (1 << 20)));
-      _qd = new double[prob.Lenght];
-      for (int i = 0; i < prob.Lenght; i++)
+      _cache = new Cache(prob.Length, (long)(param.CacheSize * (1 << 20)));
+      _qd = new double[prob.Length];
+      for (int i = 0; i < prob.Length; i++)
         _qd[i] = kernel_function(i, i);
     }
 
