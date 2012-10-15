@@ -19,15 +19,9 @@ namespace LibSvmDemo.Demo
     public double Y { get; set; }
     public int Label { get; set; }
 
-    public SvmNode[] ToSvmNodes()
-    {
-      return new[] { new SvmNode(1, X), new SvmNode(2, Y) };
-    }
-
     public double[] ToArray()
     {
       return new[] { X, Y };
     }
-
   }
 }

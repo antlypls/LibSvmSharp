@@ -8,11 +8,6 @@ namespace LibSvmDemo.Demo
 {
   internal static class DemoHelper
   {
-    public static SvmNode[] ToSvmNodes(this double x)
-    {
-      return new[] { new SvmNode(1, x) };
-    }
-
     public static double[] ToArray(this double x)
     {
       return new[] { x };

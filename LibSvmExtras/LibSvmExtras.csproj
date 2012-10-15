@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="Kernel\CustomKernel.cs" />
     <Compile Include="Models\ClassificationModel.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="IModel.cs" />
     <Compile Include="ITrainer.cs" />
     <Compile Include="Kernel\IKernel.cs" />
