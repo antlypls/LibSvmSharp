@@ -91,9 +91,8 @@ namespace LibSvm
 
       if (2 * nr_free < _activeSize)
       {
-        Svm.info("\nWarning: using -h 0 may be faster\n"); 
+        Svm.info("\nWARNING: using -h 0 may be faster\n"); 
       }
-
 
       if (nr_free * _length > 2 * _activeSize * (_length - _activeSize))
       {
@@ -174,10 +173,11 @@ namespace LibSvm
       // optimization step
 
       int iter = 0;
+      int max_iter = Math.Max(10000000, length > int.MaxValue / 100 ? int.MaxValue : 100 * length);
       int counter = Math.Min(length, 1000) + 1;
       int[] working_set = new int[2];
 
-      while (true)
+      while (iter < max_iter)
       {
         // show progress and do shrinking
 
@@ -356,6 +356,18 @@ namespace LibSvm
             }
           }
         }
+      }
+
+      if (iter >= max_iter)
+      {
+        if (_activeSize < length)
+        {
+          // reconstruct the whole gradient to calculate objective value
+          reconstruct_gradient();
+          _activeSize = length;
+          Svm.info("*");
+        }
+        Svm.info("\nWARNING: reaching max number of iterations");
       }
 
       // calculate rho
