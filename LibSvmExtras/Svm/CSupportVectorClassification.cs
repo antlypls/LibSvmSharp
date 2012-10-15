@@ -9,7 +9,7 @@ namespace LibSvmExtras.Svm
     public double C
     {
       get;
-      private set; 
+      private set;
     }
 
     public CSupportVectorClassification(double c)

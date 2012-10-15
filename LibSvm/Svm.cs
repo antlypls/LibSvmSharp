@@ -286,7 +286,7 @@ namespace LibSvm
       int iter;
 
       // Initial Point and Initial Fun Value
-      double A = 0.0; 
+      double A = 0.0;
       double B = Math.Log((prior0 + 1.0) / (prior1 + 1.0));
 
       double fval = 0.0;
@@ -307,8 +307,8 @@ namespace LibSvm
         // Update Gradient and Hessian (use H' = H + sigma I)
         double h11 = sigma; // numerically ensures strict PD
         double h22 = sigma;
-        double h21 = 0.0; 
-        
+        double h21 = 0.0;
+
         double g1 = 0.0;
         double g2 = 0.0;
 
@@ -470,7 +470,7 @@ namespace LibSvm
       // random shuffle
       var rnd = new Random();
       for (int i = 0; i < prob.Lenght; i++) perm[i] = i;
-      
+
       for (int i = 0; i < prob.Lenght; i++)
       {
         int j = i + (int)(rnd.NextDouble() * (prob.Lenght - i));
@@ -507,7 +507,7 @@ namespace LibSvm
         }
 
         int p_count = 0, n_count = 0;
-        
+
         for (int j = 0; j < k; j++)
           if (subprob.Y[j] > 0)
             p_count++;
@@ -548,7 +548,7 @@ namespace LibSvm
       sigmoid_train(prob.Lenght, dec_values, prob.Y, probAB);
     }
 
-    // Return parameter of a Laplace distribution 
+    // Return parameter of a Laplace distribution
     private static double svm_svr_probability<TPattern>(SvmProblem<TPattern> prob, SvmParameter<TPattern> param)
     {
       int i;
@@ -744,7 +744,7 @@ namespace LibSvm
         for (i = 0; i < nr_class; i++)
           for (int j = i + 1; j < nr_class; j++)
           {
-            
+
             int si = start[i], sj = start[j];
             int ci = count[i], cj = count[j];
             var subprobLenght = ci + cj;
@@ -957,7 +957,7 @@ namespace LibSvm
         int begin = fold_start[i];
         int end = fold_start[i + 1];
         int j, k;
-        
+
         var subprobLenght = l - (end - begin);
         var subprob = new SvmProblem<TPattern>
         {
@@ -995,7 +995,7 @@ namespace LibSvm
     //static readonly string[] kernel_type_table = { "linear", "polynomial", "rbf", "sigmoid", "precomputed" };
 
     //implement later
-    //public static void svm_save_model(String model_file_name, svm_model model) 
+    //public static void svm_save_model(String model_file_name, svm_model model)
     //{
     //  DataOutputStream fp = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(model_file_name)));
 
@@ -1043,7 +1043,7 @@ namespace LibSvm
     //      fp.writeBytes(" "+model.probA[i]);
     //    fp.writeBytes("\n");
     //  }
-    //  if(model.probB != null) 
+    //  if(model.probB != null)
     //  {
     //    fp.writeBytes("probB");
     //    for(int i=0;i<nr_class*(nr_class-1)/2;i++)

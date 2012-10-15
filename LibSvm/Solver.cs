@@ -91,7 +91,7 @@ namespace LibSvm
 
       if (2 * nr_free < _activeSize)
       {
-        Svm.info("\nWARNING: using -h 0 may be faster\n"); 
+        Svm.info("\nWARNING: using -h 0 may be faster\n");
       }
 
       if (nr_free * _length > 2 * _activeSize * (_length - _activeSize))

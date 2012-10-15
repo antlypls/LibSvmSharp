@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LibSvm
 {
-  abstract class Kernel<TPattern> : QMatrix 
+  abstract class Kernel<TPattern> : QMatrix
   {
     private Func<TPattern, TPattern, double> _kernelFunc;
 

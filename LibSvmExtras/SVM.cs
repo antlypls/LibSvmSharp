@@ -8,7 +8,7 @@ namespace LibSvmExtras
 
   public static class SVM
   {
-    public static ITrainer<TIn, TOut, TPattern> Create<TIn, TOut, TPattern>(ISvm<TIn, TOut> svm, IKernel<TPattern> kernel, 
+    public static ITrainer<TIn, TOut, TPattern> Create<TIn, TOut, TPattern>(ISvm<TIn, TOut> svm, IKernel<TPattern> kernel,
       double cacheSize = 128, double tolerance = 0.001, bool shrinking = true, bool probability = false)
       where TOut : struct
     {

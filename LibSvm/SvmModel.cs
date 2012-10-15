@@ -9,7 +9,7 @@ namespace LibSvm
   public class SvmModel<TPattern>
   {
     // parameterS
-    public SvmParameter<TPattern> Param 
+    public SvmParameter<TPattern> Param
     {
       get;
       internal set;
@@ -18,47 +18,47 @@ namespace LibSvm
     // number of classes, = 2 in regression/one class svm
     public int NrClass
     {
-      get; 
+      get;
       internal set;
     }		
 
     // total #SV
     public int TotalSupportVectorsNumber
     {
-      get; 
+      get;
       internal set;
     }			
 
     // SVs (SV[TotalSupportVectorsNumber])
     public TPattern[] SupportVectors
     {
-      get; 
+      get;
       internal set;
     }	
 
     // coefficients for SVs in decision functions (sv_coef[k-1][l])
     public double[][] SupportVectorsCoefficients
     {
-      get; 
+      get;
       internal set;
     }	
 
     // constants in decision functions (rho[k*(k-1)/2])
     public double[] Rho
     {
-      get; 
+      get;
       internal set;
     }		
 
     // pariwise probability information
     public double[] ProbA
     {
-      get; 
+      get;
       internal set;
-    }         
+    }
     public double[] ProbB
     {
-      get; 
+      get;
       internal set;
     }
 
@@ -74,7 +74,7 @@ namespace LibSvm
     // number of SVs for each class (SupportVectorsNumbers[k])
     public int[] SupportVectorsNumbers
     {
-      get; 
+      get;
       internal set;
     }		
     // SupportVectorsNumbers[0] + SupportVectorsNumbers[1] + ... + SupportVectorsNumbers[k-1] = TotalSupportVectorsNumber

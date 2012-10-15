@@ -7,8 +7,8 @@ namespace LibSvmExtras.Models
   {
     public ClassificationModel(SvmModel<TPattern> model)
       : base(model)
-    { 
-    
+    {
+
     }
 
     public int Predict(TPattern point)

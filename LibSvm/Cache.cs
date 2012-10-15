@@ -104,7 +104,7 @@ namespace LibSvm
       if (head[i].len > 0) lru_insert(head[i]);
       if (head[j].len > 0) lru_insert(head[j]);
 
-      if (i > j) 
+      if (i > j)
       {
         Common.Swap(ref i, ref j);
       }

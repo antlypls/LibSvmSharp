@@ -5,10 +5,10 @@ namespace LibSvmExtras.Kernel
 {
   public sealed class RbfKernel : KernelBase<double[]>
   {
-    public double Gamma 
+    public double Gamma
     {
-      get; 
-      private set; 
+      get;
+      private set;
     }
 
     public RbfKernel(double gamma)

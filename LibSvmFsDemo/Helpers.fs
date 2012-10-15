@@ -2,13 +2,13 @@
 
 open System
 
-let randomNumber = 
+let randomNumber =
   let rnd = new Random()
   (fun() -> (rnd.NextDouble() - 0.5) / 4.0)
 
-let generateClass label (x, y) count = 
-  let generatePoint() = 
-    let withMean z = 
+let generateClass label (x, y) count =
+  let generatePoint() =
+    let withMean z =
       z +  randomNumber()
     let x_ = withMean x
     let y_ = withMean y
