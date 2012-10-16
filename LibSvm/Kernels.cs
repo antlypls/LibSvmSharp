@@ -5,7 +5,7 @@ namespace LibSvm
 {
   public static class Kernels
   {
-    private static double powi(double base_, int times)
+    private static double PowI(double base_, int times)
     {
       double tmp = base_, ret = 1.0;
 
@@ -31,7 +31,7 @@ namespace LibSvm
     private static double PolynomialInt(double gamma, int degree, double r, double[] x, double[] y)
     {
       var dot = x.Zip(y, (x_, y_) => x_ * y_).Sum();
-      return powi(gamma * dot + r, degree);
+      return PowI(gamma * dot + r, degree);
     }
 
     private static double SigmoidInt(double gamma, double r, double[] x, double[] y)

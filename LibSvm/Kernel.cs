@@ -4,7 +4,7 @@ namespace LibSvm
 {
   abstract class Kernel<TPattern> : QMatrix
   {
-    private Func<TPattern, TPattern, double> _kernelFunc;
+    private readonly Func<TPattern, TPattern, double> _kernelFunc;
 
     private readonly TPattern[] _x;
 
@@ -18,16 +18,11 @@ namespace LibSvm
       return _kernelFunc(_x[i], _x[j]);
     }
 
-    protected Kernel(TPattern[] x_, SvmParameter<TPattern> param)
+    protected Kernel(TPattern[] x, SvmParameter<TPattern> param)
     {
       _kernelFunc = param.KernelFunc;
 
-      _x = (TPattern[])x_.Clone();
+      _x = (TPattern[])x.Clone();
     }
-
-    //public static double k_function(TPattern x, TPattern y, SvmParameter<TPattern> param)
-    //{
-    //  return param.KernelFunc(x, y);
-    //}
   }
 }

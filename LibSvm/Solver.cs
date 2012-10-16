@@ -54,11 +54,26 @@ namespace LibSvm
       else _alphaStatus[i] = BoundType.Free;
     }
 
-    protected bool is_upper_bound(int i) { return _alphaStatus[i] == BoundType.UpperBound; }
-    protected bool is_lower_bound(int i) { return _alphaStatus[i] == BoundType.LowerBound; }
-    protected bool is_free(int i) { return _alphaStatus[i] == BoundType.Free; }
+    // from is_upper_bound
+    protected bool IsUpperBound(int i)
+    {
+      return _alphaStatus[i] == BoundType.UpperBound;
+    }
 
-    protected void swap_index(int i, int j)
+    // from is_lower_bound
+    protected bool IsLowerBound(int i)
+    {
+      return _alphaStatus[i] == BoundType.LowerBound;
+    }
+
+    // from is_free
+    protected bool IsFree(int i)
+    {
+      return _alphaStatus[i] == BoundType.Free;
+    }
+
+    // from swap_index
+    protected void SwapIndex(int i, int j)
     {
       _q.SwapIndex(i, j);
       Common.Swap(ref _y[i], ref _y[j]);
@@ -70,7 +85,8 @@ namespace LibSvm
       Common.Swap(ref _gBar[i], ref _gBar[j]);
     }
 
-    protected void reconstruct_gradient()
+    // from reconstruct_gradient
+    protected void ReconstructGradient()
     {
       // reconstruct inactive elements of G from G_bar and free variables
 
@@ -83,7 +99,7 @@ namespace LibSvm
         _g[j] = _gBar[j] + _p[j];
 
       for (j = 0; j < _activeSize; j++)
-        if (is_free(j))
+        if (IsFree(j))
           nr_free++;
 
       if (2 * nr_free < _activeSize)
@@ -97,14 +113,14 @@ namespace LibSvm
         {
           double[] Q_i = _q.GetQ(i, _activeSize);
           for (j = 0; j < _activeSize; j++)
-            if (is_free(j))
+            if (IsFree(j))
               _g[i] += _alpha[j] * Q_i[j];
         }
       }
       else
       {
         for (i = 0; i < _activeSize; i++)
-          if (is_free(i))
+          if (IsFree(i))
           {
             double[] Q_i = _q.GetQ(i, _length);
             double alpha_i = _alpha[i];
@@ -117,16 +133,16 @@ namespace LibSvm
     public virtual void Solve(int length, QMatrix Q, double[] p_, sbyte[] y_,
          double[] alpha_, double Cp, double Cn, double eps, SolutionInfo si, bool shrinking)
     {
-      this._length = length;
-      this._q = Q;
+      _length = length;
+      _q = Q;
       _qd = Q.GetQD();
       _p = (double[]) p_.Clone();
       _y = (sbyte[]) y_.Clone();
       _alpha = (double[]) alpha_.Clone();
-      this._cp = Cp;
-      this._cn = Cn;
-      this._eps = eps;
-      this._unshrink = false;
+      _cp = Cp;
+      _cn = Cn;
+      _eps = eps;
+      _unshrink = false;
 
       // initialize alpha_status
       {
@@ -147,21 +163,22 @@ namespace LibSvm
       {
         _g = new double[length];
         _gBar = new double[length];
-        int i;
-        for (i = 0; i < length; i++)
+        //int i;
+        for (int i = 0; i < length; i++)
         {
           _g[i] = _p[i];
           _gBar[i] = 0;
         }
-        for (i = 0; i < length; i++)
-          if (!is_lower_bound(i))
+
+        for (int i = 0; i < length; i++)
+          if (!IsLowerBound(i))
           {
             double[] Q_i = Q.GetQ(i, length);
             double alpha_i = _alpha[i];
             int j;
             for (j = 0; j < length; j++)
               _g[j] += alpha_i*Q_i[j];
-            if (is_upper_bound(i))
+            if (IsUpperBound(i))
               for (j = 0; j < length; j++)
                 _gBar[j] += GetC(i)*Q_i[j];
           }
@@ -181,18 +198,18 @@ namespace LibSvm
         if (--counter == 0)
         {
           counter = Math.Min(length, 1000);
-          if (shrinking) do_shrinking();
+          if (shrinking) DoShrinking();
           Svm.info(".");
         }
 
-        if (select_working_set(working_set) != 0)
+        if (SelectWorkingSet(working_set) != 0)
         {
           // reconstruct the whole gradient
-          reconstruct_gradient();
+          ReconstructGradient();
           // reset active set size and check
           _activeSize = length;
           Svm.info("*");
-          if (select_working_set(working_set) != 0)
+          if (SelectWorkingSet(working_set) != 0)
             break;
           else
             counter = 1; // do shrinking next iteration
@@ -311,12 +328,12 @@ namespace LibSvm
         }
 
         // update alpha_status and G_bar
-        bool ui = is_upper_bound(i);
-        bool uj = is_upper_bound(j);
+        bool ui = IsUpperBound(i);
+        bool uj = IsUpperBound(j);
         UpdateAlphaStatus(i);
         UpdateAlphaStatus(j);
         //int k;
-        if (ui != is_upper_bound(i))
+        if (ui != IsUpperBound(i))
         {
           Q_i = Q.GetQ(i, length);
           if (ui)
@@ -335,7 +352,7 @@ namespace LibSvm
           }
         }
 
-        if (uj != is_upper_bound(j))
+        if (uj != IsUpperBound(j))
         {
           Q_j = Q.GetQ(j, length);
           if (uj)
@@ -360,7 +377,7 @@ namespace LibSvm
         if (_activeSize < length)
         {
           // reconstruct the whole gradient to calculate objective value
-          reconstruct_gradient();
+          ReconstructGradient();
           _activeSize = length;
           Svm.info("*");
         }
@@ -368,7 +385,7 @@ namespace LibSvm
       }
 
       // calculate rho
-      si.Rho = calculate_rho();
+      si.Rho = CalculateRho();
 
       // calculate objective value
       double v = 0;
@@ -390,8 +407,9 @@ namespace LibSvm
       Svm.info("\noptimization finished, #iter = " + iter + "\n");
     }
 
+    // from select_working_set
     // return 1 if already optimal, return 0 otherwise
-    protected virtual int select_working_set(int[] working_set)
+    protected virtual int SelectWorkingSet(int[] workingSet)
     {
       // return i,j such that
       // i: maximizes -y_i * grad(f)_i, i in I_up(\alpha)
@@ -408,7 +426,7 @@ namespace LibSvm
       for (int t = 0; t < _activeSize; t++)
         if (_y[t] == +1)
         {
-          if (!is_upper_bound(t))
+          if (!IsUpperBound(t))
             if (-_g[t] >= Gmax)
             {
               Gmax = -_g[t];
@@ -417,7 +435,7 @@ namespace LibSvm
         }
         else
         {
-          if (!is_lower_bound(t))
+          if (!IsLowerBound(t))
             if (_g[t] >= Gmax)
             {
               Gmax = _g[t];
@@ -434,7 +452,7 @@ namespace LibSvm
       {
         if (_y[j] == +1)
         {
-          if (!is_lower_bound(j))
+          if (!IsLowerBound(j))
           {
             double grad_diff = Gmax + _g[j];
             if (_g[j] >= Gmax2)
@@ -458,7 +476,7 @@ namespace LibSvm
         }
         else
         {
-          if (!is_upper_bound(j))
+          if (!IsUpperBound(j))
           {
             double grad_diff = Gmax - _g[j];
             if (-_g[j] >= Gmax2)
@@ -485,21 +503,22 @@ namespace LibSvm
       if (Gmax + Gmax2 < _eps)
         return 1;
 
-      working_set[0] = Gmax_idx;
-      working_set[1] = Gmin_idx;
+      workingSet[0] = Gmax_idx;
+      workingSet[1] = Gmin_idx;
       return 0;
     }
 
-    private bool be_shrunk(int i, double Gmax1, double Gmax2)
+    // from be_shrunk
+    private bool BeShrunk(int i, double Gmax1, double Gmax2)
     {
-      if (is_upper_bound(i))
+      if (IsUpperBound(i))
       {
         if (_y[i] == +1)
           return (-_g[i] > Gmax1);
         else
           return (-_g[i] > Gmax2);
       }
-      else if (is_lower_bound(i))
+      else if (IsLowerBound(i))
       {
         if (_y[i] == +1)
           return (_g[i] > Gmax2);
@@ -510,59 +529,59 @@ namespace LibSvm
         return (false);
     }
 
-    protected virtual void do_shrinking()
+    // from do_shrinking
+    protected virtual void DoShrinking()
     {
-      int i;
-      double Gmax1 = double.NegativeInfinity;       // max { -y_i * grad(f)_i | i in I_up(\alpha) }
-      double Gmax2 = double.NegativeInfinity;       // max { y_i * grad(f)_i | i in I_low(\alpha) }
+      double gmax1 = double.NegativeInfinity;       // max { -y_i * grad(f)_i | i in I_up(\alpha) }
+      double gmax2 = double.NegativeInfinity;       // max { y_i * grad(f)_i | i in I_low(\alpha) }
 
       // find maximal violating pair first
-      for (i = 0; i < _activeSize; i++)
+      for (int i = 0; i < _activeSize; i++)
       {
         if (_y[i] == +1)
         {
-          if (!is_upper_bound(i))
+          if (!IsUpperBound(i))
           {
-            if (-_g[i] >= Gmax1)
-              Gmax1 = -_g[i];
+            if (-_g[i] >= gmax1)
+              gmax1 = -_g[i];
           }
-          if (!is_lower_bound(i))
+          if (!IsLowerBound(i))
           {
-            if (_g[i] >= Gmax2)
-              Gmax2 = _g[i];
+            if (_g[i] >= gmax2)
+              gmax2 = _g[i];
           }
         }
         else
         {
-          if (!is_upper_bound(i))
+          if (!IsUpperBound(i))
           {
-            if (-_g[i] >= Gmax2)
-              Gmax2 = -_g[i];
+            if (-_g[i] >= gmax2)
+              gmax2 = -_g[i];
           }
-          if (!is_lower_bound(i))
+          if (!IsLowerBound(i))
           {
-            if (_g[i] >= Gmax1)
-              Gmax1 = _g[i];
+            if (_g[i] >= gmax1)
+              gmax1 = _g[i];
           }
         }
       }
 
-      if (_unshrink == false && Gmax1 + Gmax2 <= _eps * 10)
+      if (_unshrink == false && gmax1 + gmax2 <= _eps * 10)
       {
         _unshrink = true;
-        reconstruct_gradient();
+        ReconstructGradient();
         _activeSize = _length;
       }
 
-      for (i = 0; i < _activeSize; i++)
-        if (be_shrunk(i, Gmax1, Gmax2))
+      for (int i = 0; i < _activeSize; i++)
+        if (BeShrunk(i, gmax1, gmax2))
         {
           _activeSize--;
           while (_activeSize > i)
           {
-            if (!be_shrunk(_activeSize, Gmax1, Gmax2))
+            if (!BeShrunk(_activeSize, gmax1, gmax2))
             {
-              swap_index(i, _activeSize);
+              SwapIndex(i, _activeSize);
               break;
             }
             _activeSize--;
@@ -570,7 +589,8 @@ namespace LibSvm
         }
     }
 
-    protected virtual double calculate_rho()
+    // from calculate_rho
+    protected virtual double CalculateRho()
     {
       double r;
       int nr_free = 0;
@@ -579,14 +599,14 @@ namespace LibSvm
       {
         double yG = _y[i] * _g[i];
 
-        if (is_lower_bound(i))
+        if (IsLowerBound(i))
         {
           if (_y[i] > 0)
             ub = Math.Min(ub, yG);
           else
             lb = Math.Max(lb, yG);
         }
-        else if (is_upper_bound(i))
+        else if (IsUpperBound(i))
         {
           if (_y[i] < 0)
             ub = Math.Min(ub, yG);

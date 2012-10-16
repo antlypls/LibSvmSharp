@@ -11,48 +11,48 @@
 
   internal static class SvmTypeExtensions
   {
-    public static bool IsSVROrOneClass(this SvmType svm_type)
+    public static bool IsSVROrOneClass(this SvmType svmType)
     {
-      return svm_type == SvmType.ONE_CLASS || svm_type == SvmType.EPSILON_SVR || svm_type == SvmType.NU_SVR;
+      return svmType == SvmType.ONE_CLASS || svmType == SvmType.EPSILON_SVR || svmType == SvmType.NU_SVR;
     }
 
-    public static bool IsSVR(this SvmType svm_type)
+    public static bool IsSVR(this SvmType svmType)
     {
-      return svm_type == SvmType.EPSILON_SVR || svm_type == SvmType.NU_SVR;
+      return svmType == SvmType.EPSILON_SVR || svmType == SvmType.NU_SVR;
     }
 
-    public static bool IsSVC(this SvmType svm_type)
+    public static bool IsSVC(this SvmType svmType)
     {
-      return svm_type == SvmType.C_SVC || svm_type == SvmType.NU_SVC;
+      return svmType == SvmType.C_SVC || svmType == SvmType.NU_SVC;
     }
 
-    public static bool IsOneClass(this SvmType svm_type)
+    public static bool IsOneClass(this SvmType svmType)
     {
-      return svm_type == SvmType.ONE_CLASS;
+      return svmType == SvmType.ONE_CLASS;
     }
 
-    public static bool IsNuSVC(this SvmType svm_type)
+    public static bool IsNuSVC(this SvmType svmType)
     {
-      return svm_type == SvmType.NU_SVC;
+      return svmType == SvmType.NU_SVC;
     }
 
-    public static bool UseCParameter(this SvmType svm_type)
+    public static bool UseCParameter(this SvmType svmType)
     {
-      return svm_type == SvmType.C_SVC ||
-             svm_type == SvmType.EPSILON_SVR ||
-             svm_type == SvmType.NU_SVR;
+      return svmType == SvmType.C_SVC ||
+             svmType == SvmType.EPSILON_SVR ||
+             svmType == SvmType.NU_SVR;
     }
 
-    public static bool UseNuParameter(this SvmType svm_type)
+    public static bool UseNuParameter(this SvmType svmType)
     {
-      return svm_type == SvmType.NU_SVC ||
-             svm_type == SvmType.ONE_CLASS ||
-             svm_type == SvmType.NU_SVR;
+      return svmType == SvmType.NU_SVC ||
+             svmType == SvmType.ONE_CLASS ||
+             svmType == SvmType.NU_SVR;
     }
 
-    public static bool UsePParameter(this SvmType svm_type)
+    public static bool UsePParameter(this SvmType svmType)
     {
-      return svm_type == SvmType.EPSILON_SVR;
+      return svmType == SvmType.EPSILON_SVR;
     }
   }
 }

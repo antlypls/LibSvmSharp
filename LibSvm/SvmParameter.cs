@@ -56,14 +56,13 @@ namespace LibSvm
         return;
       }
 
-      int l = prob.Length;
+      int length = prob.Length;
       int max_nr_class = 16;
       int nr_class = 0;
-      int[] label = new int[max_nr_class];
-      int[] count = new int[max_nr_class];
+      var label = new int[max_nr_class];
+      var count = new int[max_nr_class];
 
-      int i;
-      for (i = 0; i < l; i++)
+      for (int i = 0; i < length; i++)
       {
         int this_label = (int) prob.Y[i];
         int j;
@@ -79,7 +78,7 @@ namespace LibSvm
           if (nr_class == max_nr_class)
           {
             max_nr_class *= 2;
-            int[] new_data = new int[max_nr_class];
+            var new_data = new int[max_nr_class];
             Array.Copy(label, 0, new_data, 0, label.Length);
             label = new_data;
 
@@ -93,13 +92,13 @@ namespace LibSvm
         }
       }
 
-      for (i = 0; i < nr_class; i++)
+      for (int i = 0; i < nr_class; i++)
       {
         int n1 = count[i];
         for (int j = i + 1; j < nr_class; j++)
         {
           int n2 = count[j];
-          if (this.Nu*(n1 + n2)/2 > Math.Min(n1, n2))
+          if (Nu*(n1 + n2)/2 > Math.Min(n1, n2))
             throw new ApplicationException("specified nu is infeasible");
         }
       }

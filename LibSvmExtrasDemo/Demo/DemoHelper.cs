@@ -13,7 +13,7 @@ namespace LibSvmExtrasDemo.Demo
 
     public static double Sinc(double x)
     {
-      return x == 0 ? 1 : Math.Sin(x) / x;
+      return x == 0.0 ? 1 : Math.Sin(x) / x;
     }
 
     public static IEnumerable<Point> GenerateClass(int label, double x, double y, int count)

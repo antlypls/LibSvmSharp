@@ -21,7 +21,7 @@
       if ((start = _cache.get_data(i, out data, len)) < len)
       {
         for (int j = start; j < len; j++)
-          data[j] = (double)kernel_function(i, j);
+          data[j] = kernel_function(i, j);
       }
       return data;
     }

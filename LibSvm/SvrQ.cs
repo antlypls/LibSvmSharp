@@ -3,68 +3,72 @@
   //SvrQ
   class SvrQ<TPattern> : Kernel<TPattern>
   {
-    private readonly int l;
-    private readonly Cache cache;
-    private readonly sbyte[] sign;
-    private readonly int[] index;
-    private int next_buffer;
-    private double[][] buffer;
-    private readonly double[] QD;
+    private readonly int _length;
+    private readonly Cache _cache;
+    private readonly sbyte[] _sign;
+    private readonly int[] _index;
+    private int _nextBuffer;
+    private readonly double[][] _buffer;
+    private readonly double[] _QD;
 
     public SvrQ(SvmProblem<TPattern> prob, SvmParameter<TPattern> param)
       : base(prob.X, param)
     {
-      l = prob.Length;
-      cache = new Cache(l, (long)(param.CacheSize * (1 << 20)));
+      _length = prob.Length;
+      _cache = new Cache(_length, (long)(param.CacheSize * (1 << 20)));
 
-      QD = new double[2 * l];
-      sign = new sbyte[2 * l];
-      index = new int[2 * l];
+      _QD = new double[2 * _length];
+      _sign = new sbyte[2 * _length];
+      _index = new int[2 * _length];
 
-      for (int k = 0; k < l; k++)
+      for (int k = 0; k < _length; k++)
       {
-        sign[k] = 1;
-        sign[k + l] = -1;
-        index[k] = k;
-        index[k + l] = k;
-        QD[k] = kernel_function(k, k);
-        QD[k + l] = QD[k];
+        _sign[k] = 1;
+        _sign[k + _length] = -1;
+        _index[k] = k;
+        _index[k + _length] = k;
+        _QD[k] = kernel_function(k, k);
+        _QD[k + _length] = _QD[k];
       }
 
-      buffer = new[] { new double[2 * l], new double[2 * l] };
+      _buffer = new[] { new double[2 * _length], new double[2 * _length] };
 
-      next_buffer = 0;
+      _nextBuffer = 0;
     }
 
     public override void SwapIndex(int i, int j)
     {
-      Common.Swap(ref sign[i], ref sign[j]);
-      Common.Swap(ref index[i], ref index[j]);
-      Common.Swap(ref QD[i], ref QD[j]);
+      Common.Swap(ref _sign[i], ref _sign[j]);
+      Common.Swap(ref _index[i], ref _index[j]);
+      Common.Swap(ref _QD[i], ref _QD[j]);
     }
 
     public override double[] GetQ(int i, int len)
     {
       double[] data;
-      int j, real_i = index[i];
-      if (cache.get_data(real_i, out data, l) < l)
+      int real_i = _index[i];
+      if (_cache.get_data(real_i, out data, _length) < _length)
       {
-        for (j = 0; j < l; j++)
-          data[j] = (double)kernel_function(real_i, j);
+        for (int j = 0; j < _length; j++)
+        {
+          data[j] = kernel_function(real_i, j);
+        }
       }
 
       // reorder and copy
-      double[] buf = buffer[next_buffer];
-      next_buffer = 1 - next_buffer;
-      sbyte si = sign[i];
-      for (j = 0; j < len; j++)
-        buf[j] = (double)si * sign[j] * data[index[j]];
+      double[] buf = _buffer[_nextBuffer];
+      _nextBuffer = 1 - _nextBuffer;
+      sbyte si = _sign[i];
+      for (int j = 0; j < len; j++)
+      {
+        buf[j] = (double)si * _sign[j] * data[_index[j]];
+      }
       return buf;
     }
 
     public override double[] GetQD()
     {
-      return QD;
+      return _QD;
     }
   }
 }

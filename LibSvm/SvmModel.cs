@@ -129,29 +129,29 @@ namespace LibSvm
       Debug.Assert(!SvmType.IsSVROrOneClass(), "!SvmType.IsSVROrOneClass()");
 
       int nr_class = NrClass;
-      int l = TotalSupportVectorsNumber;
+      int length = TotalSupportVectorsNumber;
 
-      double[] kvalue = new double[l];
-      for (int i = 0; i < l; i++)
+      var kvalue = new double[length];
+      for (int i = 0; i < length; i++)
       {
-        //kvalue[i] = Kernel.k_function(x, SupportVectors[i], Param);
         kvalue[i] = Param.KernelFunc(x, SupportVectors[i]);
       }
 
-      int[] start = new int[nr_class];
+      var start = new int[nr_class];
       start[0] = 0;
       for (int i = 1; i < nr_class; i++)
         start[i] = start[i - 1] + SupportVectorsNumbers[i - 1];
 
-      int[] vote = new int[nr_class];
+      var vote = new int[nr_class];
       for (int i = 0; i < nr_class; i++)
         vote[i] = 0;
 
       int p = 0;
       for (int i = 0; i < nr_class; i++)
+      {
         for (int j = i + 1; j < nr_class; j++)
         {
-          double sum = 0;
+          double sum = 0.0;
           int si = start[i];
           int sj = start[j];
           int ci = SupportVectorsNumbers[i];
@@ -174,6 +174,7 @@ namespace LibSvm
           p++;
         }
 
+      }
       int vote_max_idx = 0;
       for (int i = 1; i < nr_class; i++)
         if (vote[i] > vote[vote_max_idx])
@@ -185,7 +186,7 @@ namespace LibSvm
     //from Svm.svm_predict_values
     public double PredictValues(TPattern x, double[] dec_values)
     {
-      return SvmType.IsSVROrOneClass() ? PredictValuesSvrOrOneClass(x ,dec_values) : PredictValuesNonSvrOrOneClass(x, dec_values);
+      return SvmType.IsSVROrOneClass() ? PredictValuesSvrOrOneClass(x, dec_values) : PredictValuesNonSvrOrOneClass(x, dec_values);
     }
 
     //from Svm.svm_predict

@@ -19,8 +19,9 @@ namespace LibSvm
       base.Solve(length, Q, p, y, alpha, Cp, Cn, eps, si, shrinking);
     }
 
+    // from select_working_set
     // return 1 if already optimal, return 0 otherwise
-    protected override int select_working_set(int[] working_set)
+    protected override int SelectWorkingSet(int[] workingSet)
     {
       // return i,j such that y_i = y_j and
       // i: maximizes -y_i * grad(f)_i, i in I_up(\alpha)
@@ -42,7 +43,7 @@ namespace LibSvm
       for (int t = 0; t < _activeSize; t++)
         if (_y[t] == +1)
         {
-          if (!is_upper_bound(t))
+          if (!IsUpperBound(t))
             if (-_g[t] >= Gmaxp)
             {
               Gmaxp = -_g[t];
@@ -51,7 +52,7 @@ namespace LibSvm
         }
         else
         {
-          if (!is_lower_bound(t))
+          if (!IsLowerBound(t))
             if (_g[t] >= Gmaxn)
             {
               Gmaxn = _g[t];
@@ -72,7 +73,7 @@ namespace LibSvm
       {
         if (_y[j] == +1)
         {
-          if (!is_lower_bound(j))
+          if (!IsLowerBound(j))
           {
             double grad_diff = Gmaxp + _g[j];
             if (_g[j] >= Gmaxp2)
@@ -96,7 +97,7 @@ namespace LibSvm
         }
         else
         {
-          if (!is_upper_bound(j))
+          if (!IsUpperBound(j))
           {
             double grad_diff = Gmaxn - _g[j];
             if (-_g[j] >= Gmaxn2)
@@ -124,24 +125,25 @@ namespace LibSvm
         return 1;
 
       if (_y[Gmin_idx] == +1)
-        working_set[0] = Gmaxp_idx;
+        workingSet[0] = Gmaxp_idx;
       else
-        working_set[0] = Gmaxn_idx;
-      working_set[1] = Gmin_idx;
+        workingSet[0] = Gmaxn_idx;
+      workingSet[1] = Gmin_idx;
 
       return 0;
     }
 
-    private bool be_shrunk(int i, double Gmax1, double Gmax2, double Gmax3, double Gmax4)
+    // from be_shrunk
+    private bool BeShrunk(int i, double Gmax1, double Gmax2, double Gmax3, double Gmax4)
     {
-      if (is_upper_bound(i))
+      if (IsUpperBound(i))
       {
         if (_y[i] == +1)
           return (-_g[i] > Gmax1);
         else
           return (-_g[i] > Gmax4);
       }
-      else if (is_lower_bound(i))
+      else if (IsLowerBound(i))
       {
         if (_y[i] == +1)
           return (_g[i] > Gmax2);
@@ -152,7 +154,8 @@ namespace LibSvm
         return (false);
     }
 
-    protected override void do_shrinking()
+    // from do_shrinking
+    protected override void DoShrinking()
     {
       double Gmax1 = double.NegativeInfinity;
       double Gmax2 = double.NegativeInfinity;
@@ -163,7 +166,7 @@ namespace LibSvm
       int i;
       for (i = 0; i < _activeSize; i++)
       {
-        if (!is_upper_bound(i))
+        if (!IsUpperBound(i))
         {
           if (_y[i] == +1)
           {
@@ -171,7 +174,7 @@ namespace LibSvm
           }
           else if (-_g[i] > Gmax4) Gmax4 = -_g[i];
         }
-        if (!is_lower_bound(i))
+        if (!IsLowerBound(i))
         {
           if (_y[i] == +1)
           {
@@ -184,19 +187,19 @@ namespace LibSvm
       if (_unshrink == false && Math.Max(Gmax1 + Gmax2, Gmax3 + Gmax4) <= _eps * 10)
       {
         _unshrink = true;
-        reconstruct_gradient();
+        ReconstructGradient();
         _activeSize = _length;
       }
 
       for (i = 0; i < _activeSize; i++)
-        if (be_shrunk(i, Gmax1, Gmax2, Gmax3, Gmax4))
+        if (BeShrunk(i, Gmax1, Gmax2, Gmax3, Gmax4))
         {
           _activeSize--;
           while (_activeSize > i)
           {
-            if (!be_shrunk(_activeSize, Gmax1, Gmax2, Gmax3, Gmax4))
+            if (!BeShrunk(_activeSize, Gmax1, Gmax2, Gmax3, Gmax4))
             {
-              swap_index(i, _activeSize);
+              SwapIndex(i, _activeSize);
               break;
             }
             _activeSize--;
@@ -204,7 +207,8 @@ namespace LibSvm
         }
     }
 
-    protected override double calculate_rho()
+    // from calculate_rho
+    protected override double CalculateRho()
     {
       int nr_free1 = 0, nr_free2 = 0;
       double ub1 = double.PositiveInfinity, ub2 = double.PositiveInfinity;
@@ -215,9 +219,9 @@ namespace LibSvm
       {
         if (_y[i] == +1)
         {
-          if (is_lower_bound(i))
+          if (IsLowerBound(i))
             ub1 = Math.Min(ub1, _g[i]);
-          else if (is_upper_bound(i))
+          else if (IsUpperBound(i))
             lb1 = Math.Max(lb1, _g[i]);
           else
           {
@@ -227,9 +231,9 @@ namespace LibSvm
         }
         else
         {
-          if (is_lower_bound(i))
+          if (IsLowerBound(i))
             ub2 = Math.Min(ub2, _g[i]);
-          else if (is_upper_bound(i))
+          else if (IsUpperBound(i))
             lb2 = Math.Max(lb2, _g[i]);
           else
           {
