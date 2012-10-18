@@ -91,16 +91,20 @@ namespace LibSvm
       // reconstruct inactive elements of G from G_bar and free variables
 
       if (_activeSize == _length) return;
-
-      int i, j;
       int nr_free = 0;
 
-      for (j = _activeSize; j < _length; j++)
+      for (int j = _activeSize; j < _length; j++)
+      {
         _g[j] = _gBar[j] + _p[j];
+      }
 
-      for (j = 0; j < _activeSize; j++)
+      for (int j = 0; j < _activeSize; j++)
+      {
         if (IsFree(j))
+        {
           nr_free++;
+        }
+      }
 
       if (2 * nr_free < _activeSize)
       {
@@ -109,23 +113,29 @@ namespace LibSvm
 
       if (nr_free * _length > 2 * _activeSize * (_length - _activeSize))
       {
-        for (i = _activeSize; i < _length; i++)
+        for (int i = _activeSize; i < _length; i++)
         {
           double[] Q_i = _q.GetQ(i, _activeSize);
-          for (j = 0; j < _activeSize; j++)
+          for (int j = 0; j < _activeSize; j++)
+          {
             if (IsFree(j))
+            {
               _g[i] += _alpha[j] * Q_i[j];
+            }
+          }
         }
       }
       else
       {
-        for (i = 0; i < _activeSize; i++)
+        for (int i = 0; i < _activeSize; i++)
           if (IsFree(i))
           {
             double[] Q_i = _q.GetQ(i, _length);
             double alpha_i = _alpha[i];
-            for (j = _activeSize; j < _length; j++)
+            for (int j = _activeSize; j < _length; j++)
+            {
               _g[j] += alpha_i * Q_i[j];
+            }
           }
       }
     }
@@ -145,43 +155,50 @@ namespace LibSvm
       _unshrink = false;
 
       // initialize alpha_status
+      _alphaStatus = new BoundType[length];
+      for (int i = 0; i < length; i++)
       {
-        _alphaStatus = new BoundType[length];
-        for (int i = 0; i < length; i++)
-          UpdateAlphaStatus(i);
+        UpdateAlphaStatus(i);
       }
 
       // initialize active set (for shrinking)
+      _activeSet = new int[length];
+      for (int i = 0; i < length; i++)
       {
-        _activeSet = new int[length];
-        for (int i = 0; i < length; i++)
-          _activeSet[i] = i;
-        _activeSize = length;
+        _activeSet[i] = i;
       }
+      _activeSize = length;
 
       // initialize gradient
-      {
-        _g = new double[length];
-        _gBar = new double[length];
-        //int i;
-        for (int i = 0; i < length; i++)
-        {
-          _g[i] = _p[i];
-          _gBar[i] = 0;
-        }
+      _g = new double[length];
+      _gBar = new double[length];
 
-        for (int i = 0; i < length; i++)
-          if (!IsLowerBound(i))
+      for (int i = 0; i < length; i++)
+      {
+        _g[i] = _p[i];
+        _gBar[i] = 0;
+      }
+
+      for (int i = 0; i < length; i++)
+      {
+        if (!IsLowerBound(i))
+        {
+          double[] Q_i = Q.GetQ(i, length);
+          double alpha_i = _alpha[i];
+
+          for (int j = 0; j < length; j++)
           {
-            double[] Q_i = Q.GetQ(i, length);
-            double alpha_i = _alpha[i];
-            int j;
-            for (j = 0; j < length; j++)
-              _g[j] += alpha_i*Q_i[j];
-            if (IsUpperBound(i))
-              for (j = 0; j < length; j++)
-                _gBar[j] += GetC(i)*Q_i[j];
+            _g[j] += alpha_i * Q_i[j];
           }
+
+          if (IsUpperBound(i))
+          {
+            for (int j = 0; j < length; j++)
+            {
+              _gBar[j] += GetC(i) * Q_i[j];
+            }
+          }
+        }
       }
 
       // optimization step
