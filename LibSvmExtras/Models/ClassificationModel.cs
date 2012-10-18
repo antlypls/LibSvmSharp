@@ -7,8 +7,8 @@ namespace LibSvmExtras.Models
   {
     public ClassificationModel(SvmModel model)
       : base(model)
-    { 
-    
+    {
+
     }
 
     public int Predict(double[] point)

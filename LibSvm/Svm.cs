@@ -15,7 +15,7 @@ namespace LibSvm
   //
   public static class Svm
   {
-    public const int LIBSVM_VERSION = 300;
+    public const int LIBSVM_VERSION = 312;
 
     #region private_members
 
@@ -551,7 +551,7 @@ namespace LibSvm
       sigmoid_train(prob.Lenght, dec_values, prob.Y, probAB);
     }
 
-    // Return parameter of a Laplace distribution 
+    // Return parameter of a Laplace distribution
     private static double svm_svr_probability(SvmProblem prob, SvmParameter param)
     {
       int i;
@@ -703,6 +703,9 @@ namespace LibSvm
         // group training data of the same class
         svm_group_classes(prob, out nr_class, out label, out start, out count, perm);
 
+        if (nr_class == 1)
+          Svm.info("WARNING: training data in only one class. See README for details.\n");
+
         SvmNode[][] x = new SvmNode[l][];
         int i;
         for (i = 0; i < l; i++)
@@ -720,7 +723,7 @@ namespace LibSvm
             if (param.WeightLabel[i] == label[j])
               break;
           if (j == nr_class)
-            Console.Error.WriteLine("warning: class label " + param.WeightLabel[i] + " specified in weight is not found\n");
+            Console.Error.WriteLine("WARNING: class label " + param.WeightLabel[i] + " specified in weight is not found\n");
           else
             weighted_C[j] *= param.Weight[i];
         }
@@ -994,7 +997,7 @@ namespace LibSvm
     //static readonly string[] kernel_type_table = { "linear", "polynomial", "rbf", "sigmoid", "precomputed" };
 
     //implement later
-    //public static void svm_save_model(String model_file_name, svm_model model) 
+    //public static void svm_save_model(String model_file_name, svm_model model)
     //{
     //  DataOutputStream fp = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(model_file_name)));
 
@@ -1042,7 +1045,7 @@ namespace LibSvm
     //      fp.writeBytes(" "+model.probA[i]);
     //    fp.writeBytes("\n");
     //  }
-    //  if(model.probB != null) 
+    //  if(model.probB != null)
     //  {
     //    fp.writeBytes("probB");
     //    for(int i=0;i<nr_class*(nr_class-1)/2;i++)

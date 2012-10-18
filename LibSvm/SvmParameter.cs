@@ -10,14 +10,14 @@ namespace LibSvm
   {
     public SvmType SvmType;
     public KernelType KernelType;
-    public int Degree;	            // for poly
-    public double Gamma;	          // for poly/rbf/sigmoid
-    public double Coef0;	          // for poly/sigmoid
+    public int Degree;            // for poly
+    public double Gamma;          // for poly/rbf/sigmoid
+    public double Coef0;          // for poly/sigmoid
 
     // these are for training only
     public double CacheSize;    // in MB
-    public double Eps;	        // stopping criteria
-    public double C;	          // for C_SVC, EPSILON_SVR and NU_SVR
+    public double Eps;          // stopping criteria
+    public double C;            // for C_SVC, EPSILON_SVR and NU_SVR
     public int WeightsCount     // for C_SVC
     {
       get
@@ -29,12 +29,12 @@ namespace LibSvm
         Debug.Assert(WeightLabel.Length == Weight.Length, "WeightLabel.Length == Weight.Length");
         return WeightLabel.Length;
       }
-    }		    
-    public int[] WeightLabel;	  // for C_SVC
-    public double[] Weight;		  // for C_SVC
-    public double Nu;	          // for NU_SVC, ONE_CLASS, and NU_SVR
-    public double P;	          // for EPSILON_SVR
-    public bool Shrinking;	    // use the shrinking heuristics
+    }
+    public int[] WeightLabel;  // for C_SVC
+    public double[] Weight;    // for C_SVC
+    public double Nu;          // for NU_SVC, ONE_CLASS, and NU_SVR
+    public double P;           // for EPSILON_SVR
+    public bool Shrinking;     // use the shrinking heuristics
     public bool Probability;    // do probability estimates
 
     public object Clone()
