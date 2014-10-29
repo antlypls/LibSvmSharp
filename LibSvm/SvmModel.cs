@@ -59,6 +59,13 @@ namespace LibSvm
       internal set;
     }
 
+    // sv_indices[0,...,nSV-1] are values in [1,...,num_traning_data] to indicate SVs in the training set
+    public int[] SupportVectorsIndices
+    {
+      get;
+      internal set;
+    }
+
     // for classification only
 
     // label of each class (label[k])
@@ -96,6 +103,15 @@ namespace LibSvm
       }
     }
 
+    //from Svm.svm_get_sv_indices
+    public void GetSupportVectorsIndices(int[] indices)
+    {
+      if (SupportVectorsIndices != null)
+        for (int i = 0; i < TotalSupportVectorsNumber; i++)
+          indices[i] = SupportVectorsIndices[i];
+    }
+
+
     //from Svm.svm_get_svr_probability
     public double GetSvrProbability()
     {
@@ -106,6 +122,9 @@ namespace LibSvm
 
       throw new ApplicationException("Model doesn't contain information for SVR probability inference\n");
     }
+
+    //Svm.svm_get_nr_sv
+    //Use TotalSupportVectorsNumber instead
 
     private double PredictValuesSvrOrOneClass(TPattern x, double[] dec_values)
     {

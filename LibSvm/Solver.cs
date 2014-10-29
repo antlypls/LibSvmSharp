@@ -398,7 +398,7 @@ namespace LibSvm
           _activeSize = length;
           Svm.info("*");
         }
-        Svm.info("\nWARNING: reaching max number of iterations");
+        Console.Error.WriteLine("\nWARNING: reaching max number of iterations");
       }
 
       // calculate rho

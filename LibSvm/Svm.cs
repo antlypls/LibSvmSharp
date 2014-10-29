@@ -9,7 +9,7 @@ namespace LibSvm
   //
   public static class Svm
   {
-    public const int LIBSVM_VERSION = 312;
+    public const int LIBSVM_VERSION = 313;
 
     #region private_members
 
@@ -672,12 +672,14 @@ namespace LibSvm
         model.TotalSupportVectorsNumber = nSV;
         model.SupportVectors = new TPattern[nSV];
         model.SupportVectorsCoefficients[0] = new double[nSV];
+        model.SupportVectorsIndices = new int[nSV];
         int j = 0;
         for (int i = 0; i < prob.Length; i++)
           if (Math.Abs(f.Alpha[i]) > 0)
           {
             model.SupportVectors[j] = prob.X[i];
             model.SupportVectorsCoefficients[0][j] = f.Alpha[i];
+            model.SupportVectorsIndices[j] = i + 1;
             ++j;
           }
       }
@@ -825,9 +827,16 @@ namespace LibSvm
 
         model.TotalSupportVectorsNumber = nnz;
         model.SupportVectors = new TPattern[nnz];
+        model.SupportVectorsIndices = new int[nnz];
         p = 0;
         for (int i = 0; i < length; i++)
-          if (nonzero[i]) model.SupportVectors[p++] = x[i];
+        {
+          if(nonzero[i])
+          {
+            model.SupportVectors[p] = x[i];
+            model.SupportVectorsIndices[p++] = perm[i] + 1;
+          }
+        }
 
         int[] nz_start = new int[nr_class];
         nz_start[0] = 0;
