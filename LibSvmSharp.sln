@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSvm", "LibSvm\LibSvm.csproj", "{698EBC12-9B34-4E17-8D15-9331B1BA9983}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibSvmDemo", "LibSvmDemo\LibSvmDemo.csproj", "{C2391B29-89B2-4E3C-BD1F-7F2667CF9492}"
