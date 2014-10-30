@@ -7,7 +7,7 @@ For more information about SVM, see original libsvm [practical guide](http://www
 
 At this time the aim of the project to provide a .NET version of the core library only, without additional tools provided by libsvm project, like command-line tools (svm-train, svm-predict, etc) or svm-toy.
 
-Current LibSvmSharp version is based on libsvm 3.15.
+Current LibSvmSharp version is based on libsvm 3.16.
 
 
 Solution Details
