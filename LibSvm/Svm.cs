@@ -9,7 +9,7 @@ namespace LibSvm
   //
   public static class Svm
   {
-    public const int LIBSVM_VERSION = 316;
+    public const int LIBSVM_VERSION = 317;
 
     #region private_members
 
@@ -606,6 +606,24 @@ namespace LibSvm
           label[nr_class] = this_label;
           count[nr_class] = 1;
           ++nr_class;
+        }
+      }
+
+      //
+      // Labels are ordered by their first occurrence in the training set.
+      // However, for two-class sets with -1/+1 labels and -1 appears first,
+      // we swap labels to ensure that internally the binary SVM has positive data corresponding to the +1 instances.
+      //
+      if (nr_class == 2 && label[0] == -1 && label[1] == +1)
+      {
+        Common.Swap(ref label[0], ref label[1]);
+        Common.Swap(ref count[0], ref count[1]);
+        for(int i = 0; i < length; i++)
+        {
+          if(data_label[i] == 0)
+            data_label[i] = 1;
+          else
+            data_label[i] = 0;
         }
       }
 
