@@ -9,7 +9,7 @@ namespace LibSvm
   //
   public static class Svm
   {
-    public const int LIBSVM_VERSION = 319;
+    public const int LIBSVM_VERSION = 320;
 
     #region private_members
 
